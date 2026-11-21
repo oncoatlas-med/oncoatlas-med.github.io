@@ -11,10 +11,11 @@ const cards = JSON.parse(read('cards.json'));
 const additionalRegimens = JSON.parse(read('regimens.json'));
 const stages = ['I', 'II', 'III', 'IV'];
 const ids = cards.map(c => c.id);
-assert.deepEqual(ids, Array.from({length: 43}, (_, i) => 'c' + String(i + 1).padStart(3, '0')));
-assert.equal(new Set(cards.map(c => c.number)).size, 43);
+const contextualCards = ['c025', 'c029', 'c030', 'c031', 'c045', 'c046'];
+assert.deepEqual(ids, Array.from({length: 46}, (_, i) => 'c' + String(i + 1).padStart(3, '0')));
+assert.equal(new Set(cards.map(c => c.number)).size, 46);
 for (const card of cards) {
-  for (const field of ['title', 'group', 'origin', 'location', 'molecular', 'diagnostics', 'markers', ...(card.id === 'c014' ? stages.slice(0, 3) : stages)]) {
+  for (const field of ['title', 'group', 'origin', 'location', 'molecular', 'diagnostics', 'markers', ...(contextualCards.includes(card.id) ? [] : card.id === 'c014' ? stages.slice(0, 3) : stages)]) {
     assert.ok(typeof card[field] === 'string' && card[field].trim(), card.id + ' missing ' + field);
   }
 }
@@ -33,7 +34,7 @@ const data = runInNewContext(app.replace(/\nstart\(\);\n$/, '\n') + `
     })))
   })
 `, {window:{ONCO_CARDS:cards, ONCO_REGIMENS:additionalRegimens, addEventListener() {}}});
-assert.deepEqual([...data.nonTnm].sort(), ['c025','c029','c030','c031']);
+assert.deepEqual([...data.nonTnm].sort(), contextualCards);
 for (const [id, groups] of Object.entries(additionalRegimens)) {
   for (const [context, regimens] of Object.entries(groups)) {
     assert.ok(data.nonTnm.includes(id) ? context === 'all' : stages.includes(context), id + ' invalid context');

@@ -8,7 +8,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const cards = require('../cards.json');
 
 const home = process.env.ONCOATLAS_TEST_URL || pathToFileURL(resolve(__dirname, '../index.html')).href;
-const nonTnm = new Set(['c025', 'c029', 'c030', 'c031']);
+const nonTnm = new Set(['c025', 'c029', 'c030', 'c031', 'c045', 'c046']);
 const options = { executablePath: process.env.CHROMIUM_EXECUTABLE || undefined };
 const pdfDir = mkdtempSync(resolve(tmpdir(), 'oncoatlas-pdf-'));
 
@@ -19,9 +19,11 @@ async function main() {
     const page = await browser.newPage({viewport:{width:1280,height:900}});
     page.on('pageerror', error => errors.push(error.message));
     await page.goto(home);
+    const warning = page.getByRole('button', {name:'Закрыть предупреждение'});
+    if (await warning.isVisible()) await warning.click();
     await page.getByRole('button', {name:/Карточки ЗНО/}).click();
     await page.locator('#cardList .item').last().waitFor();
-    assert.equal(await page.locator('#cardList .item').count(), 38);
+    assert.equal(await page.locator('#cardList .item').count(), cards.length);
     await page.locator('#find').fill('торипалимаб');
     assert.equal(await page.locator('#cardList .item').count(), 1);
     await page.locator('#find').fill('EGFR осимертиниб');
@@ -30,7 +32,7 @@ async function main() {
     assert.equal(await page.locator('#cardList').innerText(), 'Совпадений нет');
     await page.locator('#find').fill('');
     await page.locator('#group').selectOption('Онкогематология');
-    assert.equal(await page.locator('#cardList .item').count(), 6);
+    assert.equal(await page.locator('#cardList .item').count(), cards.filter(card => card.group === 'Онкогематология').length);
 
     let contexts = 0;
     let renderedRegimens = 0;
@@ -58,6 +60,7 @@ async function main() {
       }
     }
 
+    await page.goto(home + '#card/c038');
     await page.locator('[data-stage=III]').click();
     assert.match(await page.locator('.treatment-content:visible').innerText(), /Индукционная ХТ/);
     await page.locator('[data-stage=IV]').click();
@@ -106,7 +109,7 @@ async function main() {
       assert.ok(await mobile.evaluate(() => document.documentElement.scrollWidth <= innerWidth), card.id + ' overflows mobile');
     }
     assert.deepEqual(errors, []);
-    console.log(`38 desktop cards, ${contexts} treatment views, ${renderedRegimens} stage regimen renderings, 38 mobile cards, navigation, search, favorites and PDF passed.`);
+    console.log(`${cards.length} desktop cards, ${contexts} treatment views, ${renderedRegimens} stage regimen renderings, ${cards.length} mobile cards, navigation, search, favorites and PDF passed.`);
   } finally {
     await browser.close();
     rmSync(pdfDir,{recursive:true,force:true});
