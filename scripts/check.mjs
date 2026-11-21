@@ -38,8 +38,23 @@ for (const [id, groups] of Object.entries(additionalRegimens)) {
   for (const [context, regimens] of Object.entries(groups)) {
     assert.ok(data.nonTnm.includes(id) ? context === 'all' : stages.includes(context), id + ' invalid context');
     for (const protocol of regimens) {
-      assert.match(protocol.checkedOn, /^\d{4}-\d{2}-\d{2}$/);
-      assert.ok(protocol.sourceVersion && protocol.safety, id + ' missing source/safety metadata');
+      assert.match(protocol.checkedOn, /^\d{4}-\d{2}-\d{2}$/, id + ' invalid review date format');
+      const reviewDate = new Date(protocol.checkedOn + 'T00:00:00Z');
+      assert.ok(!Number.isNaN(reviewDate.getTime()) && reviewDate.toISOString().slice(0, 10) === protocol.checkedOn,
+        id + ' impossible review date');
+      assert.ok(reviewDate.getTime() <= Date.now(), id + ' future review date');
+      for (const field of ['sourceVersion', 'safety', 'notes', 'regimen', 'cycle']) {
+        assert.ok(typeof protocol[field] === 'string' && protocol[field].trim(), id + ' missing ' + field);
+      }
+      assert.ok(Array.isArray(protocol.drugs) && protocol.drugs.length > 0 &&
+        protocol.drugs.every(drug => typeof drug === 'string' && drug.trim()), id + ' missing drug instructions');
+      assert.equal(new URL(protocol.url).protocol, 'https:', id + ' invalid protocol URL');
+      if (protocol.reference !== undefined) {
+        assert.ok(Array.isArray(protocol.reference) && protocol.reference.length === 2 &&
+          typeof protocol.reference[0] === 'string' && protocol.reference[0].trim(),
+          id + ' invalid reference metadata');
+        assert.equal(new URL(protocol.reference[1]).protocol, 'https:', id + ' invalid reference URL');
+      }
     }
   }
 }
