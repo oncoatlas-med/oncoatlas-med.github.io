@@ -672,6 +672,58 @@ const SECOND_PASS_REGIMENS={
  c016:{II:[{regimen:"Паклитаксел + карбоплатин — эпителиальный рак яичников II стадии после хирургического стадирования/циторедукции",drugs:["Паклитаксел — 175 мг/м² в/в, день 1","Карбоплатин — AUC 5 в/в, день 1 (доза по формуле Calvert; AUC 6 возможна при сохранном функциональном статусе)"],cycle:"Каждые 21 день; обычно 6 циклов.",notes:"При эпителиальном раке яичников II стадии с показаниями к адъювантной химиотерапии. Контроль функции почек, ОАК, нейропатии; премедикация паклитаксела. Поддерживающая терапия определяется отдельно по BRCA/HRD и клиническим показаниям.",url:"https://www.eviq.org.au/medical-oncology/gynaecological/ovarian/252-ovarian-advanced-carboplatin-and-paclitaxel-th"}]},
  c021:{III:[{regimen:"Селперкатиниб — нерезектабельный распространённый RET-мутированный медуллярный рак щитовидной железы, требующий системной терапии",drugs:["При массе тела ≥50 кг: селперкатиниб — 160 мг внутрь 2 раза в сутки","При массе тела <50 кг: селперкатиниб — 120 мг внутрь 2 раза в сутки"],cycle:"Непрерывно, до прогрессирования или неприемлемой токсичности.",notes:"Только при подтверждённой RET-мутации и необходимости системного лечения; III стадия сама по себе не показание. Перед лечением и в динамике: АЛТ/АСТ, АД, ЭКГ/QTc и электролиты; оценить взаимодействия препаратов.",url:"https://www.fda.gov/drugs/cancer-approvals/fda-approves-selpercatinib-medullary-thyroid-cancer-ret-mutation"}],IV:[{regimen:"Селперкатиниб — распространённый/метастатический RET-мутированный медуллярный рак щитовидной железы",drugs:["При массе тела ≥50 кг: селперкатиниб — 160 мг внутрь 2 раза в сутки","При массе тела <50 кг: селперкатиниб — 120 мг внутрь 2 раза в сутки"],cycle:"Непрерывно, до прогрессирования или неприемлемой токсичности.",notes:"RET-мутация обязательна; лечение при прогрессирующем/симптомном заболевании, требующем системной терапии, не при стабильном бессимптомном течении автоматически. Контроль АЛТ/АСТ, АД, QTc, лекарственных взаимодействий.",url:"https://www.fda.gov/drugs/cancer-approvals/fda-approves-selpercatinib-medullary-thyroid-cancer-ret-mutation"}]}
 };
+const THIRD_PASS_REGIMENS={
+  "c017": {
+    "IV": [
+      {
+        "regimen": "KEYNOTE-826 — индукция, персистирующий/рецидивный/метастатический рак шейки матки",
+        "drugs": [
+          "Пембролизумаб — 200 мг в/в, день 1",
+          "Бевацизумаб — 15 мг/кг в/в, день 1",
+          "Паклитаксел — 175 мг/м² в/в, день 1",
+          "Карбоплатин — AUC 5 в/в, день 1 (Calvert)"
+        ],
+        "cycle": "Каждые 21 день; 6 циклов индукции, затем отдельная поддержка.",
+        "notes": "Первая линия заболевания, не подлежащего радикальному лечению; ECOG 0–1; для пембролизумаба учитывать PD-L1 CPS (при CPS <1 польза не определена). Бевацизумаб не применять при значимом риске свищей, перфорации, кровотечений; контролировать АД, функцию почек, нейропатию и irAE.",
+        "url": "https://www.eviq.org.au/medical-oncology/gynaecological/cervical/4169-cervical-recurrent-or-metastatic-carboplatin"
+      },
+      {
+        "regimen": "KEYNOTE-826 — поддержка после 6 циклов индукции",
+        "drugs": [
+          "Пембролизумаб — 200 мг в/в, день 1",
+          "Бевацизумаб — 15 мг/кг в/в, день 1"
+        ],
+        "cycle": "Каждые 21 день; до прогрессирования/неприемлемой токсичности, пембролизумаб максимум 35 циклов суммарно с индукцией.",
+        "notes": "Продолжение после индукции у подходящих пациенток; бевацизумаб не обязателен при противопоказаниях и не должен автоматически назначаться всем. Следить за irAE, протеинурией, АД и риском свищей.",
+        "url": "https://www.eviq.org.au/medical-oncology/gynaecological/cervical/4169-cervical-recurrent-or-metastatic-carboplatin"
+      }
+    ]
+  },
+  "c019": {
+    "IV": [
+      {
+        "regimen": "KEYNOTE-048 — индукция, первая линия рецидивного/метастатического плоскоклеточного рака головы и шеи",
+        "drugs": [
+          "Пембролизумаб — 200 мг в/в, день 1",
+          "Карбоплатин — AUC 5 в/в, день 1 (Calvert)",
+          "Фторурацил — 4000 мг/м² в/в непрерывно за 96 часов, начиная в день 1 (1000 мг/м²/сут × 4 суток)"
+        ],
+        "cycle": "Каждые 21 день; 6 циклов, затем отдельная поддержка пембролизумабом.",
+        "notes": "Первая линия рецидивного/метастатического плоскоклеточного рака головы и шеи при ECOG 0–1; рецидив более чем через 6 месяцев после предшествующей платины. До фторурацила оценить DPD/DPYD; необходим центральный венозный доступ и контроль irAE.",
+        "url": "https://www.eviq.org.au/medical-oncology/head-and-neck/recurrent-or-metastatic/3982-head-and-neck-scc-recurrent-or-metastatic-car"
+      },
+      {
+        "regimen": "KEYNOTE-048 — поддержка после 6 циклов",
+        "drugs": [
+          "Пембролизумаб — 200 мг в/в, день 1"
+        ],
+        "cycle": "Каждые 21 день, максимум 35 циклов суммарно с индукцией; альтернативно с цикла 7 — 400 мг каждые 42 дня.",
+        "notes": "Только продолжение начатого режима у пациентов с клинической пользой, до прогрессирования или неприемлемой токсичности.",
+        "url": "https://www.eviq.org.au/medical-oncology/head-and-neck/recurrent-or-metastatic/3982-head-and-neck-scc-recurrent-or-metastatic-car"
+      }
+    ]
+  }
+};
 const LUNG_REGIMENS = {
   osimertinibAdjuvant: {
     regimen: "Осимертиниб после полной резекции · EGFR del19 или L858R",
@@ -1066,7 +1118,7 @@ function stageExtras(c) {
   const treatment = (LUNG_TREATMENT[c.id] ?? BREAST_TREATMENT[c.id] ?? NEXT_TREATMENT[c.id] ?? VERIFIED_TREATMENT_2026[c.id])?.[stage];
   const drugsSelected = state.treatmentTab === 'drugs';
   const existingProtocol = STAGE_PROTOCOLS[c.id]?.[stage];
-  const regimens = treatment?.regimens ?? SECOND_PASS_REGIMENS[c.id]?.[stage] ?? AUDITED_10_REGIMENS[c.id]?.[stage] ?? (existingProtocol ? [existingProtocol] : []);
+  const regimens = treatment?.regimens ?? THIRD_PASS_REGIMENS[c.id]?.[stage] ?? SECOND_PASS_REGIMENS[c.id]?.[stage] ?? AUDITED_10_REGIMENS[c.id]?.[stage] ?? (existingProtocol ? [existingProtocol] : []);
   const legacySurgery = stage !== 'IV' || ['c005', 'c022', 'c024'].includes(c.id);
   const surgery = treatment?.surgery ?? (REMAINING_SURGERY[c.id] && (stage !== 'IV' || ['c022','c024','c032','c033','c034','c037'].includes(c.id)) ? REMAINING_SURGERY[c.id] : undefined) ?? (legacySurgery ? SURGERY_DETAILS[c.id] : undefined);
   const intro = treatment?.intro;
