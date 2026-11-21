@@ -1738,6 +1738,40 @@ const EIGHTH_PASS_REGIMENS={
     ]
   }
 };
+const NINTH_PASS_REGIMENS={
+  "c035": {
+    "III": [
+      {
+        "regimen": "TIP — неоадъювантная химиотерапия при плоскоклеточном раке полового члена с массивным регионарным поражением (cN3; отдельные cN2)",
+        "drugs": [
+          "Паклитаксел — 175 мг/м² в/в, день 1",
+          "Ифосфамид — 1200 мг/м² в/в, дни 1–3",
+          "Цисплатин — 25 мг/м² в/в, дни 1–3",
+          "Месна — 400 мг/м² в/в перед ифосфамидом и через 4 и 8 часов после окончания его инфузии, дни 1–3",
+          "Пэгфилграстим — 6 мг подкожно, день 4 (не ранее 24 часов после ХТ)"
+        ],
+        "cycle": "Каждые 21 день; 4 цикла, затем рестадирование и решение о лимфодиссекции/резекции.",
+        "notes": "Применять преимущественно при cN3 (фиксированные паховые узлы/тазовые лимфоузлы), у отобранных пациентов с массивным cN2; не всем пациентам III–IV стадии. Для M1 решение о системной терапии индивидуальное. Обязательны гидратация, уропротекция месной, контроль ОАК, eGFR, слуха и нейротоксичности. При eGFR 30–44 мл/мин/1,73 м² eviQ рекомендует избегать цисплатина.",
+        "url": "https://www.eviq.org.au/medical-oncology/urogenital/penile/4430-penile-cancer-paclitaxel-ifosfamide-cisplatin"
+      }
+    ],
+    "IV": [
+      {
+        "regimen": "TIP — неоадъювантная химиотерапия при плоскоклеточном раке полового члена с массивным регионарным поражением (cN3; отдельные cN2)",
+        "drugs": [
+          "Паклитаксел — 175 мг/м² в/в, день 1",
+          "Ифосфамид — 1200 мг/м² в/в, дни 1–3",
+          "Цисплатин — 25 мг/м² в/в, дни 1–3",
+          "Месна — 400 мг/м² в/в перед ифосфамидом и через 4 и 8 часов после окончания его инфузии, дни 1–3",
+          "Пэгфилграстим — 6 мг подкожно, день 4 (не ранее 24 часов после ХТ)"
+        ],
+        "cycle": "Каждые 21 день; 4 цикла, затем рестадирование и решение о лимфодиссекции/резекции.",
+        "notes": "Применять преимущественно при cN3 (фиксированные паховые узлы/тазовые лимфоузлы), у отобранных пациентов с массивным cN2; не всем пациентам III–IV стадии. Для M1 решение о системной терапии индивидуальное. Обязательны гидратация, уропротекция месной, контроль ОАК, eGFR, слуха и нейротоксичности. При eGFR 30–44 мл/мин/1,73 м² eviQ рекомендует избегать цисплатина.",
+        "url": "https://www.eviq.org.au/medical-oncology/urogenital/penile/4430-penile-cancer-paclitaxel-ifosfamide-cisplatin"
+      }
+    ]
+  }
+};
 const LUNG_REGIMENS = {
   osimertinibAdjuvant: {
     regimen: "Осимертиниб после полной резекции · EGFR del19 или L858R",
@@ -2132,7 +2166,7 @@ function stageExtras(c) {
   const treatment = (LUNG_TREATMENT[c.id] ?? BREAST_TREATMENT[c.id] ?? NEXT_TREATMENT[c.id] ?? VERIFIED_TREATMENT_2026[c.id])?.[stage];
   const drugsSelected = state.treatmentTab === 'drugs';
   const existingProtocol = STAGE_PROTOCOLS[c.id]?.[stage];
-  const regimens = EIGHTH_PASS_REGIMENS[c.id]?.all ?? SIXTH_PASS_HEMATOLOGY[c.id] ?? (c.id === 'c025' ? GBM_GRADE4_REGIMENS : treatment?.regimens ?? EIGHTH_PASS_REGIMENS[c.id]?.[stage] ?? SEVENTH_PASS_REGIMENS[c.id]?.[stage] ?? FIFTH_PASS_REGIMENS[c.id]?.[stage] ?? FOURTH_PASS_REGIMENS[c.id]?.[stage] ?? THIRD_PASS_REGIMENS[c.id]?.[stage] ?? SECOND_PASS_REGIMENS[c.id]?.[stage] ?? AUDITED_10_REGIMENS[c.id]?.[stage] ?? (existingProtocol ? [existingProtocol] : []));
+  const regimens = EIGHTH_PASS_REGIMENS[c.id]?.all ?? SIXTH_PASS_HEMATOLOGY[c.id] ?? (c.id === 'c025' ? GBM_GRADE4_REGIMENS : treatment?.regimens ?? NINTH_PASS_REGIMENS[c.id]?.[stage] ?? EIGHTH_PASS_REGIMENS[c.id]?.[stage] ?? SEVENTH_PASS_REGIMENS[c.id]?.[stage] ?? FIFTH_PASS_REGIMENS[c.id]?.[stage] ?? FOURTH_PASS_REGIMENS[c.id]?.[stage] ?? THIRD_PASS_REGIMENS[c.id]?.[stage] ?? SECOND_PASS_REGIMENS[c.id]?.[stage] ?? AUDITED_10_REGIMENS[c.id]?.[stage] ?? (existingProtocol ? [existingProtocol] : []));
   const legacySurgery = stage !== 'IV' || ['c005', 'c022', 'c024'].includes(c.id);
   const surgery = treatment?.surgery ?? (REMAINING_SURGERY[c.id] && (stage !== 'IV' || ['c022','c024','c032','c033','c034','c037'].includes(c.id)) ? REMAINING_SURGERY[c.id] : undefined) ?? (legacySurgery ? SURGERY_DETAILS[c.id] : undefined);
   const intro = c.id === 'c029' ? ['ISS/R-ISS/R2-ISS не равны TNM I–IV. Режим приведён как пример системной терапии симптомной миеломы, независимо от выбранной кнопки.','https://www.eviq.org.au/haematology/multiple-myeloma/1562-mm-cybord-cyclophosphamide-bortezomib-dexame'] : SIXTH_PASS_HEMATOLOGY[c.id] ? ['Для лейкозов TNM I–IV не используется: приведённый режим относится к указанной фазе/клинической ситуации, а не к выбранной кнопке стадии.','https://www.cancer.gov/types/leukemia'] : c.id === 'c025' ? ['Режим относится к впервые диагностированной глиобластоме CNS WHO grade 4 вне зависимости от выбранной кнопки I–IV: TNM-стадирование для этой опухоли неприменимо.','https://www.eviq.org.au/medical-oncology/neurological/glioma/3364-glioblastoma-temozolomide-chemoradiation-foll'] : treatment?.intro;
