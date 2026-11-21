@@ -1908,9 +1908,37 @@ function scales(){return shell('Клинические шкалы',`<div class="
 function khorana(){let n=Number($('#kh_site').value)+['kh_pl','kh_hb','kh_wbc','kh_bmi'].filter(x=>$('#'+x).checked).length;$('#kh_result').textContent=n+' балл(ов) — '+(n===0?'низкий':n<=2?'промежуточный':'высокий')+' риск (исходная классификация)'}
 function child(){let n=['cp_bili','cp_alb','cp_inr','cp_asc','cp_enc'].reduce((a,x)=>a+Number($('#'+x).value),0);$('#cp_result').textContent=n+' баллов — Child–Pugh '+(n<=6?'A':n<=9?'B':'C')}
 function imdc(){let n=['im_time','im_kps','im_hb','im_ca','im_neu','im_pl'].filter(x=>$('#'+x).checked).length;$('#im_result').textContent=n+' факторов — '+(n===0?'благоприятный':n<=2?'промежуточный':'неблагоприятный')+' риск'}
-function markers(){return shell('Онкомаркеры',`<div class="notice">Онкомаркер не равен скрининговому тесту. Повышение требует клинической интерпретации; динамика не заменяет визуализацию или морфологию.</div><input class="search" aria-label="Поиск по справочнику" placeholder="Найти опухоль или маркер…" oninput="filterMarkers(this.value)"><div id="markerList">${DATA.map(c=>markerRow(c)).join('')}</div>`)}
-function markerRow(c){return `<div class="panel marker"><h3>${esc(c.title)}</h3><p>${esc(c.markers)}</p><button class="linkbtn" onclick="view('card','${c.id}')">Открыть карточку →</button></div>`}
-function filterMarkers(q){$('#markerList').innerHTML=DATA.filter(c=>(c.title+' '+c.markers).toLowerCase().includes(q.toLowerCase())).map(markerRow).join('')}
+const MARKERS = window.ONCO_MARKERS ?? [];
+
+function markers() {
+  return shell('Онкомаркеры', `<p class="muted">Лабораторные онкомаркеры и показатели мониторинга. Референсные значения зависят от метода и лаборатории.</p>
+    <input class="search" type="search" aria-label="Поиск онкомаркера" placeholder="Найти маркер или опухоль…" oninput="filterMarkers(this.value)">
+    <div id="markerList">${markerRows(MARKERS)}</div>`);
+}
+
+function markerRows(entries) {
+  if (!entries.length) return '<p class="panel muted" role="status">Маркеры не найдены.</p>';
+  return entries.map(marker => `<details class="marker-entry">
+    <summary>${esc(marker.name)}</summary>
+    <div class="marker-detail">
+      <p><b>Где применяют.</b> ${esc(marker.context)}.</p>
+      <p><b>Зачем.</b> ${esc(marker.use)}</p>
+      <p><b>Ограничения.</b> ${esc(marker.limit)}</p>
+      <a class="fine" href="${esc(marker.url)}" target="_blank" rel="noopener">Источник</a>
+    </div>
+  </details>`).join('');
+}
+
+function markerSearchText(value) {
+  return normalizeSearch(value.normalize('NFKC').replace(/(?:ca|са)(?=[\s–—.-]*\d)/gi, 'ca '))
+    .replace(/[^\p{L}\p{N}]/gu, '');
+}
+
+function filterMarkers(query) {
+  const key = markerSearchText(query);
+  $('#markerList').innerHTML = markerRows(MARKERS.filter(marker =>
+    [marker.name, marker.aliases, marker.context].some(value => markerSearchText(value).includes(key))));
+}
 function favorites(){let cs=DATA.filter(c=>favs().includes(c.id));return shell('Избранное',cs.length?cs.map(c=>`<button class="item" onclick="view('card','${c.id}')"><span><strong>${esc(c.title)}</strong><small>${esc(c.group)}</small></span>→</button>`).join(''):'<div class="panel muted">Пока нет избранных карточек.</div>')}
 function about(){return shell('О проекте',`<div class="panel"><h2>ОнкоАтлас</h2><p>Бесплатный русскоязычный образовательный справочник для врачей. Все материалы открыты без регистрации.</p><p><b>Редакция:</b> 0.2 · 21 ноября 2026 года. <b>Статус:</b> рабочая бета-версия; клиническая экспертиза ещё не завершена.</p><p>Тексты карточек — сокращённые алгоритмы, не официальные рекомендации. Локальная регистрация лекарств и стандарты лечения различаются по странам.</p><p>Источники для редакционной проверки: ${sources.map(([n,u])=>`<a href="${u}" target="_blank">${n}</a>`).join(', ')}.</p><p><b>Конфиденциальность:</b> не вводите персональные данные пациентов. Калькуляторы выполняются в браузере. Избранное хранится локально.</p></div>`)}
 function admin(){return shell('Администрирование',`<div class="panel"><h2>Публичный сайт — только чтение</h2><p>Защищённое редактирование ещё не подключено. Пароли в исходном коде отсутствуют. Вход «Икбал Р.В.» не будет реализован как небезопасная клиентская проверка.</p><p>Пока обновления выполняются заменой файлов после медицинской проверки. Для редактирования через чат потребуется подключение к репозиторию с ограниченными правами и подтверждением публикации.</p></div>`)}

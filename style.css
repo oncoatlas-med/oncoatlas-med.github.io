@@ -16,3 +16,9 @@ button:focus-visible,a:focus-visible{outline:2px solid #555;outline-offset:3px}
 }
 
 .entry-disclaimer{background:#fff8ec;border-bottom:1px solid #e9d9b8;color:#3f3424}.entry-disclaimer-inner{max-width:1100px;margin:auto;padding:17px 22px;display:flex;align-items:flex-start;gap:20px}.entry-disclaimer strong{font-size:15px}.entry-disclaimer p{font-size:13px;line-height:1.6;margin:7px 0 0}.entry-disclaimer-close{flex-shrink:0;border:1px solid #bfae91;background:#fff;border-radius:10px;padding:9px 15px;color:#3f3424;font-weight:600}@media(max-width:640px){.entry-disclaimer-inner{display:block}.entry-disclaimer-close{margin-top:12px;width:100%}}@media print{.entry-disclaimer{display:none!important}}
+
+.marker-entry{margin:8px 0;border:1px solid #dedede;border-radius:14px;background:#fff}
+.marker-entry summary{padding:14px 16px;font-weight:650;cursor:pointer}
+.marker-entry[open] summary{border-bottom:1px solid #ececec}
+.marker-detail{padding:2px 16px 15px;max-width:75ch}
+.marker-detail p{margin:10px 0;line-height:1.55}
