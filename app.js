@@ -668,6 +668,10 @@ const AUDITED_10_REGIMENS={
     ]
   }
 };
+const SECOND_PASS_REGIMENS={
+ c016:{II:[{regimen:"Паклитаксел + карбоплатин — эпителиальный рак яичников II стадии после хирургического стадирования/циторедукции",drugs:["Паклитаксел — 175 мг/м² в/в, день 1","Карбоплатин — AUC 5 в/в, день 1 (доза по формуле Calvert; AUC 6 возможна при сохранном функциональном статусе)"],cycle:"Каждые 21 день; обычно 6 циклов.",notes:"При эпителиальном раке яичников II стадии с показаниями к адъювантной химиотерапии. Контроль функции почек, ОАК, нейропатии; премедикация паклитаксела. Поддерживающая терапия определяется отдельно по BRCA/HRD и клиническим показаниям.",url:"https://www.eviq.org.au/medical-oncology/gynaecological/ovarian/252-ovarian-advanced-carboplatin-and-paclitaxel-th"}]},
+ c021:{III:[{regimen:"Селперкатиниб — нерезектабельный распространённый RET-мутированный медуллярный рак щитовидной железы, требующий системной терапии",drugs:["При массе тела ≥50 кг: селперкатиниб — 160 мг внутрь 2 раза в сутки","При массе тела <50 кг: селперкатиниб — 120 мг внутрь 2 раза в сутки"],cycle:"Непрерывно, до прогрессирования или неприемлемой токсичности.",notes:"Только при подтверждённой RET-мутации и необходимости системного лечения; III стадия сама по себе не показание. Перед лечением и в динамике: АЛТ/АСТ, АД, ЭКГ/QTc и электролиты; оценить взаимодействия препаратов.",url:"https://www.fda.gov/drugs/cancer-approvals/fda-approves-selpercatinib-medullary-thyroid-cancer-ret-mutation"}],IV:[{regimen:"Селперкатиниб — распространённый/метастатический RET-мутированный медуллярный рак щитовидной железы",drugs:["При массе тела ≥50 кг: селперкатиниб — 160 мг внутрь 2 раза в сутки","При массе тела <50 кг: селперкатиниб — 120 мг внутрь 2 раза в сутки"],cycle:"Непрерывно, до прогрессирования или неприемлемой токсичности.",notes:"RET-мутация обязательна; лечение при прогрессирующем/симптомном заболевании, требующем системной терапии, не при стабильном бессимптомном течении автоматически. Контроль АЛТ/АСТ, АД, QTc, лекарственных взаимодействий.",url:"https://www.fda.gov/drugs/cancer-approvals/fda-approves-selpercatinib-medullary-thyroid-cancer-ret-mutation"}]}
+};
 const LUNG_REGIMENS = {
   osimertinibAdjuvant: {
     regimen: "Осимертиниб после полной резекции · EGFR del19 или L858R",
@@ -1062,7 +1066,7 @@ function stageExtras(c) {
   const treatment = (LUNG_TREATMENT[c.id] ?? BREAST_TREATMENT[c.id] ?? NEXT_TREATMENT[c.id] ?? VERIFIED_TREATMENT_2026[c.id])?.[stage];
   const drugsSelected = state.treatmentTab === 'drugs';
   const existingProtocol = STAGE_PROTOCOLS[c.id]?.[stage];
-  const regimens = treatment?.regimens ?? AUDITED_10_REGIMENS[c.id]?.[stage] ?? (existingProtocol ? [existingProtocol] : []);
+  const regimens = treatment?.regimens ?? SECOND_PASS_REGIMENS[c.id]?.[stage] ?? AUDITED_10_REGIMENS[c.id]?.[stage] ?? (existingProtocol ? [existingProtocol] : []);
   const legacySurgery = stage !== 'IV' || ['c005', 'c022', 'c024'].includes(c.id);
   const surgery = treatment?.surgery ?? (REMAINING_SURGERY[c.id] && (stage !== 'IV' || ['c022','c024','c032','c033','c034','c037'].includes(c.id)) ? REMAINING_SURGERY[c.id] : undefined) ?? (legacySurgery ? SURGERY_DETAILS[c.id] : undefined);
   const intro = treatment?.intro;
