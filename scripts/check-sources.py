@@ -1,4 +1,4 @@
-"""Print a TSV inventory of public URLs and their retrieval results."""
+"""Print a CSV inventory of public URLs and their retrieval results."""
 import concurrent.futures
 import csv
 import html
@@ -8,7 +8,7 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parent.parent
-FILES = ("app.js", "cards.json", "index.html", "learning-library.html", "learning.html")
+FILES = ("app.js", "cards.json", "regimens.json", "index.html", "learning-library.html", "learning.html")
 URL = re.compile(r'https?://[^"\x27\s<)>]+')
 TITLE = re.compile(r'<title[^>]*>(.*?)</title>', re.IGNORECASE | re.DOTALL)
 FIELDS = ("url", "http_status", "final_url", "title", "content_type", "error")
@@ -31,7 +31,7 @@ def fetch(url):
 def main():
     urls = sorted({html.unescape(url) for name in FILES
                    for url in URL.findall((ROOT / name).read_text(encoding="utf-8"))})
-    writer = csv.writer(sys.stdout, delimiter="\t", lineterminator="\n")
+    writer = csv.writer(sys.stdout, lineterminator="\n")
     writer.writerow(FIELDS)
     with concurrent.futures.ThreadPoolExecutor(max_workers=12) as pool:
         for row in pool.map(fetch, urls):

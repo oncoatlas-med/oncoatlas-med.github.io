@@ -8,12 +8,13 @@ const read = name => readFileSync(file(name), 'utf8');
 execFileSync(process.execPath, [file('scripts/build.mjs').pathname, '--check']);
 
 const cards = JSON.parse(read('cards.json'));
+const additionalRegimens = JSON.parse(read('regimens.json'));
 const stages = ['I', 'II', 'III', 'IV'];
 const ids = cards.map(c => c.id);
 assert.deepEqual(ids, Array.from({length: 38}, (_, i) => 'c' + String(i + 1).padStart(3, '0')));
 assert.equal(new Set(cards.map(c => c.number)).size, 38);
 for (const card of cards) {
-  for (const field of ['title', 'group', 'origin', 'location', 'molecular', 'diagnostics', 'markers', ...stages]) {
+  for (const field of ['title', 'group', 'origin', 'location', 'molecular', 'diagnostics', 'markers', ...(card.id === 'c014' ? stages.slice(0, 3) : stages)]) {
     assert.ok(typeof card[field] === 'string' && card[field].trim(), card.id + ' missing ' + field);
   }
 }
@@ -27,12 +28,21 @@ const data = runInNewContext(app.replace(/\nstart\(\);\n$/, '\n') + `
       FOURTH_PASS_REGIMENS, FIFTH_PASS_REGIMENS, SIXTH_PASS_HEMATOLOGY, SEVENTH_PASS_REGIMENS,
       EIGHTH_PASS_REGIMENS, NINTH_PASS_REGIMENS, ADDITIONAL_REGIMENS, NON_TNM_CARD_INFO],
     nonTnm: Object.keys(NON_TNM_CARD_INFO),
-    rows: DATA.map(c => STAGES.map(stage => ({
+    rows: DATA.map(c => (NON_TNM_CARD_INFO[c.id] ? ['I'] : CARD_STAGES[c.id] ?? STAGES).map(stage => ({
       id: c.id, stage, protocols: regimensFor(c.id, stage)
     })))
   })
-`, {window:{ONCO_CARDS:cards, addEventListener() {}}});
+`, {window:{ONCO_CARDS:cards, ONCO_REGIMENS:additionalRegimens, addEventListener() {}}});
 assert.deepEqual([...data.nonTnm].sort(), ['c025','c029','c030','c031']);
+for (const [id, groups] of Object.entries(additionalRegimens)) {
+  for (const [context, regimens] of Object.entries(groups)) {
+    assert.ok(data.nonTnm.includes(id) ? context === 'all' : stages.includes(context), id + ' invalid context');
+    for (const protocol of regimens) {
+      assert.match(protocol.checkedOn, /^\d{4}-\d{2}-\d{2}$/);
+      assert.ok(protocol.sourceVersion && protocol.safety, id + ' missing source/safety metadata');
+    }
+  }
+}
 for (const group of data.groups) {
   for (const id of Object.keys(group)) assert.ok(ids.includes(id), 'Unknown card in treatment data: ' + id);
 }
@@ -51,11 +61,12 @@ for (const row of data.rows.flat()) {
   }
 }
 const source = id => data.rows.find(rows => rows[0].id === id);
+assert.equal(source('c014').length, 3);
 assert.ok(source('c038')[2].protocols.some(p => p.url.endsWith('/3674')));
 assert.ok(!source('c038')[3].protocols.some(p => p.url.endsWith('/3674')));
 assert.ok(source('c034')[1].protocols[0].url.endsWith('/82'));
 assert.ok(source('c035')[3].protocols[0].regimen.includes('M0'));
-console.log(`38 cards, 152 card/stage data combinations, ${populated} with protocols, ${protocols.size} distinct displayed regimen titles.`);
+console.log(`38 cards, ${data.rows.flat().length} available treatment views, ${populated} with protocols, ${protocols.size} distinct displayed regimen titles.`);
 if (process.argv[2] === '--inventory') {
   for (const rows of data.rows) {
     const entries = data.nonTnm.includes(rows[0].id) ? [rows[0]] : rows;

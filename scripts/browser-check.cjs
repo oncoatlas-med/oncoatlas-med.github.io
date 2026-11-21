@@ -43,8 +43,9 @@ async function main() {
         contexts++;
         continue;
       }
-      assert.equal(await page.locator('[data-stage]').count(), 4);
-      for (const stage of ['I','II','III','IV']) {
+      const stages = card.id === 'c014' ? ['I','II','III'] : ['I','II','III','IV'];
+      assert.equal(await page.locator('[data-stage]').count(), stages.length);
+      for (const stage of stages) {
         await page.locator('[data-stage=' + stage + ']').click();
         assert.ok((await page.locator('#stageContent').innerText()).startsWith(stage + ':'));
         await page.locator('[data-treatment=surgery]').click();
@@ -101,7 +102,7 @@ async function main() {
     for (const card of cards) {
       await mobile.goto(home + '#card/' + card.id);
       await mobile.getByRole('heading', {name:card.title, exact:true}).waitFor();
-      if (!nonTnm.has(card.id)) await mobile.locator('[data-stage=IV]').click();
+      if (!nonTnm.has(card.id)) await mobile.locator('[data-stage]').last().click();
       assert.ok(await mobile.evaluate(() => document.documentElement.scrollWidth <= innerWidth), card.id + ' overflows mobile');
     }
     assert.deepEqual(errors, []);
