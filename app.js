@@ -980,6 +980,31 @@ const GBM_GRADE4_REGIMENS=[
     "url": "https://www.eviq.org.au/getmedia/50ef2f99-cd09-4bdd-b8de-9feb8f40f985/ID-366-Glioblastoma-temozolomide-following-chemoradiation-part-2-protocol-and-PI.pdf.aspx"
   }
 ];
+const SIXTH_PASS_HEMATOLOGY={
+  "c030": [
+    {
+      "regimen": "ОМЛ — индукция «7+3» (цитарабин + даунорубицин), интенсивная терапия",
+      "drugs": [
+        "Цитарабин — 100 мг/м²/сут непрерывно в/в в течение 24 часов, дни 1–7",
+        "Даунорубицин — 60 мг/м² в/в, дни 1–3"
+      ],
+      "cycle": "Один индукционный курс; возможен второй курс при отсутствии ремиссии по результатам оценки костного мозга.",
+      "notes": "Для взрослых пациентов с впервые диагностированным ОМЛ, которым показана интенсивная индукция. Не для ОПЛ; при FLT3-мутации, AML-MR/терапия-ассоциированном ОМЛ и других молекулярных ситуациях режим может отличаться. Профилактика синдрома лизиса, инфекций; центральный венозный доступ, оценка ФВ ЛЖ. TNM I–IV к ОМЛ неприменима.",
+      "url": "https://www.eviq.org.au/haematology/leukaemias/acute-myeloid-leukaemia/2043-induction-7-3-cytarabine-and-daunorubicin"
+    }
+  ],
+  "c031": [
+    {
+      "regimen": "ХМЛ, хроническая фаза — иматиниб, первая линия при соответствующем выборе TKI",
+      "drugs": [
+        "Иматиниб — 400 мг внутрь 1 раз в сутки ежедневно, с пищей"
+      ],
+      "cycle": "Непрерывно до прогрессирования, неприемлемой токсичности или решения о контролируемой отмене при выполнении строгих критериев устойчивого глубокого молекулярного ответа.",
+      "notes": "Только хроническая фаза Ph+/BCR::ABL1+ ХМЛ. При акселерации/бластном кризе требуется иной режим. Контроль BCR::ABL1 по международной шкале, ОАК, функции печени и лекарственных взаимодействий. TNM I–IV неприменима.",
+      "url": "https://www.eviq.org.au/haematology/leukaemias/chronic-myeloid-leukaemia/362-chronic-myeloid-leukaemia-imatinib"
+    }
+  ]
+};
 const LUNG_REGIMENS = {
   osimertinibAdjuvant: {
     regimen: "Осимертиниб после полной резекции · EGFR del19 или L858R",
@@ -1374,10 +1399,10 @@ function stageExtras(c) {
   const treatment = (LUNG_TREATMENT[c.id] ?? BREAST_TREATMENT[c.id] ?? NEXT_TREATMENT[c.id] ?? VERIFIED_TREATMENT_2026[c.id])?.[stage];
   const drugsSelected = state.treatmentTab === 'drugs';
   const existingProtocol = STAGE_PROTOCOLS[c.id]?.[stage];
-  const regimens = c.id === 'c025' ? GBM_GRADE4_REGIMENS : treatment?.regimens ?? FIFTH_PASS_REGIMENS[c.id]?.[stage] ?? FOURTH_PASS_REGIMENS[c.id]?.[stage] ?? THIRD_PASS_REGIMENS[c.id]?.[stage] ?? SECOND_PASS_REGIMENS[c.id]?.[stage] ?? AUDITED_10_REGIMENS[c.id]?.[stage] ?? (existingProtocol ? [existingProtocol] : []);
+  const regimens = SIXTH_PASS_HEMATOLOGY[c.id] ?? (c.id === 'c025' ? GBM_GRADE4_REGIMENS : treatment?.regimens ?? FIFTH_PASS_REGIMENS[c.id]?.[stage] ?? FOURTH_PASS_REGIMENS[c.id]?.[stage] ?? THIRD_PASS_REGIMENS[c.id]?.[stage] ?? SECOND_PASS_REGIMENS[c.id]?.[stage] ?? AUDITED_10_REGIMENS[c.id]?.[stage] ?? (existingProtocol ? [existingProtocol] : []));
   const legacySurgery = stage !== 'IV' || ['c005', 'c022', 'c024'].includes(c.id);
   const surgery = treatment?.surgery ?? (REMAINING_SURGERY[c.id] && (stage !== 'IV' || ['c022','c024','c032','c033','c034','c037'].includes(c.id)) ? REMAINING_SURGERY[c.id] : undefined) ?? (legacySurgery ? SURGERY_DETAILS[c.id] : undefined);
-  const intro = c.id === 'c025' ? ['Режим относится к впервые диагностированной глиобластоме CNS WHO grade 4 вне зависимости от выбранной кнопки I–IV: TNM-стадирование для этой опухоли неприменимо.','https://www.eviq.org.au/medical-oncology/neurological/glioma/3364-glioblastoma-temozolomide-chemoradiation-foll'] : treatment?.intro;
+  const intro = SIXTH_PASS_HEMATOLOGY[c.id] ? ['Для лейкозов TNM I–IV не используется: приведённый режим относится к указанной фазе/клинической ситуации, а не к выбранной кнопке стадии.','https://www.cancer.gov/types/leukemia'] : c.id === 'c025' ? ['Режим относится к впервые диагностированной глиобластоме CNS WHO grade 4 вне зависимости от выбранной кнопки I–IV: TNM-стадирование для этой опухоли неприменимо.','https://www.eviq.org.au/medical-oncology/neurological/glioma/3364-glioblastoma-temozolomide-chemoradiation-foll'] : treatment?.intro;
   const drugContent = regimens.length
     ? `<p class="fine">Опубликованные режимы для клинической сверки. Применимость и регистрация зависят от показания и страны.</p>
        ${intro ? `<p>${esc(intro[0])} ${treatmentSource(intro[1], 'Источник')}</p>` : ''}
