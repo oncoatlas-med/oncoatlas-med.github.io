@@ -16,16 +16,52 @@ const tnm=[
 {n:'Рак эндометрия',v:'FIGO 2023 / TNM — разные системы',t:'FIGO 2023 учитывает глубину инвазии, LVSI, гистотип и молекулярный класс (POLEmut/MMRd/p53abn/NSMP).',ncat:'Регионарные тазовые и парааортальные узлы оцениваются по отдельным критериям.',m:'Отдалённые метастазы определяют IV стадию. Для точной группировки использовать оригинальные критерии FIGO 2023.'},
 {n:'Рак яичников',v:'FIGO 2014 / TNM — разные системы',t:'I ограничен яичником/трубой; II распространение в малом тазу; III перитонеальные очаги вне таза и/или ретроперитонеальные узлы.',ncat:'IIIA1 — только ретроперитонеальные узлы при отсутствии экстрапельвикальных перитонеальных метастазов.',m:'IV — отдалённые метастазы; IVA цитологически положительный плевральный выпот; IVB паренхиматозные/внебрюшные.'}
 ];
-function view(page,id){state.page=page;if(id)state.card=id;location.hash=page+(id?'/'+id:'');render();window.scrollTo(0,0)}
-function start(){const hash=decodeURIComponent(location.hash.slice(1)).split('/');state.page=['home','catalog','card','tnm','calculators','scales','markers','favorites','about','admin'].includes(hash[0])?hash[0]:'home';state.card=hash[1]||DATA[0].id;render()}
+function view(page, id) {
+  const hash = '#' + page + (id ? '/' + id : '');
+  if (location.hash !== hash) location.hash = hash;
+  else window.scrollTo(0, 0);
+}
+
+function start() {
+  let path = '';
+  try { path = decodeURIComponent(location.hash.slice(1)); } catch { /* Invalid deep link. */ }
+  const [page, id] = path.split('/');
+  const pages = ['home', 'catalog', 'card', 'tnm', 'calculators', 'scales', 'markers', 'favorites', 'about', 'admin'];
+  state.page = pages.includes(page) ? page : 'home';
+  if (state.page === 'card' && state.card !== id) {
+    state.stage = 'I';
+    state.treatmentTab = 'drugs';
+  }
+  state.card = state.page === 'card' ? id : null;
+  render();
+  window.scrollTo(0, 0);
+}
 window.addEventListener('hashchange',start);
 const btn=(label,fn,kind='')=>`<button class="btn ${kind}" onclick="${fn}">${label}</button>`;
 function shell(title,body,back='home'){return `<button class="back" onclick="view('${back}')">← ${back==='home'?'Главная':'Каталог'}</button><h1>${title}</h1>${body}`}
-function home(){const tiles=[['▤','Карточки ЗНО',`${DATA.length} нозологий: гистология, диагностика, лечение`,'catalog'],['⑂','TNM-справочник','Краткие критерии и версии классификаций','tnm'],['▦','Калькуляторы','BSA, Calvert, Cockcroft–Gault, RECIST','calculators'],['♧','Онкомаркеры','Показания и ограничения','markers'],['◎','Шкалы','ECOG, Khorana, Child–Pugh, IMDC','scales'],['☆','Избранное','Быстрый доступ к карточкам','favorites']];return `<div class="intro"><h1>ОнкоАтлас</h1><p class="muted">Краткий клинический справочник по онкологии. Свободный доступ, без регистрации.</p></div><input class="search" placeholder="Найти опухоль, мутацию, маркер…" oninput="searchHome(this.value)"><div id="quickSearch"></div><div class="tiles">${tiles.map(([i,n,d,p])=>`<button class="tile" onclick="view('${p}')"><span class="ico">${i}</span><h3>${n}</h3><p>${d}</p></button>`).join('')}</div><div class="notice">Медицинский контент — справочная редакция, <b>не прошедшая независимую клиническую экспертизу</b>. Для назначения терапии используйте актуальные руководства и инструкции. Данные пациентов на сайт не вводите.</div>`}
-function searchHome(q){let matches=DATA.filter(c=>(c.title+' '+c.molecular+' '+c.markers).toLowerCase().includes(q.toLowerCase())).slice(0,8);$('#quickSearch').innerHTML=q.trim()?`<div class="panel">${matches.length?matches.map(c=>`<button class="item" onclick="view('card','${c.id}')"><span><strong>${esc(c.title)}</strong><small>${esc(c.group)}</small></span>→</button>`).join(''):'Совпадений нет'}</div>`:''}
-function catalog(){return shell('Карточки ЗНО',`<div class="catalog-tools"><input class="search" id="find" placeholder="Поиск по нозологии, мутации, маркеру…" oninput="listCards()"><select id="group" onchange="listCards()">${groups.map(g=>`<option>${esc(g)}</option>`).join('')}</select></div><p class="muted" id="count"></p><div id="cardList"></div>`)}
-function listCards(){const q=($('#find')?.value||'').toLowerCase().trim(),g=$('#group')?.value||'Все';const filtered=DATA.filter(c=>(g==='Все'||c.group===g)&&Object.values(c).join(' ').toLowerCase().includes(q));$('#count').textContent=`Найдено: ${filtered.length} из ${DATA.length}`;$('#cardList').innerHTML=filtered.map(c=>`<button class="item" onclick="view('card','${c.id}')"><span><strong>${esc(c.title)}</strong><small>${esc(c.group)} · № ${String(c.number).padStart(3,'0')}</small></span>→</button>`).join('')||'<div class="panel muted">Совпадений нет</div>'}
-const favkey='oncoatlas_favorites_v2';function favs(){try{return JSON.parse(localStorage.getItem(favkey)||'[]')}catch{return []}}function toggleFav(id){let f=favs();f=f.includes(id)?f.filter(x=>x!==id):[...f,id];localStorage.setItem(favkey,JSON.stringify(f));render()}
+function home(){const tiles=[['▤','Карточки ЗНО',`${DATA.length} нозологий: гистология, диагностика, лечение`,'catalog'],['⑂','TNM-справочник','Краткие критерии и версии классификаций','tnm'],['▦','Калькуляторы','BSA, Calvert, Cockcroft–Gault, RECIST','calculators'],['♧','Онкомаркеры','Показания и ограничения','markers'],['◎','Шкалы','ECOG, Khorana, Child–Pugh, IMDC','scales'],['☆','Избранное','Быстрый доступ к карточкам','favorites']];return `<div class="intro"><h1>ОнкоАтлас</h1><p class="muted">Краткий клинический справочник по онкологии. Свободный доступ, без регистрации.</p></div><input class="search" aria-label="Поиск по справочнику" placeholder="Найти опухоль, гистотип, биомаркер или препарат…" oninput="searchHome(this.value)"><div id="quickSearch" aria-live="polite"></div><div class="tiles">${tiles.map(([i,n,d,p])=>`<button class="tile" onclick="view('${p}')"><span class="ico">${i}</span><h3>${n}</h3><p>${d}</p></button>`).join('')}</div><div class="notice">Медицинский контент — справочная редакция, <b>не прошедшая независимую клиническую экспертизу</b>. Для назначения терапии используйте актуальные руководства и инструкции. Данные пациентов на сайт не вводите.</div>`}
+function searchHome(q){const matches = findCards(q).slice(0, 8);$('#quickSearch').innerHTML=q.trim()?`<div class="panel">${matches.length?matches.map(c=>`<button class="item" onclick="view('card','${c.id}')"><span><strong>${esc(c.title)}</strong><small>${esc(c.group)}</small></span>→</button>`).join(''):'Совпадений нет'}</div>`:''}
+function catalog(){return shell('Карточки ЗНО',`<div class="catalog-tools"><input class="search" id="find" aria-label="Поиск по каталогу" placeholder="Поиск по опухоли, гистотипу, биомаркеру или препарату…" oninput="listCards()"><select id="group" aria-label="Группа опухолей" onchange="listCards()">${groups.map(g=>`<option>${esc(g)}</option>`).join('')}</select></div><p class="muted" id="count" aria-live="polite"></p><div id="cardList"></div>`)}
+function listCards(){const q = $('#find').value, g = $('#group').value; const filtered = findCards(q, g);$('#count').textContent=`Найдено: ${filtered.length} из ${DATA.length}`;$('#cardList').innerHTML=filtered.map(c=>`<button class="item" onclick="view('card','${c.id}')"><span><strong>${esc(c.title)}</strong><small>${esc(c.group)} · № ${String(c.number).padStart(3,'0')}</small></span>→</button>`).join('')||'<div class="panel muted">Совпадений нет</div>'}
+const favkey = 'oncoatlas_favorites_v2';
+let sessionFavorites;
+function favs() {
+  if (sessionFavorites) return sessionFavorites;
+  try {
+    const saved = JSON.parse(localStorage.getItem(favkey));
+    return Array.isArray(saved) ? saved : [];
+  } catch {
+    return [];
+  }
+}
+function toggleFav(id) {
+  const current = favs();
+  sessionFavorites = current.includes(id) ? current.filter(x => x !== id) : [...current, id];
+  try { localStorage.setItem(favkey, JSON.stringify(sessionFavorites)); } catch { /* Keep session favorites. */ }
+  render();
+  $('.actions button')?.focus();
+}
+
 const NON_TNM_CARD_INFO = {
   c025: {heading:"Глиобластома · CNS WHO grade 4",explanation:"Для глиобластомы неприменимы стадии TNM I–IV. Лечебная тактика определяется возрастом, функциональным статусом, MGMT, объёмом резекции и возможностью лучевой терапии. Ниже — пример для впервые диагностированной глиобластомы у подходящего пациента.",url:"https://www.cancer.gov/types/brain/hp/adult-brain-treatment-pdq"},
   c029: {heading:"Множественная миелома · ISS / R-ISS / R2-ISS",explanation:"ISS, R-ISS и R2-ISS — прогностические системы, не аналоги TNM I–IV. Системная терапия выбирается по критериям симптомной миеломы, трансплантационной пригодности, цитогенетике, функции почек и предшествующему лечению. CyBorD — один из возможных режимов.",url:"https://www.cancer.gov/types/myeloma/hp/myeloma-treatment-pdq"},
@@ -34,12 +70,13 @@ const NON_TNM_CARD_INFO = {
 };
 function renderNonTnmTreatment(c) {
   const info = NON_TNM_CARD_INFO[c.id];
-  const regimens = c.id === 'c025' ? GBM_GRADE4_REGIMENS : c.id === 'c029' ? EIGHTH_PASS_REGIMENS.c029.all : SIXTH_PASS_HEMATOLOGY[c.id];
+  const regimens = regimensFor(c.id, 'I');
   return `<div class="panel"><h2>5. Лечение по клинической ситуации</h2><p><b>${esc(info.heading)}</b></p><p>${esc(info.explanation)}</p><p class="fine">${treatmentSource(info.url, 'Источник по классификации и тактике')}</p><h3>Пример лекарственного протокола</h3><p class="fine">Режим приведён для конкретных показаний; не является универсальным назначением.</p>${regimens.map(renderRegimen).join('')}</div>`;
 }
-function card(){const c=DATA.find(x=>x.id===state.card);if(!c)return shell('Не найдено','');const f=favs().includes(c.id);return shell(esc(c.title),`<div class="eyebrow">Карточка №${String(c.number).padStart(3,'0')} · ${esc(c.group)}</div><div class="actions">${btn(f?'★ В избранном':'☆ В избранное',`toggleFav('${c.id}')`)}${btn('Сохранить PDF','window.print()','secondary')}</div><div class="panel"><h2>1. Гистотип и локализация</h2><p><b>Происхождение:</b> ${esc(c.origin)}</p><p><b>Локализация:</b> ${esc(c.location)}</p></div><div class="panel"><h2>2. Молекулярные паттерны</h2><p>${esc(c.molecular).split('; ').join(' · ')}</p></div><div class="panel"><h2>3. Диагностика</h2><p>${esc(c.diagnostics)}</p></div><div class="panel"><h2>4. Онкомаркеры${c.markers.includes('продукция:')? ' и гормональная продукция':''}</h2><p>${esc(c.markers)}</p></div>${c.id === 'c038' ? `<div class="panel"><h2>Стадирование · AJCC 9</h2><p>Версия 9 действует с 1 января 2025 года. При использовании AJCC 8 указывайте версию рядом со стадией. IVA по AJCC 8 означала T4 или N3 при M0. В AJCC 9 при M0 эти категории входят в стадию III, а IVA и IVB относятся только к M1.</p><p>${treatmentSource('https://www.cancer.org/cancer/types/nasopharyngeal-cancer/detection-diagnosis-staging/staging.html', 'Группы стадий AJCC 9 · ACS')}</p></div>` : ''}${NON_TNM_CARD_INFO[c.id] ? renderNonTnmTreatment(c) : `<div class="panel"><h2>5. Лечение по стадиям</h2><div class="tabs">${['I','II','III','IV'].map(s=>`<button class="tab ${state.stage===s?'selected':''}" onclick="setStage('${s}')">${s}</button>`).join('')}</div><p id="stageContent"><b>${state.stage}:</b> ${esc(c[state.stage])}</p>${(STAGE_MNEMONICS[c.id] ?? REMAINING_MNEMONICS[c.id])?.[state.stage]?`<p class="fine"><b>Кратко для запоминания:</b> ${esc((STAGE_MNEMONICS[c.id] ?? REMAINING_MNEMONICS[c.id])[state.stage])}</p>`:""}${stageExtras(c)}<p class="fine">Стадии приведены укрупнённо. Реальная тактика определяется гистотипом, подстадией, биомаркерами, резектабельностью, функциональным статусом и линией терапии.</p></div>`}<div class="notice"><b>Статус:</b> редакционный черновик. Независимая медицинская проверка не проведена. <b>Дата редакции:</b> 21.11.2026.</div><div class="sources">Источники для проверки: ${sources.map(([n,u])=>`<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join(' · ')}</div>`,'catalog')}
+function card(){const c=DATA.find(x=>x.id===state.card);if(!c)return shell('Карточка не найдена','<p>Выберите нозологию в каталоге.</p>','catalog');const f=favs().includes(c.id);return shell(esc(c.title),`<div class="eyebrow">Карточка №${String(c.number).padStart(3,'0')} · ${esc(c.group)}</div><div class="actions">${btn(f?'★ В избранном':'☆ В избранное',`toggleFav('${c.id}')`)}${btn('Сохранить PDF','window.print()','secondary')}</div><div class="panel"><h2>1. Гистотип и локализация</h2><p><b>Происхождение:</b> ${esc(c.origin)}</p><p><b>Локализация:</b> ${esc(c.location)}</p></div><div class="panel"><h2>2. Молекулярные паттерны</h2><p>${esc(c.molecular).split('; ').join(' · ')}</p></div><div class="panel"><h2>3. Диагностика</h2><p>${esc(c.diagnostics)}</p></div><div class="panel"><h2>4. Онкомаркеры${c.markers.includes('продукция:')? ' и гормональная продукция':''}</h2><p>${esc(c.markers)}</p></div>${c.id === 'c038' ? `<div class="panel"><h2>Стадирование · AJCC 9</h2><p>Версия 9 действует с 1 января 2025 года. При использовании AJCC 8 указывайте версию рядом со стадией. IVA по AJCC 8 означала T4 или N3 при M0. В AJCC 9 при M0 эти категории входят в стадию III, а IVA и IVB относятся только к M1.</p><p>${treatmentSource('https://www.cancer.org/cancer/types/nasopharyngeal-cancer/detection-diagnosis-staging/staging.html', 'Группы стадий AJCC 9 · ACS')}</p></div>` : ''}${NON_TNM_CARD_INFO[c.id] ? renderNonTnmTreatment(c) : `<div class="panel"><h2>5. Лечение по стадиям${['c026', 'c027', 'c028'].includes(c.id) ? ' · Lugano' : ''}</h2><div class="tabs">${STAGES.map(s=>`<button class="tab ${state.stage===s?'selected':''}" data-stage="${s}" aria-pressed="${state.stage===s}" onclick="setStage('${s}')">${s}</button>`).join('')}</div><p id="stageContent" aria-live="polite"><b>${state.stage}:</b> ${esc(c[state.stage])}</p>${(STAGE_MNEMONICS[c.id] ?? REMAINING_MNEMONICS[c.id])?.[state.stage]?`<p class="fine"><b>Кратко для запоминания:</b> ${esc((STAGE_MNEMONICS[c.id] ?? REMAINING_MNEMONICS[c.id])[state.stage])}</p>`:""}${stageExtras(c)}<p class="fine">Стадии приведены укрупнённо. Реальная тактика определяется гистотипом, подстадией, биомаркерами, резектабельностью, функциональным статусом и линией терапии.</p></div>`}<div class="notice"><b>Статус:</b> редакционный черновик. Независимая медицинская проверка не проведена.</div><div class="sources">Источники для проверки: ${sources.map(([n,u])=>`<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join(' · ')}</div>`,'catalog')}
 
 // Редакционные примеры режимов. Не использовать как индивидуальные назначения.
+const STAGES = ['I', 'II', 'III', 'IV'];
 const STAGE_PROTOCOLS={
  c016:{
  I:{regimen:"Пример адъювантной терапии эпителиального рака яичников I стадии высокого риска: паклитаксел + карбоплатин.",drugs:["Паклитаксел — 175 мг/м², в/в, день 1","Карбоплатин — AUC 5, в/в, день 1 (доза по Calvert)"],cycle:"Каждые 21 день; 4–6 циклов; при серозном гистотипе протокол eviQ рекомендует 6 циклов.",notes:"Не для всех опухолей I стадии: решение зависит от подстадии, гистотипа, степени злокачественности и полноты стадирования. Необходимы премедикация таксана и контроль функции почек.",url:"https://www.eviq.org.au/medical-oncology/gynaecological/ovarian/251-ovarian-high-risk-stage-1-adjuvant-carboplatin"},
@@ -75,7 +112,7 @@ const BREAST_REGIMENS = {
   apt: {regimen:"Адъювантная APT · небольшая HER2+ опухоль, преимущественно N0",drugs:["Паклитаксел — 80 мг/м² в/в, дни 1, 8, 15 циклов 1–4","Трастузумаб — 8 мг/кг в/в, день 1 цикла 1 (нагрузочная доза)","Трастузумаб — 6 мг/кг в/в, день 1 циклов 2–17"],cycle:"Цикл 21 день. Паклитаксел — 12 еженедельных введений (4 цикла); трастузумаб — всего 17 циклов (около года).",notes:"После операции у отобранных пациенток с небольшим HER2+ РМЖ низкого риска; не заменяет более интенсивные режимы при высоком риске. Контроль ФВ ЛЖ и инфузионных реакций.",url:"https://www.eviq.org.au/medical-oncology/breast/neoadjuvant-adjuvant/153-breast-adjuvant-paclitaxel-weekly-and-trastuzu"},
   tchp: {regimen:"Неоадъювантная TCHP · HER2+ РМЖ высокого риска, операбельный/местнораспространённый",drugs:["Пертузумаб — 840 мг в/в, день 1 цикла 1; затем 420 мг в/в, день 1 циклов 2–6","Трастузумаб — 8 мг/кг в/в, день 1 цикла 1; затем 6 мг/кг в/в, день 1 циклов 2–6","Доцетаксел — 75 мг/м² в/в, день 1 каждого цикла","Карбоплатин — AUC 6 в/в, день 1 каждого цикла (доза по Calvert)","Пэгфилграстим — 6 мг п/к, день 2"],cycle:"Каждые 21 день, 6 циклов до операции. После операции продолжение анти-HER2 терапии зависит от pCR/остаточной опухоли и риска.",notes:"Выбор при HER2+ II–III стадии по размеру опухоли, N-статусу и клиническому риску; не универсально для каждой II стадии. Оценка ФВ ЛЖ, почечной функции, нейропатии, нейтропении.",url:"https://www.eviq.org.au/medical-oncology/breast/neoadjuvant-adjuvant/3736-breast-neoadjuvant-tchp-docetaxel-carboplati"},
   key1: {regimen:"KEYNOTE-522, часть 1 · неоадъювантная TNBC высокого риска",drugs:["Пембролизумаб — 200 мг в/в, день 1","Паклитаксел — 80 мг/м² в/в, дни 1, 8, 15","Карбоплатин — AUC 5 в/в, день 1 (Calvert)"],cycle:"Цикл 21 день, 4 цикла; затем обязательна следующая часть режима (AC + пембролизумаб).",notes:"Для раннего TNBC высокого риска по критериям показания; не для всех опухолей II стадии. Требуются премедикация, профилактика миелотоксичности и мониторинг иммунных нежелательных явлений.",url:"https://www.eviq.org.au/medical-oncology/breast/neoadjuvant-adjuvant/4152-breast-neoadjuvant-adjuvant-carboplatin-pacl",reference:["Дозы первой части eviQ 4153","https://www.eviq.org.au/medical-oncology/breast/neoadjuvant-adjuvant/4153-breast-neoadjuvant-carboplatin-three-weekly-p"]},
-  key2: {regimen:"KEYNOTE-522, часть 2 · неоадъювантная AC + пембролизумаб",drugs:["Пембролизумаб — 200 мг в/в, день 1","Доксорубицин — 60 мг/м² в/в, день 1","Циклофосфамид — 600 мг/м² в/в, день 1","Пэгфилграстим — 6 мг п/к, день 2"],cycle:"Каждые 21 день, 4 цикла после карбоплатина/паклитаксела/пембролизумаба; затем операция.",notes:"Продолжение полного неоадъювантного режима, не самостоятельная схема для любой стадии. Контроль ФВ ЛЖ, кумулятивной антрациклиновой токсичности и irAE.",url:"https://www.eviq.org.au/medical-oncology/breast/neoadjuvant-adjuvant/4152-breast-neoadjuvant-adjuvant-carboplatin-pacl",reference:["Дозы AC eviQ 4154","https://www.eviq.org.au/medical-oncology/breast/neoadjuvant-adjuvant/4154-breast-neoadjuvant-adjuvant-ac-doxorubicin"]},
+  key2: {regimen:"KEYNOTE-522, часть 2 · неоадъювантная AC + пембролизумаб",drugs:["Пембролизумаб — 200 мг в/в, день 1","Доксорубицин — 60 мг/м² в/в, день 1","Циклофосфамид — 600 мг/м² в/в, день 1","Пэгфилграстим — 6 мг п/к, день 2"],cycle:"Каждые 21 день, 4 цикла после карбоплатина/паклитаксела/пембролизумаба; затем операция.",notes:"Продолжение полного неоадъювантного режима, не самостоятельная схема для любой стадии. Контроль ФВ ЛЖ, кумулятивной антрациклиновой токсичности и irAE.",url:"https://www.eviq.org.au/medical-oncology/breast/neoadjuvant-adjuvant/4152-breast-neoadjuvant-adjuvant-carboplatin-pacl",reference:["Дозы AC eviQ 4154","https://www.eviq.org.au/p/4154"]},
   key3: {regimen:"KEYNOTE-522, послеоперационная часть · пембролизумаб",drugs:["Пембролизумаб — 200 мг в/в, день 1"],cycle:"Каждые 21 день, 9 адъювантных циклов после операции (после 8 неоадъювантных циклов с пембролизумабом).",notes:"Только как продолжение соответствующего периоперационного режима TNBC высокого риска, с учётом переносимости и иммунных осложнений.",url:"https://www.eviq.org.au/medical-oncology/breast/neoadjuvant-adjuvant/4152-breast-neoadjuvant-adjuvant-carboplatin-pacl"},
   ribo: {regimen:"Первая линия HR+/HER2− метастатического РМЖ · рибоциклиб + эндокринотерапия",drugs:["Рибоциклиб — 600 мг внутрь 1 раз/сут, дни 1–21 каждого 28-дневного цикла","Летрозол — 2,5 мг внутрь 1 раз/сут, ежедневно (пример эндокринного партнёра)"],cycle:"Цикл 28 дней; до прогрессирования или неприемлемой токсичности.",notes:"При отсутствии висцерального криза и с учётом предшествующей эндокринной терапии; у пременопаузальных пациенток требуется супрессия функции яичников. Контроль ЭКГ/QTc, ОАК, АЛТ/АСТ и взаимодействий.",url:"https://www.eviq.org.au/medical-oncology/breast/metastatic/3379-breast-metastatic-ribociclib"},
   tdxd: {regimen:"Последующие линии HER2+ метастатического РМЖ · трастузумаб дерукстекан",drugs:["Трастузумаб дерукстекан — 5,4 мг/кг в/в, день 1"],cycle:"Каждые 21 день, до прогрессирования или неприемлемой токсичности.",notes:"При соответствующей предшествующей анти-HER2 терапии и показаниях; также существуют отдельные показания для HER2-low/ultralow, которые нельзя автоматически переносить на все подтипы. Критически важен мониторинг интерстициальной болезни лёгких/пневмонита, ФВ ЛЖ и тошноты.",url:"https://www.eviq.org.au/medical-oncology/breast/metastatic/4150-breast-metastatic-trastuzumab-deruxtecan"}
@@ -406,12 +443,12 @@ const REMAINING_SURGERY={
   "c027": {
     "procedure": "Биопсия опухоли для морфологии/ИГХ; лечебная резекция не стандарт",
     "limits": "Циторедуктивная операция не улучшает исходы рутинно; стадии Lugano",
-    "url": "https://www.cancer.gov/types/lymphoma/hp/adult-nhl-treatment-pdq"
+    "url": "https://www.cancer.gov/types/lymphoma/hp/aggressive-b-cell-lymphoma-treatment-pdq"
   },
   "c028": {
     "procedure": "Биопсия лимфоузла; хирургическое удаление не является лечебной стратегией",
     "limits": "Стадии Lugano; необходимость терапии определяется также GELF/симптомами",
-    "url": "https://www.cancer.gov/types/lymphoma/hp/adult-nhl-treatment-pdq"
+    "url": "https://www.cancer.gov/types/lymphoma/hp/indolent-b-cell-lymphoma-treatment-pdq"
   },
   "c029": {
     "procedure": "Биопсия костного мозга; ортопедическая стабилизация/декомпрессия только при осложнениях",
@@ -811,7 +848,7 @@ const FOURTH_PASS_REGIMENS={
   "c026": {
     "I": [
       {
-        "regimen": "ABVD — ранняя классическая лимфома Ходжкина (Ann Arbor I–II), PET-адаптированная терапия",
+        "regimen": "ABVD — ранняя классическая лимфома Ходжкина (Lugano I–II), PET-адаптированная терапия",
         "drugs": [
           "Доксорубицин — 25 мг/м² в/в, дни 1 и 15",
           "Блеомицин — 10 000 МЕ/м² в/в, дни 1 и 15",
@@ -825,7 +862,7 @@ const FOURTH_PASS_REGIMENS={
     ],
     "II": [
       {
-        "regimen": "ABVD — ранняя классическая лимфома Ходжкина (Ann Arbor I–II), PET-адаптированная терапия",
+        "regimen": "ABVD — ранняя классическая лимфома Ходжкина (Lugano I–II), PET-адаптированная терапия",
         "drugs": [
           "Доксорубицин — 25 мг/м² в/в, дни 1 и 15",
           "Блеомицин — 10 000 МЕ/м² в/в, дни 1 и 15",
@@ -839,7 +876,7 @@ const FOURTH_PASS_REGIMENS={
     ],
     "III": [
       {
-        "regimen": "ABVD — распространённая классическая лимфома Ходжкина (Ann Arbor III–IV), PET-адаптированная терапия",
+        "regimen": "ABVD — распространённая классическая лимфома Ходжкина (Lugano III–IV), PET-адаптированная терапия",
         "drugs": [
           "Доксорубицин — 25 мг/м² в/в, дни 1 и 15",
           "Блеомицин — 10 000 МЕ/м² в/в, дни 1 и 15",
@@ -853,7 +890,7 @@ const FOURTH_PASS_REGIMENS={
     ],
     "IV": [
       {
-        "regimen": "ABVD — распространённая классическая лимфома Ходжкина (Ann Arbor III–IV), PET-адаптированная терапия",
+        "regimen": "ABVD — распространённая классическая лимфома Ходжкина (Lugano III–IV), PET-адаптированная терапия",
         "drugs": [
           "Доксорубицин — 25 мг/м² в/в, дни 1 и 15",
           "Блеомицин — 10 000 МЕ/м² в/в, дни 1 и 15",
@@ -1249,7 +1286,7 @@ const NINTH_PASS_REGIMENS={
   "c035": {
     "III": [
       {
-        "regimen": "TIP — неоадъювантная химиотерапия при плоскоклеточном раке полового члена с массивным регионарным поражением (cN3; отдельные cN2)",
+        "regimen": "TIP — неоадъювантная химиотерапия при плоскоклеточном раке полового члена с массивным регионарным поражением M0 (cN3; отдельные cN2)",
         "drugs": [
           "Паклитаксел — 175 мг/м² в/в, день 1",
           "Ифосфамид — 1200 мг/м² в/в, дни 1–3",
@@ -1264,7 +1301,7 @@ const NINTH_PASS_REGIMENS={
     ],
     "IV": [
       {
-        "regimen": "TIP — неоадъювантная химиотерапия при плоскоклеточном раке полового члена с массивным регионарным поражением (cN3; отдельные cN2)",
+        "regimen": "TIP — неоадъювантная химиотерапия при плоскоклеточном раке полового члена с массивным регионарным поражением M0 (cN3; отдельные cN2)",
         "drugs": [
           "Паклитаксел — 175 мг/м² в/в, день 1",
           "Ифосфамид — 1200 мг/м² в/в, дни 1–3",
@@ -1664,24 +1701,147 @@ function renderRegimen(protocol) {
     <ul>${protocol.drugs.map(drug => `<li>${esc(drug)}</li>`).join('')}</ul>
     <p><b>Интервал и длительность.</b> ${esc(protocol.cycle)}</p>
     <p><b>Условия применения.</b> ${esc(protocol.notes)}</p>
+    ${protocol.safety ? `<p><b>Сопроводительная терапия и мониторинг.</b> ${esc(protocol.safety)}</p>` : ''}
     <p class="fine">${treatmentSource(protocol.url, protocol.sourceVersion || 'Источник схемы')}${protocol.reference ? ` · ${treatmentSource(protocol.reference[1], protocol.reference[0])}` : ''}${protocol.checkedOn ? ` · Сверено ${esc(protocol.checkedOn.split('-').reverse().join('.'))}` : ''}</p>
   </article>`;
 }
 
+function treatmentFor(id, stage) {
+  return (LUNG_TREATMENT[id] ?? BREAST_TREATMENT[id] ?? NEXT_TREATMENT[id] ?? VERIFIED_TREATMENT_2026[id])?.[stage];
+}
+
+const ADDITIONAL_REGIMENS = {
+  "c026": {
+    "III": [
+      {
+        "regimen": "N-AVD — первая линия классической лимфомы Ходжкина, Lugano III–IV (взрослые)",
+        "drugs": [
+          "Ниволумаб — 240 мг в/в",
+          "Доксорубицин — 25 мг/м² в/в",
+          "Винбластин — 6 мг/м² в/в",
+          "Дакарбазин — 375 мг/м² в/в"
+        ],
+        "cycle": "Все препараты вводятся в дни 1 и 15 каждого 28-дневного цикла. До 6 циклов.",
+        "notes": "Впервые диагностированная классическая лимфома Ходжкина III–IV стадии. FDA одобрило комбинацию в марте 2026 года. Тест на PD-L1 не требуется. Педиатрические дозировки приведены в источнике.",
+        "safety": "По FDA первичная профилактика Г-КСФ с первого цикла. До лечения оценить ОАК, функцию печени, почек, щитовидной железы и ФВЛЖ. Контролировать нейропатию, нейтропению и иммуноопосредованные явления. Противорвотная профилактика по протоколу. Учитывать кумулятивную дозу антрациклинов.",
+        "url": "https://www.eviq.org.au/p/5035",
+        "reference": [
+          "FDA, решение от 20.03.2026",
+          "https://www.fda.gov/drugs/cancer-approvals/fda-approves-nivolumab-chemotherapy-previously-untreated-hodgkin-lymphoma"
+        ],
+        "sourceVersion": "eviQ №5035, v.1",
+        "checkedOn": "2026-11-21"
+      }
+    ]
+  },
+  "c027": {
+    "III": [
+      {
+        "regimen": "Pola-R-CHP — первая линия ДВККЛ, IPI 2–5",
+        "drugs": [
+          "Полатузумаб ведотин — 1,8 мг/кг в/в, день 1, циклы 1–6",
+          "Ритуксимаб — 375 мг/м² в/в, день 1, циклы 1–8",
+          "Циклофосфамид — 750 мг/м² в/в, день 1, циклы 1–6",
+          "Доксорубицин — 50 мг/м² в/в, день 1, циклы 1–6",
+          "Преднизолон — 100 мг внутрь 1 раз в сутки, дни 1–5, циклы 1–6 (вариант eviQ)"
+        ],
+        "cycle": "Каждые 21 день. По схеме POLARIX/eviQ 6 комбинированных циклов, затем 2 цикла монотерапии ритуксимабом.",
+        "notes": "Для взрослых с впервые диагностированной ДВККЛ NOS и IPI ≥2. Американское показание также включает HGBL с IPI ≥2. При специфических вариантах лимфомы выбор обсуждается отдельно. Полатузумаб в этой комбинации заменяет винкристин.",
+        "safety": "Премедикация ритуксимаба и полатузумаба жаропонижающим и антигистаминным препаратом по протоколу. Первичная профилактика Г-КСФ, профилактика Pneumocystis jirovecii и герпесвирусов. До терапии оценить HBV и риск лизиса опухоли, ОАК, печёночную и почечную функцию, ФВЛЖ, исходную нейропатию. При HBsAg+ или anti-HBc+ на фоне анти-CD20 показана противовирусная профилактика. Допустимость режима и коррекцию доз определять по отдельным инструкциям.",
+        "url": "https://www.eviq.org.au/p/4434",
+        "reference": [
+          "FDA, решение от 19.04.2023",
+          "https://www.fda.gov/drugs/cancer-approvals/fda-approves-polatuzumab-vedotin-piiq-previously-untreated-diffuse-large-b-cell-lymphoma-not"
+        ],
+        "sourceVersion": "eviQ №4434, v.1",
+        "checkedOn": "2026-11-21"
+      }
+    ]
+  },
+  "c038": {
+    "IV": [
+      {
+        "regimen": "Торипалимаб + цисплатин + гемцитабин — первая линия рецидивного или метастатического рака носоглотки",
+        "drugs": [
+          "Торипалимаб — 240 мг в/в, день 1",
+          "Гемцитабин — 1000 мг/м² в/в, дни 1 и 8",
+          "Цисплатин — 80 мг/м² в/в, день 1"
+        ],
+        "cycle": "Каждые 21 день, до 6 комбинированных циклов по JUPITER-02. Затем торипалимаб 240 мг в/в каждые 3 недели до прогрессирования, неприемлемой токсичности или достижения 24 месяцев лечения.",
+        "notes": "Показание FDA для первой линии у взрослых с метастатическим или местнораспространённым рецидивным раком носоглотки. В JUPITER-02 включали пациентов с ECOG 0–1, которым не подходила локальная радикальная терапия. Порог PD-L1 в инструкции FDA отсутствует. Регистрацию и доступность проверять по стране.",
+        "safety": "В инструкции FDA торипалимаба абсолютные противопоказания не перечислены. Оценить риски активной аутоиммунной болезни и трансплантации. Контролировать функцию щитовидной железы, почек и печени, ОАК и электролиты. Для цисплатина необходимы гидратация, высокоэметогенная профилактика и оценка слуха и нейропатии. Противопоказания и дозовые ограничения цисплатина и гемцитабина см. в инструкциях.",
+        "url": "https://www.accessdata.fda.gov/drugsatfda_docs/label/2026/761240s006lbl.pdf",
+        "reference": [
+          "JUPITER-02, JAMA, 2023",
+          "https://pmc.ncbi.nlm.nih.gov/articles/PMC10685882/"
+        ],
+        "sourceVersion": "FDA, Loqtorzi, 07.2026",
+        "checkedOn": "2026-11-21"
+      },
+      {
+        "regimen": "Торипалимаб — монотерапия после платиносодержащей химиотерапии",
+        "drugs": [
+          "Торипалимаб — 3 мг/кг в/в каждые 14 дней"
+        ],
+        "cycle": "Продолжать до прогрессирования или неприемлемой токсичности.",
+        "notes": "Показание FDA для взрослых с нерезектабельным рецидивом или метастатической болезнью, прогрессировавшей на платиносодержащей химиотерапии или после неё. Режим не следует автоматически переносить на прогрессирование после первой линии с торипалимабом.",
+        "safety": "Контролировать иммуноопосредованные и инфузионные реакции. До начала и затем периодически проверять креатинин, печёночные ферменты и функцию щитовидной железы. В разделе 4 инструкции FDA абсолютные противопоказания не перечислены.",
+        "url": "https://www.accessdata.fda.gov/drugsatfda_docs/label/2026/761240s006lbl.pdf",
+        "sourceVersion": "FDA, Loqtorzi, 07.2026",
+        "checkedOn": "2026-11-21"
+      }
+    ]
+  }
+};
+
+function regimensFor(id, stage) {
+  const additional = ADDITIONAL_REGIMENS[id]?.[stage] ??
+    (['c026', 'c027'].includes(id) && stage === 'IV' ? ADDITIONAL_REGIMENS[id].III : []);
+  return [...additional, ...baseRegimensFor(id, stage)];
+}
+
+function baseRegimensFor(id, stage) {
+  if (id === 'c025') return GBM_GRADE4_REGIMENS;
+  const existing = STAGE_PROTOCOLS[id]?.[stage];
+  return EIGHTH_PASS_REGIMENS[id]?.all ?? SIXTH_PASS_HEMATOLOGY[id] ??
+    treatmentFor(id, stage)?.regimens ?? NINTH_PASS_REGIMENS[id]?.[stage] ??
+    EIGHTH_PASS_REGIMENS[id]?.[stage] ?? SEVENTH_PASS_REGIMENS[id]?.[stage] ??
+    FIFTH_PASS_REGIMENS[id]?.[stage] ?? FOURTH_PASS_REGIMENS[id]?.[stage] ??
+    THIRD_PASS_REGIMENS[id]?.[stage] ?? SECOND_PASS_REGIMENS[id]?.[stage] ??
+    AUDITED_10_REGIMENS[id]?.[stage] ?? (existing ? [existing] : []);
+}
+
+function normalizeSearch(value) {
+  return value.toLowerCase().normalize('NFKC').replaceAll('ё', 'е')
+    .replace(/[‐‑‒–—−]/g, '-').replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+}
+
+const searchIndex = new Map(DATA.map(c => {
+  const regimens = STAGES.flatMap(stage => regimensFor(c.id, stage));
+  const drugNames = regimens.flatMap(protocol => [protocol.regimen, ...protocol.drugs]);
+  const text = [c.title, c.group, c.origin, c.location, c.molecular, c.markers, ...drugNames].join(' ');
+  return [c.id, normalizeSearch(text)];
+}));
+
+function findCards(query, group = 'Все') {
+  const terms = normalizeSearch(query).split(' ').filter(Boolean);
+  return DATA.filter(c => (group === 'Все' || c.group === group) &&
+    terms.every(term => searchIndex.get(c.id).includes(term)));
+}
+
 function stageExtras(c) {
   const stage = state.stage;
-  const treatment = (LUNG_TREATMENT[c.id] ?? BREAST_TREATMENT[c.id] ?? NEXT_TREATMENT[c.id] ?? VERIFIED_TREATMENT_2026[c.id])?.[stage];
+  const treatment = treatmentFor(c.id, stage);
   const drugsSelected = state.treatmentTab === 'drugs';
-  const existingProtocol = STAGE_PROTOCOLS[c.id]?.[stage];
-  const regimens = EIGHTH_PASS_REGIMENS[c.id]?.all ?? SIXTH_PASS_HEMATOLOGY[c.id] ?? (c.id === 'c025' ? GBM_GRADE4_REGIMENS : treatment?.regimens ?? NINTH_PASS_REGIMENS[c.id]?.[stage] ?? EIGHTH_PASS_REGIMENS[c.id]?.[stage] ?? SEVENTH_PASS_REGIMENS[c.id]?.[stage] ?? FIFTH_PASS_REGIMENS[c.id]?.[stage] ?? FOURTH_PASS_REGIMENS[c.id]?.[stage] ?? THIRD_PASS_REGIMENS[c.id]?.[stage] ?? SECOND_PASS_REGIMENS[c.id]?.[stage] ?? AUDITED_10_REGIMENS[c.id]?.[stage] ?? (existingProtocol ? [existingProtocol] : []));
+  const regimens = regimensFor(c.id, stage);
   const legacySurgery = stage !== 'IV' || ['c005', 'c022', 'c024'].includes(c.id);
   const surgery = treatment?.surgery ?? (REMAINING_SURGERY[c.id] && (stage !== 'IV' || ['c022','c024','c032','c033','c034','c037'].includes(c.id)) ? REMAINING_SURGERY[c.id] : undefined) ?? (legacySurgery ? SURGERY_DETAILS[c.id] : undefined);
-  const intro = c.id === 'c029' ? ['ISS/R-ISS/R2-ISS не равны TNM I–IV. Режим приведён как пример системной терапии симптомной миеломы, независимо от выбранной кнопки.','https://www.eviq.org.au/haematology/multiple-myeloma/1562-mm-cybord-cyclophosphamide-bortezomib-dexame'] : SIXTH_PASS_HEMATOLOGY[c.id] ? ['Для лейкозов TNM I–IV не используется: приведённый режим относится к указанной фазе/клинической ситуации, а не к выбранной кнопке стадии.','https://www.cancer.gov/types/leukemia'] : c.id === 'c025' ? ['Режим относится к впервые диагностированной глиобластоме CNS WHO grade 4 вне зависимости от выбранной кнопки I–IV: TNM-стадирование для этой опухоли неприменимо.','https://www.eviq.org.au/medical-oncology/neurological/glioma/3364-glioblastoma-temozolomide-chemoradiation-foll'] : treatment?.intro;
+  const intro = treatment?.intro;
   const drugContent = regimens.length
     ? `<p class="fine">Опубликованные режимы для клинической сверки. Применимость и регистрация зависят от показания и страны.</p>
        ${intro ? `<p>${esc(intro[0])} ${treatmentSource(intro[1], 'Источник')}</p>` : ''}
        ${regimens.map(renderRegimen).join('')}`
-    : `<div class="notice" style="margin:10px 0">Для этой стадии пока нет проверенного дозового протокола. Режим, дозы и длительность будут добавлены после сверки с первоисточником.</div>`;
+    : `<div class="notice" style="margin:10px 0">Дозовый протокол для этой ситуации в карточке отсутствует. См. описание лечебной тактики и источники.</div>`;
   const surgeryContent = `<div class="notice" style="margin:10px 0">
     ${surgery ? `<p><b>Возможный объём.</b> ${esc(surgery.procedure)}</p>
       <p><b>Ограничения и противопоказания.</b> ${esc(surgery.limits)}</p>` : `<p>Для этой стадии нет универсального хирургического стандарта в текущей редакции карточки. Решение о вмешательстве зависит от нозологии, резектабельности, цели лечения и консилиума.</p>`}
@@ -1689,16 +1849,27 @@ function stageExtras(c) {
   </div>`;
   return `<div class="stage-extras">
     <div class="tabs" style="margin:14px 0 10px">
-      <button class="tab ${drugsSelected ? 'selected' : ''}" onclick="setTreatmentTab('drugs')">Препараты · дозировки · курсы</button>
-      <button class="tab ${drugsSelected ? '' : 'selected'}" onclick="setTreatmentTab('surgery')">Хирургическое лечение</button>
+      <button class="tab ${drugsSelected ? 'selected' : ''}" data-treatment="drugs" aria-pressed="${drugsSelected}" onclick="setTreatmentTab('drugs')">Препараты · дозировки · курсы</button>
+      <button class="tab ${drugsSelected ? '' : 'selected'}" data-treatment="surgery" aria-pressed="${!drugsSelected}" onclick="setTreatmentTab('surgery')">Хирургическое лечение</button>
     </div>
-    ${drugsSelected ? drugContent : surgeryContent}
+    <div class="treatment-content ${drugsSelected ? '' : 'print-only'}">${drugContent}</div>
+    <div class="treatment-content ${drugsSelected ? 'print-only' : ''}">${surgeryContent}</div>
   </div>`;
 }
 
-function setTreatmentTab(t){state.treatmentTab=t;render()}
+function setTreatmentTab(t) {
+  if (!['drugs', 'surgery'].includes(t)) return;
+  state.treatmentTab = t;
+  render();
+  $(`[data-treatment="${t}"]`)?.focus({preventScroll: true});
+}
 
-function setStage(s){state.stage=s;render()}
+function setStage(s) {
+  if (!STAGES.includes(s)) return;
+  state.stage = s;
+  render();
+  $(`[data-stage="${s}"]`)?.focus({preventScroll: true});
+}
 function tnmPage(){return shell('TNM и FIGO',`<div class="notice">Краткий учебный ориентир, <b>не полная нормативная классификация</b>. Учитывайте неразмерные критерии T, cTNM/pTNM/ypTNM, гистологию и действующую редакцию. Автоматическое присвоение стадии отключено, чтобы не создавать ложной точности.</div><div class="panel"><label class="field">Локализация<select id="tnmSelect" onchange="renderTNM()">${tnm.map((x,i)=>`<option value="${i}">${esc(x.n)}</option>`).join('')}</select></label><div id="tnmDetail"></div></div><div class="sources"><a href="https://www.uicc.org/resources/tnm" target="_blank">UICC</a> · <a href="https://www.figo.org/" target="_blank">FIGO</a></div>`)}
 function renderTNM(){const t=tnm[Number($('#tnmSelect').value)];$('#tnmDetail').innerHTML=`<p class="fine">${esc(t.v)}</p><p><b>T:</b> ${esc(t.t)}</p><p><b>N:</b> ${esc(t.ncat)}</p><p><b>M / стадия:</b> ${esc(t.m)}</p>`}
 function calcPage(){return shell('Калькуляторы',`<div class="notice">Расчёты выполняются локально в браузере, не отправляются на сервер. Это арифметические инструменты, а не автоматические назначения. Вводите обезличенные параметры.</div>
@@ -1723,7 +1894,7 @@ function scales(){return shell('Клинические шкалы',`<div class="
 function khorana(){let n=Number($('#kh_site').value)+['kh_pl','kh_hb','kh_wbc','kh_bmi'].filter(x=>$('#'+x).checked).length;$('#kh_result').textContent=n+' балл(ов) — '+(n===0?'низкий':n<=2?'промежуточный':'высокий')+' риск (исходная классификация)'}
 function child(){let n=['cp_bili','cp_alb','cp_inr','cp_asc','cp_enc'].reduce((a,x)=>a+Number($('#'+x).value),0);$('#cp_result').textContent=n+' баллов — Child–Pugh '+(n<=6?'A':n<=9?'B':'C')}
 function imdc(){let n=['im_time','im_kps','im_hb','im_ca','im_neu','im_pl'].filter(x=>$('#'+x).checked).length;$('#im_result').textContent=n+' факторов — '+(n===0?'благоприятный':n<=2?'промежуточный':'неблагоприятный')+' риск'}
-function markers(){return shell('Онкомаркеры',`<div class="notice">Онкомаркер не равен скрининговому тесту. Повышение требует клинической интерпретации; динамика не заменяет визуализацию или морфологию.</div><input class="search" placeholder="Найти опухоль или маркер…" oninput="filterMarkers(this.value)"><div id="markerList">${DATA.map(c=>markerRow(c)).join('')}</div>`)}
+function markers(){return shell('Онкомаркеры',`<div class="notice">Онкомаркер не равен скрининговому тесту. Повышение требует клинической интерпретации; динамика не заменяет визуализацию или морфологию.</div><input class="search" aria-label="Поиск по справочнику" placeholder="Найти опухоль или маркер…" oninput="filterMarkers(this.value)"><div id="markerList">${DATA.map(c=>markerRow(c)).join('')}</div>`)}
 function markerRow(c){return `<div class="panel marker"><h3>${esc(c.title)}</h3><p>${esc(c.markers)}</p><button class="linkbtn" onclick="view('card','${c.id}')">Открыть карточку →</button></div>`}
 function filterMarkers(q){$('#markerList').innerHTML=DATA.filter(c=>(c.title+' '+c.markers).toLowerCase().includes(q.toLowerCase())).map(markerRow).join('')}
 function favorites(){let cs=DATA.filter(c=>favs().includes(c.id));return shell('Избранное',cs.length?cs.map(c=>`<button class="item" onclick="view('card','${c.id}')"><span><strong>${esc(c.title)}</strong><small>${esc(c.group)}</small></span>→</button>`).join(''):'<div class="panel muted">Пока нет избранных карточек.</div>')}
