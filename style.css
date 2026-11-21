@@ -23,11 +23,8 @@ button:focus-visible,a:focus-visible{outline:2px solid #555;outline-offset:3px}
 .marker-detail{padding:2px 16px 15px;max-width:75ch}
 .marker-detail p{margin:10px 0;line-height:1.55}
 
-.book-icon{display:inline-block;position:relative;width:25px;height:18px;vertical-align:middle}
-.book-icon::before,.book-icon::after{content:"";position:absolute;top:1px;width:12px;height:15px;border:1.5px solid currentColor;background:#fff}
-.book-icon::before{left:0;border-radius:3px 1px 1px 3px;transform:skewY(9deg)}
-.book-icon::after{right:0;border-radius:1px 3px 3px 1px;transform:skewY(-9deg)}
 .source-section ul{list-style:none;padding:0;margin:0}
 .source-section li+li{border-top:1px solid #ececec;padding-top:12px;margin-top:12px}
 .source-section a{font-weight:650}
 .source-section li p{margin:3px 0 0;color:#626262}
+.tile-icon{display:block;width:26px;height:26px;color:#000}
