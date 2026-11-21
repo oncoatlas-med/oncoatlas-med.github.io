@@ -11,8 +11,8 @@ const cards = JSON.parse(read('cards.json'));
 const additionalRegimens = JSON.parse(read('regimens.json'));
 const stages = ['I', 'II', 'III', 'IV'];
 const ids = cards.map(c => c.id);
-assert.deepEqual(ids, Array.from({length: 38}, (_, i) => 'c' + String(i + 1).padStart(3, '0')));
-assert.equal(new Set(cards.map(c => c.number)).size, 38);
+assert.deepEqual(ids, Array.from({length: 43}, (_, i) => 'c' + String(i + 1).padStart(3, '0')));
+assert.equal(new Set(cards.map(c => c.number)).size, 43);
 for (const card of cards) {
   for (const field of ['title', 'group', 'origin', 'location', 'molecular', 'diagnostics', 'markers', ...(card.id === 'c014' ? stages.slice(0, 3) : stages)]) {
     assert.ok(typeof card[field] === 'string' && card[field].trim(), card.id + ' missing ' + field);
@@ -81,7 +81,7 @@ assert.ok(source('c038')[2].protocols.some(p => p.url.endsWith('/3674')));
 assert.ok(!source('c038')[3].protocols.some(p => p.url.endsWith('/3674')));
 assert.ok(source('c034')[1].protocols[0].url.endsWith('/82'));
 assert.ok(source('c035')[3].protocols[0].regimen.includes('M0'));
-console.log(`38 cards, ${data.rows.flat().length} available treatment views, ${populated} with protocols, ${protocols.size} distinct displayed regimen titles.`);
+console.log(`${cards.length} cards, ${data.rows.flat().length} available treatment views, ${populated} with protocols, ${protocols.size} distinct displayed regimen titles.`);
 if (process.argv[2] === '--inventory') {
   for (const rows of data.rows) {
     const entries = data.nonTnm.includes(rows[0].id) ? [rows[0]] : rows;
