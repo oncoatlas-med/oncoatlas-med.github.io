@@ -109,6 +109,16 @@ const NON_TNM_CARD_INFO = {
       ["Ответ и рецидив", "MRD оценивают в опорных точках протокола. При персистирующей MRD или рецидиве обсуждают смену терапии, при B-ОЛЛ — иммунотерапию по экспрессии мишени, CAR-T и/или алло-ТГСК по показаниям."],
       ["Роль хирургии", "Хирургическое удаление опухоли не является методом лечения ОЛЛ. Алло-ТГСК оценивают по риску, ответу и пригодности к трансплантации."],
     ],
+  },
+  c056: {
+    heading: "Мантийноклеточная лимфома · Lugano и клинические ситуации",
+    explanation: "Анатомическую стадию описывают по Lugano. Выбор тактики учитывает симптомы, темп болезни, TP53, морфологию и пригодность к интенсивному лечению.",
+    url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC12541557/",
+    contexts: [
+      ["Наблюдение или локальная терапия", "У отобранных бессимптомных пациентов с индолентным течением возможно наблюдение. При подтверждённой ограниченной стадии обсуждают локальную ЛТ и необходимость системной терапии."],
+      ["Первая линия", "При необходимости лечения оценить пригодность к интенсивному режиму. У подходящих пациентов обсуждают цитарабин-содержащий подход, роль ингибитора BTK и ауто-ТГСК. Для непригодных к ауто-ТГСК приведён режим ECHO. При мутации TP53 предпочтительна оценка возможности клинического исследования."],
+      ["Рецидив", "Выбор зависит от предшествующего ингибитора BTK, ответа, коморбидности и доступности. По показаниям обсуждают ковалентный или нековалентный ингибитор BTK и CAR-T. Хирургия играет прежде всего диагностическую роль."],
+    ],
   }
 };
 function renderNonTnmTreatment(c) {
@@ -1763,7 +1773,7 @@ function regimensFor(id, stage) {
     (['c026', 'c027'].includes(id) && stage === 'IV' ? ADDITIONAL_REGIMENS[id].III : []);
   const base = baseRegimensFor(id, stage);
   if (id === 'c025' || id === 'c030' || id === 'c031') return [...base, ...additional];
-  if (['c047', 'c048', 'c049'].includes(id) && stage === 'IV') return [...additional, ...baseRegimensFor('c019', 'IV')];
+  if (['c047', 'c048', 'c049', 'c052'].includes(id) && stage === 'IV') return [...additional, ...baseRegimensFor('c019', 'IV')];
   if (id === 'c038' && stage === 'IV') return [additional[0], ...base, additional[1]];
   return [...additional, ...base];
 }
@@ -1798,6 +1808,18 @@ function findCards(query, group = 'Все') {
 }
 
 const STAGE_DRUG_NOTES = {
+  c052: {
+    I: ["При малом объёме заболевания лечение локальное.", "https://www.cancer.gov/types/head-and-neck/hp/adult/hypopharyngeal-treatment-pdq"],
+    II: ["Лекарственное лечение обсуждают при отдельных показаниях к ХЛТ или по факторам риска после операции.", "https://www.cancer.gov/types/head-and-neck/hp/adult/hypopharyngeal-treatment-pdq"],
+  },
+  c054: {
+    I: ["После радикального удаления стадии I обычно показано наблюдение.", "https://www.cancer.gov/types/small-intestine/hp/small-intestine-treatment-pdq"],
+  },
+  c055: {
+    I: ["После полной резекции чистого папиллярного ПКР адъювантный системный режим рутинно не установлен.", "https://uroweb.org/guidelines/renal-cell-carcinoma/chapter/disease-management"],
+    II: ["После полной резекции чистого папиллярного ПКР адъювантный системный режим рутинно не установлен.", "https://uroweb.org/guidelines/renal-cell-carcinoma/chapter/disease-management"],
+    III: ["После полной резекции чистого папиллярного ПКР адъювантный системный режим рутинно не установлен.", "https://uroweb.org/guidelines/renal-cell-carcinoma/chapter/disease-management"],
+  },
   c047: {
     I: ["При ранней опухоли основное лечение локальное. Рутинная системная терапия не показана.", "https://www.ncbi.nlm.nih.gov/books/NBK65821/"],
     II: ["Основное лечение хирургическое. После операции показания к ЛТ или ХЛТ определяют по окончательной патоморфологии.", "https://www.ncbi.nlm.nih.gov/books/NBK65821/"],
@@ -1879,6 +1901,30 @@ const STAGE_SURGERY = {
     II: {"procedure": "Радикальная нефроуретерэктомия с удалением манжеты мочевого пузыря.", "limits": "До операции оценить функцию контралатеральной почки и возможное снижение СКФ после резекции.", "url": "https://uroweb.org/guidelines/upper-urinary-tract-urothelial-cell-carcinoma/chapter/disease-management"},
     III: {"procedure": "Нефроуретерэктомия с манжетой мочевого пузыря и лимфодиссекцией по анатомическому шаблону при высоком риске.", "limits": "При необходимости системной терапии обсуждают её сроки до операции с учётом пригодности к цисплатину.", "url": "https://uroweb.org/guidelines/upper-urinary-tract-urothelial-cell-carcinoma/chapter/disease-management"},
     IV: {"procedure": "При отобранных резектабельных M0 случаях операция может быть частью мультимодального лечения.", "limits": "При метастатическом процессе нефроуретерэктомию обычно рассматривают для контроля симптомов; решение консилиума.", "url": "https://uroweb.org/guidelines/upper-urinary-tract-urothelial-cell-carcinoma/chapter/disease-management"},
+  },
+  c052: {
+    I: {"procedure": "Для небольших доступных опухолей возможна трансоральная или открытая ограниченная резекция.", "limits": "Оценить достижимость отрицательных краёв, глотание и альтернативную ЛТ.", "url": "https://www.cancer.gov/types/head-and-neck/hp/adult/hypopharyngeal-treatment-pdq"},
+    II: {"procedure": "У отобранных пациентов — частичная фарингэктомия с лечением регионарных узлов по показаниям.", "limits": "При ожидаемой неприемлемой дисфагии рассмотреть нехирургический подход.", "url": "https://www.cancer.gov/types/head-and-neck/hp/adult/hypopharyngeal-treatment-pdq"},
+    III: {"procedure": "При резектабельности объём варьирует от частичной резекции до ларингофарингэктомии с лимфодиссекцией.", "limits": "Оценить возможность реконструкции и риск тримодального лечения.", "url": "https://www.cancer.gov/types/head-and-neck/hp/adult/hypopharyngeal-treatment-pdq"},
+    IV: {"procedure": "При резектабельной распространённой опухоли возможна тотальная ларингофарингэктомия с реконструкцией.", "limits": "При M1 вмешательство обычно направлено на устранение симптомов.", "url": "https://www.cancer.gov/types/head-and-neck/hp/adult/hypopharyngeal-treatment-pdq"},
+  },
+  c053: {
+    I: {"procedure": "При R0 pT1a достаточна холецистэктомия. При pT1b рассмотреть завершение радикальной операции и регионарную лимфодиссекцию.", "limits": "При случайной находке сначала пересмотреть препарат и исключить распространение.", "url": "https://www.cancer.gov/types/gallbladder/hp/gallbladder-treatment-pdq"},
+    II: {"procedure": "При резектабельности — удаление опухоли с прилежащей печёночной тканью и регионарная лимфодиссекция.", "limits": "Объём резекции печени определяется достижимостью R0. Резекция внепечёночного протока требуется при вовлечении или необходимости обеспечить чистый край.", "url": "https://www.cancer.gov/types/gallbladder/hp/gallbladder-treatment-pdq"},
+    III: {"procedure": "У отобранных пациентов возможна расширенная резекция единым блоком на гепатобилиарном консилиуме.", "limits": "Оценить вероятность R0, сосудистую анатомию и остаточный объём печени.", "url": "https://www.cancer.gov/types/gallbladder/hp/gallbladder-treatment-pdq"},
+    IV: {"procedure": "Радикальную резекцию при диссеминации рутинно не выполняют.", "limits": "Для контроля обструкции рассмотреть билиарное дренирование по показаниям.", "url": "https://www.cancer.gov/types/gallbladder/hp/gallbladder-treatment-pdq"},
+  },
+  c054: {
+    I: {"procedure": "Сегментарная резекция тощей или подвздошной кишки с регионарными узлами. При дуоденальной опухоли объём зависит от локализации.", "limits": "При вовлечении второй части двенадцатиперстной кишки может потребоваться панкреатодуоденальная резекция.", "url": "https://www.cancer.gov/types/small-intestine/hp/small-intestine-treatment-pdq"},
+    II: {"procedure": "Резекция первичной опухоли с регионарными узлами и патоморфологической оценкой краёв.", "limits": "Учитывать место опухоли, инвазию соседних структур и достаточность оценки узлов.", "url": "https://www.cancer.gov/types/small-intestine/hp/small-intestine-treatment-pdq"},
+    III: {"procedure": "Радикальная резекция первичного очага и регионарных лимфоузлов при резектабельности.", "limits": "После операции оценить показания к адъювантной ХТ.", "url": "https://www.cancer.gov/types/small-intestine/hp/small-intestine-treatment-pdq"},
+    IV: {"procedure": "При обструкции, кровотечении или перфорации рассмотреть симптоматическое вмешательство.", "limits": "Резекция метастазов возможна лишь у тщательно отобранных пациентов после оценки в профильном центре.", "url": "https://www.cancer.gov/types/small-intestine/hp/small-intestine-treatment-pdq"},
+  },
+  c055: {
+    I: {"procedure": "Резекция почки предпочтительна при T1 и технической возможности.", "limits": "Оценить сложность резекции, СКФ и функцию контралатеральной почки.", "url": "https://uroweb.org/guidelines/renal-cell-carcinoma/chapter/disease-management"},
+    II: {"procedure": "Радикальная нефрэктомия, если органосохраняющая операция технически небезопасна; у отобранных пациентов возможна резекция.", "limits": "Особенно важна оценка возможности сохранения нефронов при единственной почке или ХБП.", "url": "https://uroweb.org/guidelines/renal-cell-carcinoma/chapter/disease-management"},
+    III: {"procedure": "Нефрэктомия с тромбэктомией при резектабельном венозном тромбе по показаниям.", "limits": "Уровень тромба и ожидаемый операционный риск определяют состав команды и объём вмешательства.", "url": "https://uroweb.org/guidelines/renal-cell-carcinoma/chapter/disease-management"},
+    IV: {"procedure": "Циторедуктивную нефрэктомию или локальное лечение отдельных метастазов обсуждают индивидуально.", "limits": "Если требуется немедленная системная терапия, учитывают риск её задержки и возможность отсроченной операции.", "url": "https://uroweb.org/guidelines/renal-cell-carcinoma/chapter/disease-management"},
   },
 };
 

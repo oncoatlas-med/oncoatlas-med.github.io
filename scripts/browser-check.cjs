@@ -8,7 +8,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const cards = require('../cards.json');
 
 const home = process.env.ONCOATLAS_TEST_URL || pathToFileURL(resolve(__dirname, '../index.html')).href;
-const nonTnm = new Set(['c025', 'c029', 'c030', 'c031', 'c045', 'c046', 'c050']);
+const nonTnm = new Set(['c025', 'c029', 'c030', 'c031', 'c045', 'c046', 'c050', 'c056']);
 const options = { executablePath: process.env.CHROMIUM_EXECUTABLE || undefined };
 const pdfDir = mkdtempSync(resolve(tmpdir(), 'oncoatlas-pdf-'));
 
