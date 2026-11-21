@@ -26,7 +26,7 @@ function start() {
   let path = '';
   try { path = decodeURIComponent(location.hash.slice(1)); } catch { /* Invalid deep link. */ }
   const [page, id] = path.split('/');
-  const pages = ['home', 'catalog', 'card', 'tnm', 'calculators', 'scales', 'markers', 'favorites', 'about', 'admin'];
+  const pages = ['home', 'catalog', 'card', 'tnm', 'calculators', 'scales', 'markers', 'sources', 'favorites', 'about', 'admin'];
   state.page = pages.includes(page) ? page : 'home';
   if (state.page === 'card' && state.card !== id) {
     state.stage = 'I';
@@ -39,7 +39,7 @@ function start() {
 window.addEventListener('hashchange',start);
 const btn=(label,fn,kind='')=>`<button class="btn ${kind}" onclick="${fn}">${label}</button>`;
 function shell(title,body,back='home'){return `<button class="back" onclick="view('${back}')">← ${back==='home'?'Главная':'Каталог'}</button><h1>${title}</h1>${body}`}
-function home(){const tiles=[['▤','Карточки ЗНО',`${DATA.length} нозологий: гистология, диагностика, лечение`,'catalog'],['⑂','TNM-справочник','Краткие критерии и версии классификаций','tnm'],['▦','Калькуляторы','BSA, Calvert, CKD-EPI 2021, RECIST','calculators'],['♧','Онкомаркеры','Показания и ограничения','markers'],['◎','Шкалы','ECOG, Khorana, Child–Pugh, IMDC','scales'],['☆','Избранное','Быстрый доступ к карточкам','favorites']];return `<div class="intro"><h1>ОнкоАтлас</h1><p class="muted">Краткий клинический справочник по онкологии. Свободный доступ, без регистрации.</p></div><input class="search" aria-label="Поиск по справочнику" placeholder="Найти опухоль, гистотип, биомаркер или препарат…" oninput="searchHome(this.value)"><div id="quickSearch" aria-live="polite"></div><div class="tiles">${tiles.map(([i,n,d,p])=>`<button class="tile" onclick="view('${p}')"><span class="ico">${i}</span><h3>${n}</h3><p>${d}</p></button>`).join('')}</div><div class="notice">Медицинский контент — справочная редакция, <b>не прошедшая независимую клиническую экспертизу</b>. Для назначения терапии используйте актуальные руководства и инструкции. Данные пациентов на сайт не вводите.</div>`}
+function home(){const tiles=[['▤','Карточки ЗНО',`${DATA.length} нозологий: гистология, диагностика, лечение`,'catalog'],['⑂','TNM-справочник','Краткие критерии и версии классификаций','tnm'],['▦','Калькуляторы','BSA, Calvert, CKD-EPI 2021, RECIST','calculators'],['♧','Онкомаркеры','Показания и ограничения','markers'],['◎','Шкалы','ECOG, Khorana, Child–Pugh, IMDC','scales'],['','Источники','Рекомендации, журналы и базы исследований','sources']];return `<div class="intro"><h1>ОнкоАтлас</h1><p class="muted">Краткий клинический справочник по онкологии. Свободный доступ, без регистрации.</p></div><input class="search" aria-label="Поиск по справочнику" placeholder="Найти опухоль, гистотип, биомаркер или препарат…" oninput="searchHome(this.value)"><div id="quickSearch" aria-live="polite"></div><div class="tiles">${tiles.map(([i,n,d,p])=>`<button class="tile" onclick="view('${p}')"><span class="ico" aria-hidden="true">${i || '<span class="book-icon"></span>'}</span><h3>${n}</h3><p>${d}</p></button>`).join('')}</div><div class="notice">Медицинский контент — справочная редакция, <b>не прошедшая независимую клиническую экспертизу</b>. Для назначения терапии используйте актуальные руководства и инструкции. Данные пациентов на сайт не вводите.</div>`}
 function searchHome(q){const matches = findCards(q).slice(0, 8);$('#quickSearch').innerHTML=q.trim()?`<div class="panel">${matches.length?matches.map(c=>`<button class="item" onclick="view('card','${c.id}')"><span><strong>${esc(c.title)}</strong><small>${esc(c.group)}</small></span>→</button>`).join(''):'Совпадений нет'}</div>`:''}
 function catalog(){return shell('Карточки ЗНО',`<div class="catalog-tools"><input class="search" id="find" aria-label="Поиск по каталогу" placeholder="Поиск по опухоли, гистотипу, биомаркеру или препарату…" oninput="listCards()"><select id="group" aria-label="Группа опухолей" onchange="listCards()">${groups.map(g=>`<option>${esc(g)}</option>`).join('')}</select></div><p class="muted" id="count" aria-live="polite"></p><div id="cardList"></div>`)}
 function listCards(){const q = $('#find').value, g = $('#group').value; const filtered = findCards(q, g);$('#count').textContent=`Найдено: ${filtered.length} из ${DATA.length}`;$('#cardList').innerHTML=filtered.map(c=>`<button class="item" onclick="view('card','${c.id}')"><span><strong>${esc(c.title)}</strong><small>${esc(c.group)} · № ${String(c.number).padStart(3,'0')}</small></span>→</button>`).join('')||'<div class="panel muted">Совпадений нет</div>'}
@@ -1939,9 +1939,42 @@ function filterMarkers(query) {
   $('#markerList').innerHTML = markerRows(MARKERS.filter(marker =>
     [marker.name, marker.aliases, marker.context].some(value => markerSearchText(value).includes(key))));
 }
+const SOURCE_SECTIONS = [
+  ['Клинические рекомендации и протоколы', [
+    ['Минздрав России', 'Официальный рубрикатор клинических рекомендаций РФ', 'https://cr.minzdrav.gov.ru/'],
+    ['RUSSCO', 'Рекомендации Российского общества клинической онкологии', 'https://www.rosoncoweb.ru/standarts/RUSSCO/'],
+    ['ESMO', 'Клинические рекомендации Европейского общества медицинской онкологии', 'https://www.esmo.org/guidelines'],
+    ['ASCO', 'Клинические рекомендации Американского общества клинической онкологии', 'https://ascopubs.org/guidelines'],
+    ['NCCN', 'Клинические алгоритмы по нозологиям и поддерживающей терапии', 'https://www.nccn.org/guidelines/category_1'],
+    ['eviQ', 'Протоколы лечения с дозами, мониторингом и коррекцией терапии', 'https://www.eviq.org.au/medical-oncology'],
+    ['NCI PDQ', 'Доказательные обзоры по диагностике и лечению опухолей', 'https://www.cancer.gov/publications/pdq'],
+  ]],
+  ['Базы публикаций и исследований', [
+    ['PubMed', 'Поиск биомедицинских публикаций', 'https://pubmed.ncbi.nlm.nih.gov/'],
+    ['Cochrane Library', 'Систематические обзоры и реестр контролируемых исследований', 'https://www.cochranelibrary.com/'],
+    ['ClinicalTrials.gov', 'Реестр исследований, их статусы и опубликованные результаты', 'https://clinicaltrials.gov/'],
+  ]],
+  ['Научные журналы', [
+    ['Journal of Clinical Oncology', 'Клинические исследования и рекомендации ASCO', 'https://ascopubs.org/journal/jco'],
+    ['Annals of Oncology', 'Научный журнал ESMO', 'https://www.esmo.org/about-esmo/discover-esmo-journals/annals-of-oncology'],
+    ['The Lancet Oncology', 'Клинические исследования, обзоры и комментарии', 'https://www.thelancet.com/journals/lanonc/home'],
+    ['JAMA Oncology', 'Клинические исследования и обзоры в онкологии', 'https://jamanetwork.com/journals/jamaoncology'],
+    ['The New England Journal of Medicine', 'Общемедицинский журнал с публикациями ключевых онкологических исследований', 'https://www.nejm.org/'],
+  ]],
+];
+
+function sourcesPage() {
+  return shell('Источники', SOURCE_SECTIONS.map(([title, entries]) => `
+    <section class="panel source-section">
+      <h2>${esc(title)}</h2>
+      <ul>${entries.map(([name, description, url]) => `
+        <li><a href="${esc(url)}" target="_blank" rel="noopener">${esc(name)}</a><p>${esc(description)}</p></li>
+      `).join('')}</ul>
+    </section>`).join(''));
+}
 function favorites(){let cs=DATA.filter(c=>favs().includes(c.id));return shell('Избранное',cs.length?cs.map(c=>`<button class="item" onclick="view('card','${c.id}')"><span><strong>${esc(c.title)}</strong><small>${esc(c.group)}</small></span>→</button>`).join(''):'<div class="panel muted">Пока нет избранных карточек.</div>')}
 function about(){return shell('О проекте',`<div class="panel"><h2>ОнкоАтлас</h2><p>Бесплатный русскоязычный образовательный справочник для врачей. Все материалы открыты без регистрации.</p><p><b>Редакция:</b> 0.2 · 21 ноября 2026 года. <b>Статус:</b> рабочая бета-версия; клиническая экспертиза ещё не завершена.</p><p>Тексты карточек — сокращённые алгоритмы, не официальные рекомендации. Локальная регистрация лекарств и стандарты лечения различаются по странам.</p><p>Источники для редакционной проверки: ${sources.map(([n,u])=>`<a href="${u}" target="_blank">${n}</a>`).join(', ')}.</p><p><b>Конфиденциальность:</b> не вводите персональные данные пациентов. Калькуляторы выполняются в браузере. Избранное хранится локально.</p></div>`)}
 function admin(){return shell('Администрирование',`<div class="panel"><h2>Публичный сайт — только чтение</h2><p>Защищённое редактирование ещё не подключено. Пароли в исходном коде отсутствуют. Вход «Икбал Р.В.» не будет реализован как небезопасная клиентская проверка.</p><p>Пока обновления выполняются заменой файлов после медицинской проверки. Для редактирования через чат потребуется подключение к репозиторию с ограниченными правами и подтверждением публикации.</p></div>`)}
-function render(){const pages={home,catalog,card,tnm:tnmPage,calculators:calcPage,scales,markers,favorites,about,admin};$('#app').innerHTML=(pages[state.page]||home)();allNodes('[data-nav]').forEach(x=>x.classList.toggle('active',x.dataset.nav===state.page));if(state.page==='catalog')listCards();if(state.page==='tnm')renderTNM()}
+function render(){const pages={home,catalog,card,tnm:tnmPage,calculators:calcPage,scales,markers,sources:sourcesPage,favorites,about,admin};$('#app').innerHTML=(pages[state.page]||home)();allNodes('[data-nav]').forEach(x=>x.classList.toggle('active',x.dataset.nav===state.page));if(state.page==='catalog')listCards();if(state.page==='tnm')renderTNM()}
 window.view=view;window.toggleFav=toggleFav;window.setStage=setStage;window.searchHome=searchHome;window.listCards=listCards;window.renderTNM=renderTNM;window.calculate=calculate;window.khorana=khorana;window.child=child;window.imdc=imdc;window.filterMarkers=filterMarkers;
 start();
