@@ -1025,6 +1025,17 @@ const REMAINING_SURGERY={
     "url": "https://www.cancer.gov/types/head-and-neck/hp/nasopharyngeal-treatment-pdq"
   }
 };
+
+const VERIFIED_REGIMENS_2026 = {
+ biliaryInduction:{regimen:"TOPAZ-1: первая линия нерезектабельной/метастатической холангиокарциномы — индукция",drugs:["Дурвалумаб — 1500 мг в/в, день 1","Гемцитабин — 1000 мг/м² в/в, дни 1 и 8","Цисплатин — 25 мг/м² в/в, дни 1 и 8"],cycle:"Каждые 21 день; максимум 8 циклов, затем поддержка дурвалумабом отдельно.",notes:"ECOG 0–1; не для ампулярной карциномы. В протоколе eviQ исключён клиренс креатинина <50 мл/мин. Контроль ОАК, функции почек, слуха, нейропатии, инфекций желчных путей и иммуноопосредованной токсичности.",url:"https://www.eviq.org.au/medical-oncology/upper-gastrointestinal/pancreas-and-biliary/4301-biliary-and-gallbladder-advanced-cisplatin-g"},
+ biliaryMaintenance:{regimen:"TOPAZ-1: поддержка после 8 циклов индукции",drugs:["Дурвалумаб — 1500 мг в/в, день 1"],cycle:"Каждые 28 дней; до прогрессирования или неприемлемой токсичности.",notes:"Только после индукционной части режима; не самостоятельная первая линия. Мониторинг иммуноопосредованных нежелательных явлений.",url:"https://www.eviq.org.au/medical-oncology/upper-gastrointestinal/pancreas-and-biliary/4301-biliary-and-gallbladder-advanced-cisplatin-g"},
+ evPembro:{regimen:"EV-302: первая линия местнораспространённого нерезектабельного/метастатического уротелиального рака",drugs:["Энфортумаб ведотин — 1,25 мг/кг в/в, дни 1 и 8 (максимум 125 мг на введение)","Пембролизумаб — 200 мг в/в, день 1"],cycle:"Каждые 21 день; до прогрессирования/неприемлемой токсичности. Пембролизумаб — максимум 35 циклов, энфортумаб ведотин — без фиксированного максимума циклов.",notes:"Ранее нелеченый местнораспространённый/метастатический уротелиальный рак, ECOG 0–2. Исключения eviQ: нейропатия ≥2 степени, неконтролируемый диабет, активный кератит/язвы роговицы. Контроль тяжёлых кожных реакций, гликемии и irAE.",url:"https://www.eviq.org.au/medical-oncology/urogenital/bladder-and-urothelial/4427-bladder-urothelial-locally-advanced-or-metast"}
+};
+const VERIFIED_TREATMENT_2026={
+ c010:{III:{intro:["Только нерезектабельный местнораспространённый процесс при подходящем ECOG; при резектабельной III стадии первична хирургическая оценка.","https://www.eviq.org.au/medical-oncology/upper-gastrointestinal/pancreas-and-biliary/4301-biliary-and-gallbladder-advanced-cisplatin-g"],regimens:[VERIFIED_REGIMENS_2026.biliaryInduction,VERIFIED_REGIMENS_2026.biliaryMaintenance]},IV:{regimens:[VERIFIED_REGIMENS_2026.biliaryInduction,VERIFIED_REGIMENS_2026.biliaryMaintenance]}},
+ c012:{IV:{intro:["Только нерезектабельный местнораспространённый или метастатический уротелиальный рак, ранее не получавший системную терапию по поводу распространённого заболевания.","https://www.eviq.org.au/medical-oncology/urogenital/bladder-and-urothelial/4427-bladder-urothelial-locally-advanced-or-metast"],regimens:[VERIFIED_REGIMENS_2026.evPembro]}}
+};
+
 const LUNG_REGIMENS = {
   osimertinibAdjuvant: {
     regimen: "Осимертиниб после полной резекции · EGFR del19 или L858R",
@@ -1416,7 +1427,7 @@ function renderRegimen(protocol) {
 
 function stageExtras(c) {
   const stage = state.stage;
-  const treatment = (LUNG_TREATMENT[c.id] ?? BREAST_TREATMENT[c.id] ?? NEXT_TREATMENT[c.id])?.[stage];
+  const treatment = (LUNG_TREATMENT[c.id] ?? BREAST_TREATMENT[c.id] ?? NEXT_TREATMENT[c.id] ?? VERIFIED_TREATMENT_2026[c.id])?.[stage];
   const drugsSelected = state.treatmentTab === 'drugs';
   const existingProtocol = STAGE_PROTOCOLS[c.id]?.[stage];
   const regimens = treatment?.regimens ?? (existingProtocol ? [existingProtocol] : []);
