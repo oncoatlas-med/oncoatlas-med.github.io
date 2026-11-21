@@ -28,3 +28,7 @@ button:focus-visible,a:focus-visible{outline:2px solid #555;outline-offset:3px}
 .source-section a{font-weight:650}
 .source-section li p{margin:3px 0 0;color:#626262}
 .tile-icon{display:block;width:26px;height:26px;color:#000}
+
+.staging-result{text-decoration:none}
+.staging-back{display:inline-block;text-decoration:none}
+.staging-related{margin-top:20px}

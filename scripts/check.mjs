@@ -9,6 +9,22 @@ execFileSync(process.execPath, [file('scripts/build.mjs').pathname, '--check']);
 
 const cards = JSON.parse(read('cards.json'));
 const additionalRegimens = JSON.parse(read('regimens.json'));
+const staging = JSON.parse(read('staging.json'));
+const stagingIds = new Set(staging.entries.map(entry => entry.id));
+assert.equal(stagingIds.size, staging.entries.length);
+const stagedCards = new Set();
+for (const entry of staging.entries) {
+  for (const key of ['title', 'edition', 't', 'n', 'm', 'groups']) assert.ok(entry[key]?.trim(), entry.id + ' missing ' + key);
+  assert.equal(new URL(entry.url).protocol, 'https:');
+  assert.ok(entry.cards.length);
+  entry.cards.forEach(id => stagedCards.add(id));
+  (entry.related ?? []).forEach(id => assert.ok(stagingIds.has(id), entry.id + ' invalid related entry'));
+}
+for (const id of Object.keys(staging.other)) {
+  assert.ok(!stagedCards.has(id), id + ' appears in both staging indexes');
+  stagedCards.add(id);
+}
+assert.deepEqual([...stagedCards].sort(), cards.map(card => card.id));
 const stages = ['I', 'II', 'III', 'IV'];
 const ids = cards.map(c => c.id);
 const contextualCards = ['c025', 'c029', 'c030', 'c031', 'c045', 'c046', 'c050', 'c056'];

@@ -3,6 +3,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 const read = name => readFileSync(new URL('../' + name, import.meta.url), 'utf8');
 const index = read('index.html');
 const cards = JSON.parse(read('cards.json'));
+const staging = JSON.parse(read('staging.json'));
 const markers = JSON.parse(read('markers.json'));
 const protocols = JSON.parse(read('regimens.json'));
 const application = read('app.js');
@@ -14,7 +15,7 @@ function replaceOnce(html, pattern, replacement) {
 }
 
 const serialize = value => JSON.stringify(value, null, 2).replaceAll('<', '\\u003c');
-const dataScript = 'window.ONCO_CARDS=' + serialize(cards) + ';\nwindow.ONCO_REGIMENS=' + serialize(protocols) + ';\nwindow.ONCO_MARKERS=' + serialize(markers) + ';';
+const dataScript = 'window.ONCO_CARDS=' + serialize(cards) + ';\nwindow.ONCO_REGIMENS=' + serialize(protocols) + ';\nwindow.ONCO_MARKERS=' + serialize(markers) + ';\nwindow.ONCO_STAGING=' + serialize(staging) + ';';
 if (/<\/script/i.test(application) || /<\/style/i.test(stylesheet)) throw new Error('Embedded code contains a closing HTML tag');
 
 let output = replaceOnce(index, /<style>[\s\S]*?<\/style>/gi, '<style>' + stylesheet + '</style>');
