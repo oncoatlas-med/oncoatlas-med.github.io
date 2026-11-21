@@ -1005,6 +1005,72 @@ const SIXTH_PASS_HEMATOLOGY={
     }
   ]
 };
+const SEVENTH_PASS_REGIMENS={
+  "c034": {
+    "II": [
+      {
+        "regimen": "Анальный плоскоклеточный рак — радикальная ХЛТ: митомицин + капецитабин",
+        "drugs": [
+          "Митомицин — 12 мг/м² в/в, день 1 (максимум 20 мг)",
+          "Капецитабин — 825 мг/м² внутрь дважды в сутки только в дни лучевой терапии (понедельник–пятница)"
+        ],
+        "cycle": "Митомицин однократно в день 1; капецитабин на протяжении курса лучевой терапии, обычно 5–6 недель.",
+        "notes": "Для локализованного плоскоклеточного рака анального канала при выборе радикальной ХЛТ. Дозу митомицина и график проверять по локальному протоколу. До капецитабина оценить DPD/DPYD, функцию почек; контролировать ОАК, дерматит и диарею.",
+        "url": "https://www.eviq.org.au/medical-oncology/colorectal/anal/1959-anal-definitive-mitomycin-and-capecitabine-chem"
+      }
+    ],
+    "III": [
+      {
+        "regimen": "Анальный плоскоклеточный рак — радикальная ХЛТ: митомицин + капецитабин",
+        "drugs": [
+          "Митомицин — 12 мг/м² в/в, день 1 (максимум 20 мг)",
+          "Капецитабин — 825 мг/м² внутрь дважды в сутки только в дни лучевой терапии"
+        ],
+        "cycle": "На протяжении лучевой терапии, обычно 5–6 недель.",
+        "notes": "Для локорегионарного плоскоклеточного рака анального канала; индивидуальная оценка объёма ЛТ. До фторпиримидина оценить DPD/DPYD; контроль токсичности.",
+        "url": "https://www.eviq.org.au/medical-oncology/colorectal/anal/1959-anal-definitive-mitomycin-and-capecitabine-chem"
+      }
+    ]
+  },
+  "c036": {
+    "IV": [
+      {
+        "regimen": "Мезотелиома плевры — цисплатин + пеметрексед, первая линия при соответствующем выборе",
+        "drugs": [
+          "Пеметрексед — 500 мг/м² в/в, день 1",
+          "Цисплатин — 75 мг/м² в/в, день 1"
+        ],
+        "cycle": "Каждые 21 день; обычно до 6 циклов.",
+        "notes": "Для нерезектабельной/метастатической мезотелиомы при выборе платинового дублета; иммунотерапевтические режимы также являются стандартными вариантами. Обязательны фолиевая кислота и витамин B12 до пеметрекседа, премедикация дексаметазоном, гидратация и контроль функции почек.",
+        "url": "https://www.eviq.org.au/medical-oncology/respiratory/mesothelioma/201-mesothelioma-cisplatin-and-pemetrexed"
+      }
+    ]
+  },
+  "c037": {
+    "III": [
+      {
+        "regimen": "Цемиплимаб — нерезектабельный местнораспространённый плоскоклеточный рак кожи",
+        "drugs": [
+          "Цемиплимаб — 350 мг в/в, день 1"
+        ],
+        "cycle": "Каждые 21 день до прогрессирования или неприемлемой токсичности.",
+        "notes": "Только если радикальная операция или ЛТ не подходят; не для всех пациентов III стадии. Контроль иммуноопосредованных нежелательных явлений.",
+        "url": "https://www.accessdata.fda.gov/drugsatfda_docs/label/2025/761097s021lbl.pdf"
+      }
+    ],
+    "IV": [
+      {
+        "regimen": "Цемиплимаб — метастатический плоскоклеточный рак кожи",
+        "drugs": [
+          "Цемиплимаб — 350 мг в/в, день 1"
+        ],
+        "cycle": "Каждые 21 день до прогрессирования или неприемлемой токсичности.",
+        "notes": "При метастатическом плоскоклеточном раке кожи, не подлежащем радикальному лечению; оценить противопоказания к анти-PD-1 и irAE.",
+        "url": "https://www.accessdata.fda.gov/drugsatfda_docs/label/2025/761097s021lbl.pdf"
+      }
+    ]
+  }
+};
 const LUNG_REGIMENS = {
   osimertinibAdjuvant: {
     regimen: "Осимертиниб после полной резекции · EGFR del19 или L858R",
@@ -1399,7 +1465,7 @@ function stageExtras(c) {
   const treatment = (LUNG_TREATMENT[c.id] ?? BREAST_TREATMENT[c.id] ?? NEXT_TREATMENT[c.id] ?? VERIFIED_TREATMENT_2026[c.id])?.[stage];
   const drugsSelected = state.treatmentTab === 'drugs';
   const existingProtocol = STAGE_PROTOCOLS[c.id]?.[stage];
-  const regimens = SIXTH_PASS_HEMATOLOGY[c.id] ?? (c.id === 'c025' ? GBM_GRADE4_REGIMENS : treatment?.regimens ?? FIFTH_PASS_REGIMENS[c.id]?.[stage] ?? FOURTH_PASS_REGIMENS[c.id]?.[stage] ?? THIRD_PASS_REGIMENS[c.id]?.[stage] ?? SECOND_PASS_REGIMENS[c.id]?.[stage] ?? AUDITED_10_REGIMENS[c.id]?.[stage] ?? (existingProtocol ? [existingProtocol] : []));
+  const regimens = SIXTH_PASS_HEMATOLOGY[c.id] ?? (c.id === 'c025' ? GBM_GRADE4_REGIMENS : treatment?.regimens ?? SEVENTH_PASS_REGIMENS[c.id]?.[stage] ?? FIFTH_PASS_REGIMENS[c.id]?.[stage] ?? FOURTH_PASS_REGIMENS[c.id]?.[stage] ?? THIRD_PASS_REGIMENS[c.id]?.[stage] ?? SECOND_PASS_REGIMENS[c.id]?.[stage] ?? AUDITED_10_REGIMENS[c.id]?.[stage] ?? (existingProtocol ? [existingProtocol] : []));
   const legacySurgery = stage !== 'IV' || ['c005', 'c022', 'c024'].includes(c.id);
   const surgery = treatment?.surgery ?? (REMAINING_SURGERY[c.id] && (stage !== 'IV' || ['c022','c024','c032','c033','c034','c037'].includes(c.id)) ? REMAINING_SURGERY[c.id] : undefined) ?? (legacySurgery ? SURGERY_DETAILS[c.id] : undefined);
   const intro = SIXTH_PASS_HEMATOLOGY[c.id] ? ['Для лейкозов TNM I–IV не используется: приведённый режим относится к указанной фазе/клинической ситуации, а не к выбранной кнопке стадии.','https://www.cancer.gov/types/leukemia'] : c.id === 'c025' ? ['Режим относится к впервые диагностированной глиобластоме CNS WHO grade 4 вне зависимости от выбранной кнопки I–IV: TNM-стадирование для этой опухоли неприменимо.','https://www.eviq.org.au/medical-oncology/neurological/glioma/3364-glioblastoma-temozolomide-chemoradiation-foll'] : treatment?.intro;
