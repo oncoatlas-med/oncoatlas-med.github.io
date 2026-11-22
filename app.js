@@ -13,7 +13,7 @@ function view(page, id) {
 function start() {
   let path = '';
   try { path = decodeURIComponent(location.hash.slice(1)); } catch { /* Invalid deep link. */ }
-  const [page, id] = path.split('/');
+  const [page, id, section, key] = path.split('/');
   const pages = ['home', 'catalog', 'card', 'tnm', 'calculators', 'scales', 'markers', 'sources', 'favorites', 'about', 'admin'];
   state.page = pages.includes(page) ? page : 'home';
   if (state.page === 'card' && state.card !== id) {
@@ -22,8 +22,22 @@ function start() {
   }
   state.card = state.page === 'card' ? id : null;
   state.staging = state.page === 'tnm' ? id : undefined;
+  state.marker = state.page === 'markers' && /^\d+$/.test(id ?? '') ? Number(id) : -1;
+  let target;
+  if (state.page === 'card' && DATA.some(card => card.id === id)) {
+    if (section === 'molecular') target = '#molecular';
+    else if ((CARD_STAGES[id] ?? STAGES).includes(section)) {
+      state.stage = section;
+      state.treatmentTab = 'drugs';
+      if (regimensFor(id, section).some(protocol => regimenKey(protocol) === key)) target = '#regimen-' + key;
+    }
+  }
   render();
-  window.scrollTo(0, 0);
+  const detail = target ? $(target) : null;
+  if (detail) {
+    detail.focus({preventScroll: true});
+    detail.scrollIntoView({block: 'start'});
+  } else window.scrollTo(0, 0);
 }
 window.addEventListener('hashchange',start);
 const btn=(label,fn,kind='')=>`<button class="btn ${kind}" onclick="${fn}">${label}</button>`;
@@ -41,8 +55,71 @@ function tileIcon(page) {
   return `<svg class="tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${TILE_ICONS[page]}</svg>`;
 }
 
-function home(){const tiles=[['Карточки ЗНО',`${DATA.length} нозологий: гистология, диагностика, лечение`,'catalog'],['TNM-справочник','Краткие критерии и версии классификаций','tnm'],['Калькуляторы','BSA, Calvert, CKD-EPI 2021, RECIST','calculators'],['Онкомаркеры','Показания и ограничения','markers'],['Шкалы','ECOG, Khorana, Child–Pugh, IMDC','scales'],['Источники','Рекомендации, журналы и базы исследований','sources']];return `<div class="intro"><h1>ОнкоАтлас</h1><p class="muted">Краткий клинический справочник по онкологии. Свободный доступ, без регистрации.</p></div><input class="search" aria-label="Поиск по справочнику" placeholder="Найти опухоль, код МКБ‑10, биомаркер или препарат…" oninput="searchHome(this.value)"><div id="quickSearch" aria-live="polite"></div><div class="tiles">${tiles.map(([n,d,p])=>`<button class="tile" onclick="view('${p}')">${tileIcon(p)}<h3>${n}</h3><p>${d}</p></button>`).join('')}</div><div class="notice">Медицинский контент — справочная редакция, <b>не прошедшая независимую клиническую экспертизу</b>. Для назначения терапии используйте актуальные руководства и инструкции. Данные пациентов на сайт не вводите.</div>`}
-function searchHome(q){const matches = findCards(q).slice(0, 8);$('#quickSearch').innerHTML=q.trim()?`<div class="panel">${matches.length?matches.map(c=>`<button class="item" onclick="view('card','${c.id}')"><span><strong>${esc(c.title)}</strong><small>${esc(c.group)}</small></span>→</button>`).join(''):'Совпадений нет'}</div>`:''}
+function home(){const tiles=[['Карточки ЗНО',`${DATA.length} нозологий: гистология, диагностика, лечение`,'catalog'],['TNM-справочник','Краткие критерии и версии классификаций','tnm'],['Калькуляторы','BSA, Calvert, CKD-EPI 2021, RECIST','calculators'],['Онкомаркеры','Показания и ограничения','markers'],['Шкалы','ECOG, Khorana, Child–Pugh, IMDC','scales'],['Источники','Рекомендации, журналы и базы исследований','sources']];return `<div class="intro"><h1>ОнкоАтлас</h1><p class="muted">Краткий клинический справочник по онкологии. Свободный доступ, без регистрации.</p></div><input class="search" aria-label="Поиск по справочнику" placeholder="Опухоль, МКБ‑10, схема, препарат или биомаркер…" oninput="searchHome(this.value)"><div id="quickSearch" aria-live="polite"></div><div class="tiles">${tiles.map(([n,d,p])=>`<button class="tile" onclick="view('${p}')">${tileIcon(p)}<h3>${n}</h3><p>${d}</p></button>`).join('')}</div><div class="notice">Медицинский контент — справочная редакция, <b>не прошедшая независимую клиническую экспертизу</b>. Для назначения терапии используйте актуальные руководства и инструкции. Данные пациентов на сайт не вводите.</div>`}
+const SEARCH_LIBRARY = [
+  ['Фундаментальный канцерогенез · повреждение ДНК', './carcinogenesis.html#damage', 'мутационные подписи УФ табак канцерогены репарация'],
+  ['Фундаментальный канцерогенез · драйверы и MMR/MSI', './carcinogenesis.html#drivers', 'MSI dMMR микросателлитная нестабильность KRAS APC TP53 MLH1 драйвер'],
+  ['Фундаментальный канцерогенез · клональная эволюция', './carcinogenesis.html#evolution', 'субклон гетерогенность TRACERx hallmarks'],
+  ['Фундаментальный канцерогенез · инвазия и диссеминация', './carcinogenesis.html#invasion', 'интравазация экстравазация EMT'],
+  ['Фундаментальный канцерогенез · метастатическая колонизация', './carcinogenesis.html#metastasis', 'метастазы органотропность покой ниша'],
+  ['Библиотека знаний · схемы и классификации', './learning-library.html', 'сигнальные пути MAPK WNT PI3K RECIST гистотипы препараты'],
+];
+
+function regimenKey(protocol) {
+  let hash = 2166136261;
+  for (const character of protocol.regimen) {
+    hash = Math.imul(hash ^ character.codePointAt(0), 16777619);
+  }
+  return (hash >>> 0).toString(36);
+}
+
+function globalSearch(query) {
+  const normalize = value => normalizeSearch(value.replace(/(^|\s)с(?=\d)/gi, '$1c'))
+    .replace(/прям(?:ая|ой|ую) кишк(?:а|и|у)/g, 'прямая кишка')
+    .replace(/рака (почки|легкого|желудка)/g, 'рак $1');
+  const terms = normalize(query).split(' ').filter(Boolean);
+  if (!terms.length) return '';
+  const matches = value => {
+    const haystack = normalize(value);
+    return terms.every(term => haystack.includes(term));
+  };
+  const sections = [
+    ['Стадирование', stagingData.entries.filter(entry => DATA.some(card => entry.cards.includes(card.id) &&
+      matches([card.title, ...card.icd10, entry.title, entry.edition].join(' '))))
+      .map(entry => [entry.title, '#tnm/' + entry.id, entry.edition])],
+    ['Схемы лечения', DATA.flatMap(card => {
+      const contextual = Boolean(NON_TNM_CARD_INFO[card.id]);
+      return (contextual ? ['I'] : CARD_STAGES[card.id] ?? STAGES).flatMap(stage =>
+        regimensFor(card.id, stage).filter(protocol => {
+          const regimenText = [protocol.regimen, ...protocol.drugs].join(' ');
+          return terms.some(term => normalize(regimenText).includes(term)) &&
+            matches([regimenText, card.title, ...card.icd10, 'стадия', stage].join(' '));
+        })
+          .map(protocol => [protocol.regimen, '#card/' + card.id + '/' + stage + '/' + regimenKey(protocol),
+            card.title + ' · ' + (contextual ? 'Клиническая ситуация' : 'Стадия ' + stage)]));
+    })],
+    ['Онкомаркеры', MARKERS.filter(marker => matches([marker.name, marker.aliases, marker.context].join(' ')))
+      .map((marker) => [marker.name, '#markers/' + MARKERS.indexOf(marker), marker.context])],
+    ['Библиотека знаний', SEARCH_LIBRARY.filter(([title, , keywords]) => matches(title + ' ' + keywords))
+      .map(([title, href]) => [title, href, 'Учебный материал'])],
+    ['Карточки ЗНО', findCards(query.replace(/(^|\s)с(?=\d)/gi, '$1c'))
+      .map(card => {
+        const molecular = matches(card.molecular);
+        return [card.title, '#card/' + card.id + (molecular ? '/molecular' : ''),
+          molecular ? 'Молекулярные паттерны · ' + card.group : card.group];
+      })],
+  ];
+  const link = ([title, href, context]) =>
+    `<a class="item staging-result" href="${esc(href)}"><span><strong>${esc(title)}</strong><small>${esc(context)}</small></span><span aria-hidden="true">→</span></a>`;
+  const groups = sections.filter(([, rows]) => rows.length).map(([label, rows]) =>
+    `<section><h3>${esc(label)} · ${rows.length}</h3>${rows.slice(0, 4).map(link).join('')}
+      ${rows.length > 4 ? `<details><summary>Ещё ${rows.length - 4}</summary>${rows.slice(4).map(link).join('')}</details>` : ''}</section>`);
+  return '<div class="panel global-results">' + (groups.join('') || 'Ничего не найдено.') + '</div>';
+}
+
+function searchHome(query) {
+  $('#quickSearch').innerHTML = globalSearch(query);
+}
 function catalog(){return shell('Карточки ЗНО',`<div class="catalog-tools"><input class="search" id="find" aria-label="Поиск по каталогу" placeholder="Поиск по опухоли, гистотипу, биомаркеру или препарату…" oninput="listCards()"><select id="group" aria-label="Группа опухолей" onchange="listCards()">${groups.map(g=>`<option>${esc(g)}</option>`).join('')}</select></div><p class="muted" id="count" aria-live="polite"></p><div id="cardList"></div>`)}
 function listCards(){const q = $('#find').value, g = $('#group').value; const filtered = findCards(q, g);$('#count').textContent=`Найдено: ${filtered.length} из ${DATA.length}`;$('#cardList').innerHTML=filtered.map(c=>`<button class="item" onclick="view('card','${c.id}')"><span><strong>${esc(c.title)}</strong><small>${esc(c.group)} · № ${String(c.number).padStart(3,'0')}</small></span>→</button>`).join('')||'<div class="panel muted">Совпадений нет</div>'}
 const favkey = 'oncoatlas_favorites_v2';
@@ -117,7 +194,7 @@ function renderNonTnmTreatment(c) {
     `<div class="notice" style="margin:10px 0"><p><b>${esc(title)}.</b> ${esc(detail)}</p></div>`).join('');
   return `<div class="panel"><h2>5. Лечение по клинической ситуации</h2><p><b>${esc(info.heading)}</b></p><p>${esc(info.explanation)}</p><p class="fine">${treatmentSource(info.url, 'Источник по классификации и тактике')}</p>${contexts}<h3>Лекарственные режимы</h3><p class="fine">Режим приведён для конкретных показаний; не является универсальным назначением.</p>${regimens.map(renderRegimen).join('')}</div>`;
 }
-function card(){const c=DATA.find(x=>x.id===state.card);if(!c)return shell('Карточка не найдена','<p>Выберите нозологию в каталоге.</p>','catalog');const f=favs().includes(c.id);return shell(esc(c.title),`<div class="eyebrow">Карточка №${String(c.number).padStart(3,'0')} · ${esc(c.group)}</div><div class="actions">${btn(f?'★ В избранном':'☆ В избранное',`toggleFav('${c.id}')`)}${btn('Сохранить PDF','window.print()','secondary')}${stagingCardLink(c.id)}</div><div class="panel"><h2>1. Гистотип и локализация</h2><p><b>МКБ‑10:</b> ${esc((c.icd10 ?? []).join(', '))}</p>${c.icd10Note ? `<p class="fine">${esc(c.icd10Note)}</p>` : ''}<p><b>Происхождение:</b> ${esc(c.origin)}</p><p><b>Локализация:</b> ${esc(c.location)}</p></div><div class="panel"><h2>2. Молекулярные паттерны</h2><p>${esc(c.molecular).split('; ').join(' · ')}</p></div><div class="panel"><h2>3. Диагностика</h2><p>${esc(c.diagnostics)}</p></div><div class="panel"><h2>4. Онкомаркеры${c.markers.includes('продукция:')? ' и гормональная продукция':''}</h2><p>${esc(c.markers)}</p></div>${c.id === 'c038' ? `<div class="panel"><h2>Стадирование · AJCC 9</h2><p>Версия 9 действует с 1 января 2025 года. При использовании AJCC 8 указывайте версию рядом со стадией. IVA по AJCC 8 означала T4 или N3 при M0. В AJCC 9 при M0 эти категории входят в стадию III, а IVA и IVB относятся только к M1.</p><p>${treatmentSource('https://www.cancer.org/cancer/types/nasopharyngeal-cancer/detection-diagnosis-staging/staging.html', 'Группы стадий AJCC 9 · ACS')} · ${treatmentSource('https://www.facs.org/quality-programs/cancer-programs/education/ajcc-protocol-webinar-on-version-9-staging-system-for-nasopharynx-cancer/', 'Версия и дата вступления в силу · ACS/AJCC')}</p></div>` : ''}${c.id === 'c005' ? `<p class="fine"><a href="#card/c044">Отдельная карточка аденокарциномы прямой кишки</a></p>` : ''}${NON_TNM_CARD_INFO[c.id] ? renderNonTnmTreatment(c) : `<div class="panel"><h2>5. Лечение по стадиям${['c026', 'c027', 'c028'].includes(c.id) ? ' · Lugano' : ''}</h2><div class="tabs">${(CARD_STAGES[c.id] ?? STAGES).map(s=>`<button class="tab ${state.stage===s?'selected':''}" data-stage="${s}" aria-pressed="${state.stage===s}" onclick="setStage('${s}')">${s}</button>`).join('')}</div><p id="stageContent" aria-live="polite"><b>${state.stage}:</b> ${esc(c[state.stage])}</p>${(STAGE_MNEMONICS[c.id] ?? REMAINING_MNEMONICS[c.id])?.[state.stage]?`<p class="fine"><b>Кратко для запоминания:</b> ${esc((STAGE_MNEMONICS[c.id] ?? REMAINING_MNEMONICS[c.id])[state.stage])}</p>`:""}${stageExtras(c)}<p class="fine">Стадии приведены укрупнённо. Реальная тактика определяется гистотипом, подстадией, биомаркерами, резектабельностью, функциональным статусом и линией терапии.</p></div>`}<div class="notice"><b>Статус:</b> редакционный черновик. Независимая медицинская проверка не проведена.</div><div class="sources">Источники для проверки: ${sources.map(([n,u])=>`<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join(' · ')}</div>`,'catalog')}
+function card(){const c=DATA.find(x=>x.id===state.card);if(!c)return shell('Карточка не найдена','<p>Выберите нозологию в каталоге.</p>','catalog');const f=favs().includes(c.id);return shell(esc(c.title),`<div class="eyebrow">Карточка №${String(c.number).padStart(3,'0')} · ${esc(c.group)}</div><div class="actions">${btn(f?'★ В избранном':'☆ В избранное',`toggleFav('${c.id}')`)}${btn('Сохранить PDF','window.print()','secondary')}${stagingCardLink(c.id)}</div><div class="panel"><h2>1. Гистотип и локализация</h2><p><b>МКБ‑10:</b> ${esc((c.icd10 ?? []).join(', '))}</p>${c.icd10Note ? `<p class="fine">${esc(c.icd10Note)}</p>` : ''}<p><b>Происхождение:</b> ${esc(c.origin)}</p><p><b>Локализация:</b> ${esc(c.location)}</p></div><div class="panel"><h2 id="molecular" tabindex="-1">2. Молекулярные паттерны</h2><p>${esc(c.molecular).split('; ').join(' · ')}</p></div><div class="panel"><h2>3. Диагностика</h2><p>${esc(c.diagnostics)}</p></div><div class="panel"><h2>4. Онкомаркеры${c.markers.includes('продукция:')? ' и гормональная продукция':''}</h2><p>${esc(c.markers)}</p></div>${c.id === 'c038' ? `<div class="panel"><h2>Стадирование · AJCC 9</h2><p>Версия 9 действует с 1 января 2025 года. При использовании AJCC 8 указывайте версию рядом со стадией. IVA по AJCC 8 означала T4 или N3 при M0. В AJCC 9 при M0 эти категории входят в стадию III, а IVA и IVB относятся только к M1.</p><p>${treatmentSource('https://www.cancer.org/cancer/types/nasopharyngeal-cancer/detection-diagnosis-staging/staging.html', 'Группы стадий AJCC 9 · ACS')} · ${treatmentSource('https://www.facs.org/quality-programs/cancer-programs/education/ajcc-protocol-webinar-on-version-9-staging-system-for-nasopharynx-cancer/', 'Версия и дата вступления в силу · ACS/AJCC')}</p></div>` : ''}${c.id === 'c005' ? `<p class="fine"><a href="#card/c044">Отдельная карточка аденокарциномы прямой кишки</a></p>` : ''}${NON_TNM_CARD_INFO[c.id] ? renderNonTnmTreatment(c) : `<div class="panel"><h2>5. Лечение по стадиям${['c026', 'c027', 'c028'].includes(c.id) ? ' · Lugano' : ''}</h2><div class="tabs">${(CARD_STAGES[c.id] ?? STAGES).map(s=>`<button class="tab ${state.stage===s?'selected':''}" data-stage="${s}" aria-pressed="${state.stage===s}" onclick="setStage('${s}')">${s}</button>`).join('')}</div><p id="stageContent" aria-live="polite"><b>${state.stage}:</b> ${esc(c[state.stage])}</p>${(STAGE_MNEMONICS[c.id] ?? REMAINING_MNEMONICS[c.id])?.[state.stage]?`<p class="fine"><b>Кратко для запоминания:</b> ${esc((STAGE_MNEMONICS[c.id] ?? REMAINING_MNEMONICS[c.id])[state.stage])}</p>`:""}${stageExtras(c)}<p class="fine">Стадии приведены укрупнённо. Реальная тактика определяется гистотипом, подстадией, биомаркерами, резектабельностью, функциональным статусом и линией терапии.</p></div>`}<div class="notice"><b>Статус:</b> редакционный черновик. Независимая медицинская проверка не проведена.</div><div class="sources">Источники для проверки: ${sources.map(([n,u])=>`<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join(' · ')}</div>`,'catalog')}
 
 // Редакционные примеры режимов. Не использовать как индивидуальные назначения.
 const STAGES = ['I', 'II', 'III', 'IV'];
@@ -1739,7 +1816,7 @@ function treatmentSource(url, label) {
 }
 
 function renderRegimen(protocol) {
-  return `<article class="notice treatment-regimen" style="margin:10px 0">
+  return `<article class="notice treatment-regimen" id="regimen-${regimenKey(protocol)}" tabindex="-1" style="margin:10px 0">
     <p><strong>${esc(protocol.regimen)}</strong></p>
     <p><b>Препараты и дозы</b></p>
     <ul>${protocol.drugs.map(drug => `<li>${esc(drug)}</li>`).join('')}</ul>
@@ -1747,6 +1824,7 @@ function renderRegimen(protocol) {
     <p><b>Условия применения.</b> ${esc(protocol.notes)}</p>
     ${protocol.contraindications ? `<p><b>Абсолютные противопоказания по указанной инструкции.</b> ${esc(protocol.contraindications)}</p>` : ''}
     ${protocol.safety ? `<p><b>Сопроводительная терапия и мониторинг.</b> ${esc(protocol.safety)}</p>` : ''}
+    ${protocol.reviewScope ? `<p class="fine">${esc(protocol.reviewScope)} ${protocol.reviewSources.map(([label, url]) => treatmentSource(url, label)).join(' · ')}</p>` : ''}
     <p class="fine">${treatmentSource(protocol.url, protocol.sourceVersion || 'Источник схемы')}${protocol.reference ? ` · ${treatmentSource(protocol.reference[1], protocol.reference[0])}` : ''}${protocol.checkedOn ? ` · Сверено ${esc(protocol.checkedOn.split('-').reverse().join('.'))}` : ''}</p>
   </article>`;
 }
@@ -2030,6 +2108,7 @@ function tnmPage() {
       ['N · Регионарные лимфоузлы', entry.n], ['M · Отдалённые метастазы', entry.m]];
     return `${back}<h1>${esc(entry.title)}</h1>
       <p class="muted">${esc(entry.edition)}</p>
+      ${entry.verification ? `<p class="fine"><b>Редакционная сверка ${esc(entry.verification.date.split('-').reverse().join('.'))}.</b> ${esc(entry.verification.scope)}</p>` : ''}
       <p><a href="${esc(entry.url)}" target="_blank" rel="noopener">Источник критериев и подробные определения ↗</a></p>
       ${(entry.references ?? []).map(([label, url]) => `<p><a href="${esc(url)}" target="_blank" rel="noopener">${esc(label)} ↗</a></p>`).join('')}
       ${blocks.map(([title, value], i) => `<details class="marker-entry"${i === 0 ? ' open' : ''}>
@@ -2083,12 +2162,12 @@ const MARKERS = window.ONCO_MARKERS ?? [];
 function markers() {
   return shell('Онкомаркеры', `<p class="muted">Лабораторные онкомаркеры и показатели мониторинга. Референсные значения зависят от метода и лаборатории.</p>
     <input class="search" type="search" aria-label="Поиск онкомаркера" placeholder="Найти маркер или опухоль…" oninput="filterMarkers(this.value)">
-    <div id="markerList">${markerRows(MARKERS)}</div>`);
+    <div id="markerList">${markerRows(MARKERS[state.marker] ? [MARKERS[state.marker], ...MARKERS.filter(marker => marker !== MARKERS[state.marker])] : MARKERS)}</div>`);
 }
 
 function markerRows(entries) {
   if (!entries.length) return '<p class="panel muted" role="status">Маркеры не найдены.</p>';
-  return entries.map(marker => `<details class="marker-entry">
+  return entries.map(marker => `<details class="marker-entry"${MARKERS[state.marker] === marker ? ' open' : ''}>
     <summary>${esc(marker.name)}</summary>
     <div class="marker-detail">
       <p><b>Где применяют.</b> ${esc(marker.context)}.</p>

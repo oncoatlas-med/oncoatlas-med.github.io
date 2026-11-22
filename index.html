@@ -32,6 +32,10 @@ button:focus-visible,a:focus-visible{outline:2px solid #555;outline-offset:3px}
 .staging-result{text-decoration:none}
 .staging-back{display:inline-block;text-decoration:none}
 .staging-related{margin-top:20px}
+
+.global-results section+section{margin-top:18px}
+.global-results h3{margin:0 0 8px}
+.treatment-regimen[id],#molecular{scroll-margin-top:100px}
 </style></head><body><header><div class="top"><img class="logo" src="./atlas-icon.svg" width="44" height="44" alt=""><div><div class="brand">ОнкоАтлас</div><div class="sub">Клинический справочник для врачей</div></div><div class="spacer"></div><span class="badge">Бета 0.2</span><button class="chip" onclick="view('admin')">Икбал Р.В.</button></div></header><section class="entry-disclaimer" id="entryDisclaimer" aria-label="Важная информация о медицинском справочнике"><div class="entry-disclaimer-inner"><div><strong>Важная информация о достоверности материалов</strong><p>«ОнкоАтлас» — образовательный и справочный проект, находящийся на стадии разработки. Представленные сведения могут быть неполными, устаревшими или содержать ошибки и не прошли полную независимую медицинскую экспертизу. Они не являются индивидуальными медицинскими рекомендациями и не могут использоваться как единственное основание для диагностики или назначения лечения. Перед клиническим применением необходимо самостоятельно проверить данные по действующим клиническим рекомендациям, официальным инструкциям к препаратам и другим первоисточникам. Икбал Р. В., автор проекта, не гарантирует полноту и безошибочность материалов; использование информации осуществляется под ответственность применяющего её специалиста в пределах, допускаемых законодательством.</p></div><button type="button" class="entry-disclaimer-close" onclick="this.closest('.entry-disclaimer').remove()" aria-label="Закрыть предупреждение">Понятно</button></div></section><div class="learning-link" style="max-width:1100px;margin:14px auto 0;padding:0 22px"><a href="./learning-library.html" style="display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:1px solid #d9d9d9;border-radius:15px;padding:14px 18px;text-decoration:none;color:#222"><span><strong>▤ Библиотека знаний</strong><br><small style="color:#777">Гистотипы, препараты, механизмы действия и классификации</small></span><span aria-hidden="true">→</span></a></div><main class="shell" id="app"></main><noscript><p class="shell">Для просмотра справочника включите JavaScript.</p></noscript><footer class="footer">ОнкоАтлас · Учебный справочник · Не заменяет клинические рекомендации · <a href="#about">О проекте</a></footer><nav class="mobile-nav"><button data-nav="home" onclick="view('home')"><span class="ni">⌂</span>Главная</button><button data-nav="catalog" onclick="view('catalog')"><span class="ni">▤</span>Карточки</button><button data-nav="tnm" onclick="view('tnm')"><span class="ni">⑂</span>TNM</button><button data-nav="calculators" onclick="view('calculators')"><span class="ni">▦</span>Расчёты</button></nav><script>window.ONCO_CARDS=[
   {
     "title": "Аденокарцинома лёгкого",
@@ -2243,14 +2247,27 @@ window.ONCO_REGIMENS={
       {
         "regimen": "Пембролизумаб периоперационно — KEYNOTE‑689",
         "drugs": [
-          "Пембролизумаб — 200 мг в/в каждые 3 недели: 2 введения до операции, затем 3 введения вместе с послеоперационной ЛТ с цисплатином по риску или без него, затем 12 введений в монотерапии."
+          "Пембролизумаб — 200 мг в/в каждые 3 недели: 2 введения до операции, затем 3 введения вместе с послеоперационной ЛТ с цисплатином по риску или без него, затем 12 введений в монотерапии.",
+          "Если в послеоперационной ХЛТ показан цисплатин, в KEYNOTE‑689 применяли 100 мг/м² в/в каждые 3 недели, до 3 введений."
         ],
         "cycle": "Схема исследования: 2 цикла до операции и 15 после.",
         "notes": "Для резектабельного местно-распространённого HNSCC с PD-L1 CPS ≥1 по FDA. В исследовании стадии III–IVA по AJCC 8. Не переносить эти номера автоматически на HPV-ассоциированную ротоглотку по AJCC 9. Проверить местную регистрацию.",
         "url": "https://www.fda.gov/drugs/cancer-approvals/fda-approves-neoadjuvant-and-adjuvant-pembrolizumab-resectable-locally-advanced-head-and-neck",
         "sourceVersion": "FDA · KEYNOTE‑689",
-        "checkedOn": "2026-11-21",
-        "safety": "Контроль иммуноопосредованной токсичности и согласование сроков операции, ЛТ и системной терапии."
+        "checkedOn": "2026-11-22",
+        "safety": "Пембролизумаб: контроль симптомов иммуноопосредованных реакций, печёночных показателей, креатинина и функции щитовидной железы. Цисплатин: гидратация и антиэметическая профилактика, контроль ОАК, функции почек, Mg/K, слуха и нейропатии.",
+        "reviewScope": "Последовательность и дозы сверены по исследованию KEYNOTE‑689 и инструкции FDA к внутривенному пембролизумабу.",
+        "reviewSources": [
+          [
+            "Пембролизумаб в/в · FDA",
+            "https://www.accessdata.fda.gov/drugsatfda_docs/label/2026/125514s190lbl.pdf"
+          ],
+          [
+            "Цисплатин · FDA",
+            "https://www.accessdata.fda.gov/drugsatfda_docs/label/2022/018057s092lbl.pdf"
+          ]
+        ],
+        "contraindications": "По инструкции FDA для пембролизумаба формальные противопоказания не указаны. Для цисплатина — тяжёлая гиперчувствительность к цисплатину."
       }
     ],
     "IV": [
@@ -2281,14 +2298,27 @@ window.ONCO_REGIMENS={
       {
         "regimen": "Пембролизумаб периоперационно — KEYNOTE‑689",
         "drugs": [
-          "Пембролизумаб — 200 мг в/в каждые 3 недели: 2 введения до операции, затем 3 введения вместе с послеоперационной ЛТ с цисплатином по риску или без него, затем 12 введений в монотерапии."
+          "Пембролизумаб — 200 мг в/в каждые 3 недели: 2 введения до операции, затем 3 введения вместе с послеоперационной ЛТ с цисплатином по риску или без него, затем 12 введений в монотерапии.",
+          "Если в послеоперационной ХЛТ показан цисплатин, в KEYNOTE‑689 применяли 100 мг/м² в/в каждые 3 недели, до 3 введений."
         ],
         "cycle": "Схема исследования: 2 цикла до операции и 15 после.",
         "notes": "Для резектабельного местно-распространённого HNSCC с PD-L1 CPS ≥1 по FDA. В исследовании стадии III–IVA по AJCC 8. Не переносить эти номера автоматически на HPV-ассоциированную ротоглотку по AJCC 9. Проверить местную регистрацию.",
         "url": "https://www.fda.gov/drugs/cancer-approvals/fda-approves-neoadjuvant-and-adjuvant-pembrolizumab-resectable-locally-advanced-head-and-neck",
         "sourceVersion": "FDA · KEYNOTE‑689",
-        "checkedOn": "2026-11-21",
-        "safety": "Контроль иммуноопосредованной токсичности и согласование сроков операции, ЛТ и системной терапии."
+        "checkedOn": "2026-11-22",
+        "safety": "Пембролизумаб: контроль симптомов иммуноопосредованных реакций, печёночных показателей, креатинина и функции щитовидной железы. Цисплатин: гидратация и антиэметическая профилактика, контроль ОАК, функции почек, Mg/K, слуха и нейропатии.",
+        "reviewScope": "Последовательность и дозы сверены по исследованию KEYNOTE‑689 и инструкции FDA к внутривенному пембролизумабу.",
+        "reviewSources": [
+          [
+            "Пембролизумаб в/в · FDA",
+            "https://www.accessdata.fda.gov/drugsatfda_docs/label/2026/125514s190lbl.pdf"
+          ],
+          [
+            "Цисплатин · FDA",
+            "https://www.accessdata.fda.gov/drugsatfda_docs/label/2022/018057s092lbl.pdf"
+          ]
+        ],
+        "contraindications": "По инструкции FDA для пембролизумаба формальные противопоказания не указаны. Для цисплатина — тяжёлая гиперчувствительность к цисплатину."
       }
     ]
   },
@@ -2321,14 +2351,27 @@ window.ONCO_REGIMENS={
       {
         "regimen": "Пембролизумаб периоперационно — KEYNOTE‑689",
         "drugs": [
-          "Пембролизумаб — 200 мг в/в каждые 3 недели: 2 введения до операции, затем 3 введения вместе с послеоперационной ЛТ с цисплатином по риску или без него, затем 12 введений в монотерапии."
+          "Пембролизумаб — 200 мг в/в каждые 3 недели: 2 введения до операции, затем 3 введения вместе с послеоперационной ЛТ с цисплатином по риску или без него, затем 12 введений в монотерапии.",
+          "Если в послеоперационной ХЛТ показан цисплатин, в KEYNOTE‑689 применяли 100 мг/м² в/в каждые 3 недели, до 3 введений."
         ],
         "cycle": "Схема исследования: 2 цикла до операции и 15 после.",
         "notes": "Для резектабельного местно-распространённого HNSCC с PD-L1 CPS ≥1 по FDA. В исследовании стадии III–IVA по AJCC 8. Не переносить эти номера автоматически на HPV-ассоциированную ротоглотку по AJCC 9. Проверить местную регистрацию.",
         "url": "https://www.fda.gov/drugs/cancer-approvals/fda-approves-neoadjuvant-and-adjuvant-pembrolizumab-resectable-locally-advanced-head-and-neck",
         "sourceVersion": "FDA · KEYNOTE‑689",
-        "checkedOn": "2026-11-21",
-        "safety": "Контроль иммуноопосредованной токсичности и согласование сроков операции, ЛТ и системной терапии."
+        "checkedOn": "2026-11-22",
+        "safety": "Пембролизумаб: контроль симптомов иммуноопосредованных реакций, печёночных показателей, креатинина и функции щитовидной железы. Цисплатин: гидратация и антиэметическая профилактика, контроль ОАК, функции почек, Mg/K, слуха и нейропатии.",
+        "reviewScope": "Последовательность и дозы сверены по исследованию KEYNOTE‑689 и инструкции FDA к внутривенному пембролизумабу.",
+        "reviewSources": [
+          [
+            "Пембролизумаб в/в · FDA",
+            "https://www.accessdata.fda.gov/drugsatfda_docs/label/2026/125514s190lbl.pdf"
+          ],
+          [
+            "Цисплатин · FDA",
+            "https://www.accessdata.fda.gov/drugsatfda_docs/label/2022/018057s092lbl.pdf"
+          ]
+        ],
+        "contraindications": "По инструкции FDA для пембролизумаба формальные противопоказания не указаны. Для цисплатина — тяжёлая гиперчувствительность к цисплатину."
       }
     ],
     "IV": [
@@ -2359,14 +2402,27 @@ window.ONCO_REGIMENS={
       {
         "regimen": "Пембролизумаб периоперационно — KEYNOTE‑689",
         "drugs": [
-          "Пембролизумаб — 200 мг в/в каждые 3 недели: 2 введения до операции, затем 3 введения вместе с послеоперационной ЛТ с цисплатином по риску или без него, затем 12 введений в монотерапии."
+          "Пембролизумаб — 200 мг в/в каждые 3 недели: 2 введения до операции, затем 3 введения вместе с послеоперационной ЛТ с цисплатином по риску или без него, затем 12 введений в монотерапии.",
+          "Если в послеоперационной ХЛТ показан цисплатин, в KEYNOTE‑689 применяли 100 мг/м² в/в каждые 3 недели, до 3 введений."
         ],
         "cycle": "Схема исследования: 2 цикла до операции и 15 после.",
         "notes": "Для резектабельного местно-распространённого HNSCC с PD-L1 CPS ≥1 по FDA. В исследовании стадии III–IVA по AJCC 8. Не переносить эти номера автоматически на HPV-ассоциированную ротоглотку по AJCC 9. Проверить местную регистрацию.",
         "url": "https://www.fda.gov/drugs/cancer-approvals/fda-approves-neoadjuvant-and-adjuvant-pembrolizumab-resectable-locally-advanced-head-and-neck",
         "sourceVersion": "FDA · KEYNOTE‑689",
-        "checkedOn": "2026-11-21",
-        "safety": "Контроль иммуноопосредованной токсичности и согласование сроков операции, ЛТ и системной терапии."
+        "checkedOn": "2026-11-22",
+        "safety": "Пембролизумаб: контроль симптомов иммуноопосредованных реакций, печёночных показателей, креатинина и функции щитовидной железы. Цисплатин: гидратация и антиэметическая профилактика, контроль ОАК, функции почек, Mg/K, слуха и нейропатии.",
+        "reviewScope": "Последовательность и дозы сверены по исследованию KEYNOTE‑689 и инструкции FDA к внутривенному пембролизумабу.",
+        "reviewSources": [
+          [
+            "Пембролизумаб в/в · FDA",
+            "https://www.accessdata.fda.gov/drugsatfda_docs/label/2026/125514s190lbl.pdf"
+          ],
+          [
+            "Цисплатин · FDA",
+            "https://www.accessdata.fda.gov/drugsatfda_docs/label/2022/018057s092lbl.pdf"
+          ]
+        ],
+        "contraindications": "По инструкции FDA для пембролизумаба формальные противопоказания не указаны. Для цисплатина — тяжёлая гиперчувствительность к цисплатину."
       }
     ],
     "II": [
@@ -2425,14 +2481,27 @@ window.ONCO_REGIMENS={
       {
         "regimen": "Пембролизумаб периоперационно — KEYNOTE‑689",
         "drugs": [
-          "Пембролизумаб — 200 мг в/в каждые 3 недели: 2 введения до операции, затем 3 введения вместе с послеоперационной ЛТ с цисплатином по риску или без него, затем 12 введений в монотерапии."
+          "Пембролизумаб — 200 мг в/в каждые 3 недели: 2 введения до операции, затем 3 введения вместе с послеоперационной ЛТ с цисплатином по риску или без него, затем 12 введений в монотерапии.",
+          "Если в послеоперационной ХЛТ показан цисплатин, в KEYNOTE‑689 применяли 100 мг/м² в/в каждые 3 недели, до 3 введений."
         ],
         "cycle": "Схема исследования: 2 цикла до операции и 15 после.",
         "notes": "Для резектабельного местно-распространённого HNSCC с PD-L1 CPS ≥1 по FDA. В исследовании стадии III–IVA по AJCC 8. Не переносить эти номера автоматически на HPV-ассоциированную ротоглотку по AJCC 9. Проверить местную регистрацию.",
         "url": "https://www.fda.gov/drugs/cancer-approvals/fda-approves-neoadjuvant-and-adjuvant-pembrolizumab-resectable-locally-advanced-head-and-neck",
         "sourceVersion": "FDA · KEYNOTE‑689",
-        "checkedOn": "2026-11-21",
-        "safety": "Контроль иммуноопосредованной токсичности и согласование сроков операции, ЛТ и системной терапии."
+        "checkedOn": "2026-11-22",
+        "safety": "Пембролизумаб: контроль симптомов иммуноопосредованных реакций, печёночных показателей, креатинина и функции щитовидной железы. Цисплатин: гидратация и антиэметическая профилактика, контроль ОАК, функции почек, Mg/K, слуха и нейропатии.",
+        "reviewScope": "Последовательность и дозы сверены по исследованию KEYNOTE‑689 и инструкции FDA к внутривенному пембролизумабу.",
+        "reviewSources": [
+          [
+            "Пембролизумаб в/в · FDA",
+            "https://www.accessdata.fda.gov/drugsatfda_docs/label/2026/125514s190lbl.pdf"
+          ],
+          [
+            "Цисплатин · FDA",
+            "https://www.accessdata.fda.gov/drugsatfda_docs/label/2022/018057s092lbl.pdf"
+          ]
+        ],
+        "contraindications": "По инструкции FDA для пембролизумаба формальные противопоказания не указаны. Для цисплатина — тяжёлая гиперчувствительность к цисплатину."
       }
     ],
     "IV": [
@@ -2463,14 +2532,27 @@ window.ONCO_REGIMENS={
       {
         "regimen": "Пембролизумаб периоперационно — KEYNOTE‑689",
         "drugs": [
-          "Пембролизумаб — 200 мг в/в каждые 3 недели: 2 введения до операции, затем 3 введения вместе с послеоперационной ЛТ с цисплатином по риску или без него, затем 12 введений в монотерапии."
+          "Пембролизумаб — 200 мг в/в каждые 3 недели: 2 введения до операции, затем 3 введения вместе с послеоперационной ЛТ с цисплатином по риску или без него, затем 12 введений в монотерапии.",
+          "Если в послеоперационной ХЛТ показан цисплатин, в KEYNOTE‑689 применяли 100 мг/м² в/в каждые 3 недели, до 3 введений."
         ],
         "cycle": "Схема исследования: 2 цикла до операции и 15 после.",
         "notes": "Для резектабельного местно-распространённого HNSCC с PD-L1 CPS ≥1 по FDA. В исследовании стадии III–IVA по AJCC 8. Не переносить эти номера автоматически на HPV-ассоциированную ротоглотку по AJCC 9. Проверить местную регистрацию.",
         "url": "https://www.fda.gov/drugs/cancer-approvals/fda-approves-neoadjuvant-and-adjuvant-pembrolizumab-resectable-locally-advanced-head-and-neck",
         "sourceVersion": "FDA · KEYNOTE‑689",
-        "checkedOn": "2026-11-21",
-        "safety": "Контроль иммуноопосредованной токсичности и согласование сроков операции, ЛТ и системной терапии."
+        "checkedOn": "2026-11-22",
+        "safety": "Пембролизумаб: контроль симптомов иммуноопосредованных реакций, печёночных показателей, креатинина и функции щитовидной железы. Цисплатин: гидратация и антиэметическая профилактика, контроль ОАК, функции почек, Mg/K, слуха и нейропатии.",
+        "reviewScope": "Последовательность и дозы сверены по исследованию KEYNOTE‑689 и инструкции FDA к внутривенному пембролизумабу.",
+        "reviewSources": [
+          [
+            "Пембролизумаб в/в · FDA",
+            "https://www.accessdata.fda.gov/drugsatfda_docs/label/2026/125514s190lbl.pdf"
+          ],
+          [
+            "Цисплатин · FDA",
+            "https://www.accessdata.fda.gov/drugsatfda_docs/label/2022/018057s092lbl.pdf"
+          ]
+        ],
+        "contraindications": "По инструкции FDA для пембролизумаба формальные противопоказания не указаны. Для цисплатина — тяжёлая гиперчувствительность к цисплатину."
       }
     ]
   },
@@ -2529,9 +2611,25 @@ window.ONCO_REGIMENS={
         "cycle": "Каждые 21 день, 4 цикла; начало в пределах 90 дней после нефроуретерэктомии.",
         "notes": "После радикальной операции при pT2–T4 и/или pN+ M0, если показана адъювантная терапия и ранее не проведена неоадъювантная платина.",
         "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7181180/",
-        "sourceVersion": "POUT · Lancet",
-        "checkedOn": "2026-11-21",
-        "safety": "Контроль ОАК, функции почек и электролитов. Гидратация при цисплатине. При карбоплатине использовать абсолютную СКФ для расчёта дозы по Calvert."
+        "sourceVersion": "POUT · Lancet 2020 · методы и дозы",
+        "checkedOn": "2026-11-22",
+        "safety": "Гемцитабин: ОАК перед введениями, наблюдение за лёгочной токсичностью и признаками гемолитико-уремического синдрома. Цисплатин: гидратация, контроль функции почек, Mg/K, слуха и нейропатии. Карбоплатин: расчёт по Calvert с абсолютной СКФ и контроль тромбоцитов, нейтрофилов и реакций при инфузии. В POUT при СКФ 30–49 мл/мин применяли карбоплатин. Порог исследования не заменяет индивидуальную оценку пригодности к цисплатину.",
+        "contraindications": "По указанным инструкциям: гемцитабин — известная гиперчувствительность к нему. Цисплатин — тяжёлая гиперчувствительность к нему. Карбоплатин — тяжёлая аллергическая реакция на цисплатин, другие соединения платины или маннитол. При выраженном угнетении костного мозга или значимом кровотечении карбоплатин применять не следует.",
+        "reviewScope": "Дозы и сроки сверены с POUT. Противопоказания и мониторинг сверены по указанным американским инструкциям.",
+        "reviewSources": [
+          [
+            "Гемцитабин · DailyMed",
+            "https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=e18ed1cb-7dd0-4001-bfda-17d1f4587fb8"
+          ],
+          [
+            "Цисплатин · FDA",
+            "https://www.accessdata.fda.gov/drugsatfda_docs/label/2022/018057s092lbl.pdf"
+          ],
+          [
+            "Карбоплатин · DailyMed",
+            "https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=5abfcb87-bb02-4384-9c9d-7d0e3e809311&type=pdf"
+          ]
+        ]
       }
     ],
     "III": [
@@ -2544,9 +2642,25 @@ window.ONCO_REGIMENS={
         "cycle": "Каждые 21 день, 4 цикла; начало в пределах 90 дней после нефроуретерэктомии.",
         "notes": "После радикальной операции при pT2–T4 и/или pN+ M0, если показана адъювантная терапия и ранее не проведена неоадъювантная платина.",
         "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7181180/",
-        "sourceVersion": "POUT · Lancet",
-        "checkedOn": "2026-11-21",
-        "safety": "Контроль ОАК, функции почек и электролитов. Гидратация при цисплатине. При карбоплатине использовать абсолютную СКФ для расчёта дозы по Calvert."
+        "sourceVersion": "POUT · Lancet 2020 · методы и дозы",
+        "checkedOn": "2026-11-22",
+        "safety": "Гемцитабин: ОАК перед введениями, наблюдение за лёгочной токсичностью и признаками гемолитико-уремического синдрома. Цисплатин: гидратация, контроль функции почек, Mg/K, слуха и нейропатии. Карбоплатин: расчёт по Calvert с абсолютной СКФ и контроль тромбоцитов, нейтрофилов и реакций при инфузии. В POUT при СКФ 30–49 мл/мин применяли карбоплатин. Порог исследования не заменяет индивидуальную оценку пригодности к цисплатину.",
+        "contraindications": "По указанным инструкциям: гемцитабин — известная гиперчувствительность к нему. Цисплатин — тяжёлая гиперчувствительность к нему. Карбоплатин — тяжёлая аллергическая реакция на цисплатин, другие соединения платины или маннитол. При выраженном угнетении костного мозга или значимом кровотечении карбоплатин применять не следует.",
+        "reviewScope": "Дозы и сроки сверены с POUT. Противопоказания и мониторинг сверены по указанным американским инструкциям.",
+        "reviewSources": [
+          [
+            "Гемцитабин · DailyMed",
+            "https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=e18ed1cb-7dd0-4001-bfda-17d1f4587fb8"
+          ],
+          [
+            "Цисплатин · FDA",
+            "https://www.accessdata.fda.gov/drugsatfda_docs/label/2022/018057s092lbl.pdf"
+          ],
+          [
+            "Карбоплатин · DailyMed",
+            "https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=5abfcb87-bb02-4384-9c9d-7d0e3e809311&type=pdf"
+          ]
+        ]
       }
     ],
     "IV": [
@@ -2559,9 +2673,25 @@ window.ONCO_REGIMENS={
         "cycle": "Каждые 21 день, 4 цикла; начало в пределах 90 дней после нефроуретерэктомии.",
         "notes": "После радикальной операции при pT2–T4 и/или pN+ M0, если показана адъювантная терапия и ранее не проведена неоадъювантная платина.",
         "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7181180/",
-        "sourceVersion": "POUT · Lancet",
-        "checkedOn": "2026-11-21",
-        "safety": "Контроль ОАК, функции почек и электролитов. Гидратация при цисплатине. При карбоплатине использовать абсолютную СКФ для расчёта дозы по Calvert."
+        "sourceVersion": "POUT · Lancet 2020 · методы и дозы",
+        "checkedOn": "2026-11-22",
+        "safety": "Гемцитабин: ОАК перед введениями, наблюдение за лёгочной токсичностью и признаками гемолитико-уремического синдрома. Цисплатин: гидратация, контроль функции почек, Mg/K, слуха и нейропатии. Карбоплатин: расчёт по Calvert с абсолютной СКФ и контроль тромбоцитов, нейтрофилов и реакций при инфузии. В POUT при СКФ 30–49 мл/мин применяли карбоплатин. Порог исследования не заменяет индивидуальную оценку пригодности к цисплатину.",
+        "contraindications": "По указанным инструкциям: гемцитабин — известная гиперчувствительность к нему. Цисплатин — тяжёлая гиперчувствительность к нему. Карбоплатин — тяжёлая аллергическая реакция на цисплатин, другие соединения платины или маннитол. При выраженном угнетении костного мозга или значимом кровотечении карбоплатин применять не следует.",
+        "reviewScope": "Дозы и сроки сверены с POUT. Противопоказания и мониторинг сверены по указанным американским инструкциям.",
+        "reviewSources": [
+          [
+            "Гемцитабин · DailyMed",
+            "https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=e18ed1cb-7dd0-4001-bfda-17d1f4587fb8"
+          ],
+          [
+            "Цисплатин · FDA",
+            "https://www.accessdata.fda.gov/drugsatfda_docs/label/2022/018057s092lbl.pdf"
+          ],
+          [
+            "Карбоплатин · DailyMed",
+            "https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=5abfcb87-bb02-4384-9c9d-7d0e3e809311&type=pdf"
+          ]
+        ]
       },
       {
         "regimen": "Энфортумаб ведотин + пембролизумаб — первая линия распространённого уротелиального рака",
@@ -2607,14 +2737,27 @@ window.ONCO_REGIMENS={
       {
         "regimen": "Пембролизумаб периоперационно — KEYNOTE‑689",
         "drugs": [
-          "Пембролизумаб — 200 мг в/в каждые 3 недели: 2 введения до операции, затем 3 введения вместе с послеоперационной ЛТ с цисплатином по риску или без него, затем 12 введений в монотерапии."
+          "Пембролизумаб — 200 мг в/в каждые 3 недели: 2 введения до операции, затем 3 введения вместе с послеоперационной ЛТ с цисплатином по риску или без него, затем 12 введений в монотерапии.",
+          "Если в послеоперационной ХЛТ показан цисплатин, в KEYNOTE‑689 применяли 100 мг/м² в/в каждые 3 недели, до 3 введений."
         ],
         "cycle": "Схема исследования: 2 цикла до операции и 15 после.",
         "notes": "Для резектабельного местно-распространённого HNSCC с PD-L1 CPS ≥1 по FDA. В исследовании стадии III–IVA по AJCC 8. Не переносить эти номера автоматически на HPV-ассоциированную ротоглотку по AJCC 9. Проверить местную регистрацию.",
         "url": "https://www.fda.gov/drugs/cancer-approvals/fda-approves-neoadjuvant-and-adjuvant-pembrolizumab-resectable-locally-advanced-head-and-neck",
         "sourceVersion": "FDA · KEYNOTE‑689",
-        "checkedOn": "2026-11-21",
-        "safety": "Контроль иммуноопосредованной токсичности и согласование сроков операции, ЛТ и системной терапии."
+        "checkedOn": "2026-11-22",
+        "safety": "Пембролизумаб: контроль симптомов иммуноопосредованных реакций, печёночных показателей, креатинина и функции щитовидной железы. Цисплатин: гидратация и антиэметическая профилактика, контроль ОАК, функции почек, Mg/K, слуха и нейропатии.",
+        "reviewScope": "Последовательность и дозы сверены по исследованию KEYNOTE‑689 и инструкции FDA к внутривенному пембролизумабу.",
+        "reviewSources": [
+          [
+            "Пембролизумаб в/в · FDA",
+            "https://www.accessdata.fda.gov/drugsatfda_docs/label/2026/125514s190lbl.pdf"
+          ],
+          [
+            "Цисплатин · FDA",
+            "https://www.accessdata.fda.gov/drugsatfda_docs/label/2022/018057s092lbl.pdf"
+          ]
+        ],
+        "contraindications": "По инструкции FDA для пембролизумаба формальные противопоказания не указаны. Для цисплатина — тяжёлая гиперчувствительность к цисплатину."
       }
     ],
     "IV": [
@@ -2645,14 +2788,27 @@ window.ONCO_REGIMENS={
       {
         "regimen": "Пембролизумаб периоперационно — KEYNOTE‑689",
         "drugs": [
-          "Пембролизумаб — 200 мг в/в каждые 3 недели: 2 введения до операции, затем 3 введения вместе с послеоперационной ЛТ с цисплатином по риску или без него, затем 12 введений в монотерапии."
+          "Пембролизумаб — 200 мг в/в каждые 3 недели: 2 введения до операции, затем 3 введения вместе с послеоперационной ЛТ с цисплатином по риску или без него, затем 12 введений в монотерапии.",
+          "Если в послеоперационной ХЛТ показан цисплатин, в KEYNOTE‑689 применяли 100 мг/м² в/в каждые 3 недели, до 3 введений."
         ],
         "cycle": "Схема исследования: 2 цикла до операции и 15 после.",
         "notes": "Для резектабельного местно-распространённого HNSCC с PD-L1 CPS ≥1 по FDA. В исследовании стадии III–IVA по AJCC 8. Не переносить эти номера автоматически на HPV-ассоциированную ротоглотку по AJCC 9. Проверить местную регистрацию.",
         "url": "https://www.fda.gov/drugs/cancer-approvals/fda-approves-neoadjuvant-and-adjuvant-pembrolizumab-resectable-locally-advanced-head-and-neck",
         "sourceVersion": "FDA · KEYNOTE‑689",
-        "checkedOn": "2026-11-21",
-        "safety": "Контроль иммуноопосредованной токсичности и согласование сроков операции, ЛТ и системной терапии."
+        "checkedOn": "2026-11-22",
+        "safety": "Пембролизумаб: контроль симптомов иммуноопосредованных реакций, печёночных показателей, креатинина и функции щитовидной железы. Цисплатин: гидратация и антиэметическая профилактика, контроль ОАК, функции почек, Mg/K, слуха и нейропатии.",
+        "reviewScope": "Последовательность и дозы сверены по исследованию KEYNOTE‑689 и инструкции FDA к внутривенному пембролизумабу.",
+        "reviewSources": [
+          [
+            "Пембролизумаб в/в · FDA",
+            "https://www.accessdata.fda.gov/drugsatfda_docs/label/2026/125514s190lbl.pdf"
+          ],
+          [
+            "Цисплатин · FDA",
+            "https://www.accessdata.fda.gov/drugsatfda_docs/label/2022/018057s092lbl.pdf"
+          ]
+        ],
+        "contraindications": "По инструкции FDA для пембролизумаба формальные противопоказания не указаны. Для цисплатина — тяжёлая гиперчувствительность к цисплатину."
       }
     ]
   },
@@ -3096,7 +3252,21 @@ window.ONCO_STAGING={
       "t": "По размеру T1 ≤3 см, T2 >3–5 см, T3 >5–7 см, T4 >7 см. Инвазия и отдельные узлы могут повысить T независимо от размера.",
       "n": "N1 — ипсилатеральные внутрилёгочные/перибронхиальные или корневые узлы; N2a — одна, N2b — несколько ипсилатеральных медиастинальных/субкаринальных станций; N3 — контралатеральные медиастинальные/корневые или надключичные/лестничные узлы.",
       "m": "M1a — контралатеральный лёгочный узел, плевральные/перикардиальные очаги или злокачественный выпот; M1b — один внегрудной метастаз; M1c1 — несколько в одной системе органов; M1c2 — в нескольких системах.",
-      "groups": "Примеры: IA1 — T1mi/T1a N0 M0; IVА — M1a/M1b; IVB — M1c1/M1c2. Для МРЛ дополнительно клинически используют limited/extensive без взаимно-однозначного перевода в TNM."
+      "groups": "При M0: скрытая карцинома — TXN0. Стадия 0 — TisN0. IA1–IA3: N0 и T1mi/T1a, T1b, T1c соответственно. IB: T2aN0. IIA: T1a–cN1 или T2bN0. IIB: T1a–cN2a, T2a–bN1 либо T3N0. IIIA: T1a–cN2b, T2a–bN2a, T3N1/N2a или T4N0/N1. IIIB: T1a–cN3, T2a–bN2b/N3, T3N2b или T4N2a/N2b. IIIC: T3–4N3. При M1a/M1b — IVA, при M1c1/M1c2 — IVB независимо от T/N. Для МРЛ дополнительно используют limited/extensive.",
+      "references": [
+        [
+          "AJCC 9 · группы стадий, таблица 4 NCI PDQ",
+          "https://www.cancer.gov/types/lung/hp/non-small-cell-lung-treatment-pdq"
+        ],
+        [
+          "AJCC · действующая версия",
+          "https://www.facs.org/quality-programs/cancer-programs/american-joint-committee-on-cancer/version-9/"
+        ]
+      ],
+      "verification": {
+        "date": "2026-11-22",
+        "scope": "Группы стадий AJCC Version 9 по таблице 4 NCI PDQ. Категории определяют по подходящему клиническому или патологическому разделу. После неоадъювантной терапии фиксируют yc/ypTNM отдельно от исходного cTNM."
+      }
     },
     {
       "id": "breast",
@@ -3553,7 +3723,11 @@ window.ONCO_STAGING={
           "AJCC Version 9 · редакции по локализации",
           "https://www.facs.org/quality-programs/cancer-programs/american-joint-committee-on-cancer/version-9/"
         ]
-      ]
+      ],
+      "verification": {
+        "date": "2026-11-22",
+        "scope": "Категории pN и правило для pN0 сверены по CAP 1.1.0.0, июнь 2026. Критерии cN и группы стадий следует сверять отдельно по AJCC Version 9."
+      }
     },
     {
       "id": "oropharynx-other",
@@ -3662,7 +3836,7 @@ function view(page, id) {
 function start() {
   let path = '';
   try { path = decodeURIComponent(location.hash.slice(1)); } catch { /* Invalid deep link. */ }
-  const [page, id] = path.split('/');
+  const [page, id, section, key] = path.split('/');
   const pages = ['home', 'catalog', 'card', 'tnm', 'calculators', 'scales', 'markers', 'sources', 'favorites', 'about', 'admin'];
   state.page = pages.includes(page) ? page : 'home';
   if (state.page === 'card' && state.card !== id) {
@@ -3671,8 +3845,22 @@ function start() {
   }
   state.card = state.page === 'card' ? id : null;
   state.staging = state.page === 'tnm' ? id : undefined;
+  state.marker = state.page === 'markers' && /^\d+$/.test(id ?? '') ? Number(id) : -1;
+  let target;
+  if (state.page === 'card' && DATA.some(card => card.id === id)) {
+    if (section === 'molecular') target = '#molecular';
+    else if ((CARD_STAGES[id] ?? STAGES).includes(section)) {
+      state.stage = section;
+      state.treatmentTab = 'drugs';
+      if (regimensFor(id, section).some(protocol => regimenKey(protocol) === key)) target = '#regimen-' + key;
+    }
+  }
   render();
-  window.scrollTo(0, 0);
+  const detail = target ? $(target) : null;
+  if (detail) {
+    detail.focus({preventScroll: true});
+    detail.scrollIntoView({block: 'start'});
+  } else window.scrollTo(0, 0);
 }
 window.addEventListener('hashchange',start);
 const btn=(label,fn,kind='')=>`<button class="btn ${kind}" onclick="${fn}">${label}</button>`;
@@ -3690,8 +3878,71 @@ function tileIcon(page) {
   return `<svg class="tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${TILE_ICONS[page]}</svg>`;
 }
 
-function home(){const tiles=[['Карточки ЗНО',`${DATA.length} нозологий: гистология, диагностика, лечение`,'catalog'],['TNM-справочник','Краткие критерии и версии классификаций','tnm'],['Калькуляторы','BSA, Calvert, CKD-EPI 2021, RECIST','calculators'],['Онкомаркеры','Показания и ограничения','markers'],['Шкалы','ECOG, Khorana, Child–Pugh, IMDC','scales'],['Источники','Рекомендации, журналы и базы исследований','sources']];return `<div class="intro"><h1>ОнкоАтлас</h1><p class="muted">Краткий клинический справочник по онкологии. Свободный доступ, без регистрации.</p></div><input class="search" aria-label="Поиск по справочнику" placeholder="Найти опухоль, код МКБ‑10, биомаркер или препарат…" oninput="searchHome(this.value)"><div id="quickSearch" aria-live="polite"></div><div class="tiles">${tiles.map(([n,d,p])=>`<button class="tile" onclick="view('${p}')">${tileIcon(p)}<h3>${n}</h3><p>${d}</p></button>`).join('')}</div><div class="notice">Медицинский контент — справочная редакция, <b>не прошедшая независимую клиническую экспертизу</b>. Для назначения терапии используйте актуальные руководства и инструкции. Данные пациентов на сайт не вводите.</div>`}
-function searchHome(q){const matches = findCards(q).slice(0, 8);$('#quickSearch').innerHTML=q.trim()?`<div class="panel">${matches.length?matches.map(c=>`<button class="item" onclick="view('card','${c.id}')"><span><strong>${esc(c.title)}</strong><small>${esc(c.group)}</small></span>→</button>`).join(''):'Совпадений нет'}</div>`:''}
+function home(){const tiles=[['Карточки ЗНО',`${DATA.length} нозологий: гистология, диагностика, лечение`,'catalog'],['TNM-справочник','Краткие критерии и версии классификаций','tnm'],['Калькуляторы','BSA, Calvert, CKD-EPI 2021, RECIST','calculators'],['Онкомаркеры','Показания и ограничения','markers'],['Шкалы','ECOG, Khorana, Child–Pugh, IMDC','scales'],['Источники','Рекомендации, журналы и базы исследований','sources']];return `<div class="intro"><h1>ОнкоАтлас</h1><p class="muted">Краткий клинический справочник по онкологии. Свободный доступ, без регистрации.</p></div><input class="search" aria-label="Поиск по справочнику" placeholder="Опухоль, МКБ‑10, схема, препарат или биомаркер…" oninput="searchHome(this.value)"><div id="quickSearch" aria-live="polite"></div><div class="tiles">${tiles.map(([n,d,p])=>`<button class="tile" onclick="view('${p}')">${tileIcon(p)}<h3>${n}</h3><p>${d}</p></button>`).join('')}</div><div class="notice">Медицинский контент — справочная редакция, <b>не прошедшая независимую клиническую экспертизу</b>. Для назначения терапии используйте актуальные руководства и инструкции. Данные пациентов на сайт не вводите.</div>`}
+const SEARCH_LIBRARY = [
+  ['Фундаментальный канцерогенез · повреждение ДНК', './carcinogenesis.html#damage', 'мутационные подписи УФ табак канцерогены репарация'],
+  ['Фундаментальный канцерогенез · драйверы и MMR/MSI', './carcinogenesis.html#drivers', 'MSI dMMR микросателлитная нестабильность KRAS APC TP53 MLH1 драйвер'],
+  ['Фундаментальный канцерогенез · клональная эволюция', './carcinogenesis.html#evolution', 'субклон гетерогенность TRACERx hallmarks'],
+  ['Фундаментальный канцерогенез · инвазия и диссеминация', './carcinogenesis.html#invasion', 'интравазация экстравазация EMT'],
+  ['Фундаментальный канцерогенез · метастатическая колонизация', './carcinogenesis.html#metastasis', 'метастазы органотропность покой ниша'],
+  ['Библиотека знаний · схемы и классификации', './learning-library.html', 'сигнальные пути MAPK WNT PI3K RECIST гистотипы препараты'],
+];
+
+function regimenKey(protocol) {
+  let hash = 2166136261;
+  for (const character of protocol.regimen) {
+    hash = Math.imul(hash ^ character.codePointAt(0), 16777619);
+  }
+  return (hash >>> 0).toString(36);
+}
+
+function globalSearch(query) {
+  const normalize = value => normalizeSearch(value.replace(/(^|\s)с(?=\d)/gi, '$1c'))
+    .replace(/прям(?:ая|ой|ую) кишк(?:а|и|у)/g, 'прямая кишка')
+    .replace(/рака (почки|легкого|желудка)/g, 'рак $1');
+  const terms = normalize(query).split(' ').filter(Boolean);
+  if (!terms.length) return '';
+  const matches = value => {
+    const haystack = normalize(value);
+    return terms.every(term => haystack.includes(term));
+  };
+  const sections = [
+    ['Стадирование', stagingData.entries.filter(entry => DATA.some(card => entry.cards.includes(card.id) &&
+      matches([card.title, ...card.icd10, entry.title, entry.edition].join(' '))))
+      .map(entry => [entry.title, '#tnm/' + entry.id, entry.edition])],
+    ['Схемы лечения', DATA.flatMap(card => {
+      const contextual = Boolean(NON_TNM_CARD_INFO[card.id]);
+      return (contextual ? ['I'] : CARD_STAGES[card.id] ?? STAGES).flatMap(stage =>
+        regimensFor(card.id, stage).filter(protocol => {
+          const regimenText = [protocol.regimen, ...protocol.drugs].join(' ');
+          return terms.some(term => normalize(regimenText).includes(term)) &&
+            matches([regimenText, card.title, ...card.icd10, 'стадия', stage].join(' '));
+        })
+          .map(protocol => [protocol.regimen, '#card/' + card.id + '/' + stage + '/' + regimenKey(protocol),
+            card.title + ' · ' + (contextual ? 'Клиническая ситуация' : 'Стадия ' + stage)]));
+    })],
+    ['Онкомаркеры', MARKERS.filter(marker => matches([marker.name, marker.aliases, marker.context].join(' ')))
+      .map((marker) => [marker.name, '#markers/' + MARKERS.indexOf(marker), marker.context])],
+    ['Библиотека знаний', SEARCH_LIBRARY.filter(([title, , keywords]) => matches(title + ' ' + keywords))
+      .map(([title, href]) => [title, href, 'Учебный материал'])],
+    ['Карточки ЗНО', findCards(query.replace(/(^|\s)с(?=\d)/gi, '$1c'))
+      .map(card => {
+        const molecular = matches(card.molecular);
+        return [card.title, '#card/' + card.id + (molecular ? '/molecular' : ''),
+          molecular ? 'Молекулярные паттерны · ' + card.group : card.group];
+      })],
+  ];
+  const link = ([title, href, context]) =>
+    `<a class="item staging-result" href="${esc(href)}"><span><strong>${esc(title)}</strong><small>${esc(context)}</small></span><span aria-hidden="true">→</span></a>`;
+  const groups = sections.filter(([, rows]) => rows.length).map(([label, rows]) =>
+    `<section><h3>${esc(label)} · ${rows.length}</h3>${rows.slice(0, 4).map(link).join('')}
+      ${rows.length > 4 ? `<details><summary>Ещё ${rows.length - 4}</summary>${rows.slice(4).map(link).join('')}</details>` : ''}</section>`);
+  return '<div class="panel global-results">' + (groups.join('') || 'Ничего не найдено.') + '</div>';
+}
+
+function searchHome(query) {
+  $('#quickSearch').innerHTML = globalSearch(query);
+}
 function catalog(){return shell('Карточки ЗНО',`<div class="catalog-tools"><input class="search" id="find" aria-label="Поиск по каталогу" placeholder="Поиск по опухоли, гистотипу, биомаркеру или препарату…" oninput="listCards()"><select id="group" aria-label="Группа опухолей" onchange="listCards()">${groups.map(g=>`<option>${esc(g)}</option>`).join('')}</select></div><p class="muted" id="count" aria-live="polite"></p><div id="cardList"></div>`)}
 function listCards(){const q = $('#find').value, g = $('#group').value; const filtered = findCards(q, g);$('#count').textContent=`Найдено: ${filtered.length} из ${DATA.length}`;$('#cardList').innerHTML=filtered.map(c=>`<button class="item" onclick="view('card','${c.id}')"><span><strong>${esc(c.title)}</strong><small>${esc(c.group)} · № ${String(c.number).padStart(3,'0')}</small></span>→</button>`).join('')||'<div class="panel muted">Совпадений нет</div>'}
 const favkey = 'oncoatlas_favorites_v2';
@@ -3766,7 +4017,7 @@ function renderNonTnmTreatment(c) {
     `<div class="notice" style="margin:10px 0"><p><b>${esc(title)}.</b> ${esc(detail)}</p></div>`).join('');
   return `<div class="panel"><h2>5. Лечение по клинической ситуации</h2><p><b>${esc(info.heading)}</b></p><p>${esc(info.explanation)}</p><p class="fine">${treatmentSource(info.url, 'Источник по классификации и тактике')}</p>${contexts}<h3>Лекарственные режимы</h3><p class="fine">Режим приведён для конкретных показаний; не является универсальным назначением.</p>${regimens.map(renderRegimen).join('')}</div>`;
 }
-function card(){const c=DATA.find(x=>x.id===state.card);if(!c)return shell('Карточка не найдена','<p>Выберите нозологию в каталоге.</p>','catalog');const f=favs().includes(c.id);return shell(esc(c.title),`<div class="eyebrow">Карточка №${String(c.number).padStart(3,'0')} · ${esc(c.group)}</div><div class="actions">${btn(f?'★ В избранном':'☆ В избранное',`toggleFav('${c.id}')`)}${btn('Сохранить PDF','window.print()','secondary')}${stagingCardLink(c.id)}</div><div class="panel"><h2>1. Гистотип и локализация</h2><p><b>МКБ‑10:</b> ${esc((c.icd10 ?? []).join(', '))}</p>${c.icd10Note ? `<p class="fine">${esc(c.icd10Note)}</p>` : ''}<p><b>Происхождение:</b> ${esc(c.origin)}</p><p><b>Локализация:</b> ${esc(c.location)}</p></div><div class="panel"><h2>2. Молекулярные паттерны</h2><p>${esc(c.molecular).split('; ').join(' · ')}</p></div><div class="panel"><h2>3. Диагностика</h2><p>${esc(c.diagnostics)}</p></div><div class="panel"><h2>4. Онкомаркеры${c.markers.includes('продукция:')? ' и гормональная продукция':''}</h2><p>${esc(c.markers)}</p></div>${c.id === 'c038' ? `<div class="panel"><h2>Стадирование · AJCC 9</h2><p>Версия 9 действует с 1 января 2025 года. При использовании AJCC 8 указывайте версию рядом со стадией. IVA по AJCC 8 означала T4 или N3 при M0. В AJCC 9 при M0 эти категории входят в стадию III, а IVA и IVB относятся только к M1.</p><p>${treatmentSource('https://www.cancer.org/cancer/types/nasopharyngeal-cancer/detection-diagnosis-staging/staging.html', 'Группы стадий AJCC 9 · ACS')} · ${treatmentSource('https://www.facs.org/quality-programs/cancer-programs/education/ajcc-protocol-webinar-on-version-9-staging-system-for-nasopharynx-cancer/', 'Версия и дата вступления в силу · ACS/AJCC')}</p></div>` : ''}${c.id === 'c005' ? `<p class="fine"><a href="#card/c044">Отдельная карточка аденокарциномы прямой кишки</a></p>` : ''}${NON_TNM_CARD_INFO[c.id] ? renderNonTnmTreatment(c) : `<div class="panel"><h2>5. Лечение по стадиям${['c026', 'c027', 'c028'].includes(c.id) ? ' · Lugano' : ''}</h2><div class="tabs">${(CARD_STAGES[c.id] ?? STAGES).map(s=>`<button class="tab ${state.stage===s?'selected':''}" data-stage="${s}" aria-pressed="${state.stage===s}" onclick="setStage('${s}')">${s}</button>`).join('')}</div><p id="stageContent" aria-live="polite"><b>${state.stage}:</b> ${esc(c[state.stage])}</p>${(STAGE_MNEMONICS[c.id] ?? REMAINING_MNEMONICS[c.id])?.[state.stage]?`<p class="fine"><b>Кратко для запоминания:</b> ${esc((STAGE_MNEMONICS[c.id] ?? REMAINING_MNEMONICS[c.id])[state.stage])}</p>`:""}${stageExtras(c)}<p class="fine">Стадии приведены укрупнённо. Реальная тактика определяется гистотипом, подстадией, биомаркерами, резектабельностью, функциональным статусом и линией терапии.</p></div>`}<div class="notice"><b>Статус:</b> редакционный черновик. Независимая медицинская проверка не проведена.</div><div class="sources">Источники для проверки: ${sources.map(([n,u])=>`<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join(' · ')}</div>`,'catalog')}
+function card(){const c=DATA.find(x=>x.id===state.card);if(!c)return shell('Карточка не найдена','<p>Выберите нозологию в каталоге.</p>','catalog');const f=favs().includes(c.id);return shell(esc(c.title),`<div class="eyebrow">Карточка №${String(c.number).padStart(3,'0')} · ${esc(c.group)}</div><div class="actions">${btn(f?'★ В избранном':'☆ В избранное',`toggleFav('${c.id}')`)}${btn('Сохранить PDF','window.print()','secondary')}${stagingCardLink(c.id)}</div><div class="panel"><h2>1. Гистотип и локализация</h2><p><b>МКБ‑10:</b> ${esc((c.icd10 ?? []).join(', '))}</p>${c.icd10Note ? `<p class="fine">${esc(c.icd10Note)}</p>` : ''}<p><b>Происхождение:</b> ${esc(c.origin)}</p><p><b>Локализация:</b> ${esc(c.location)}</p></div><div class="panel"><h2 id="molecular" tabindex="-1">2. Молекулярные паттерны</h2><p>${esc(c.molecular).split('; ').join(' · ')}</p></div><div class="panel"><h2>3. Диагностика</h2><p>${esc(c.diagnostics)}</p></div><div class="panel"><h2>4. Онкомаркеры${c.markers.includes('продукция:')? ' и гормональная продукция':''}</h2><p>${esc(c.markers)}</p></div>${c.id === 'c038' ? `<div class="panel"><h2>Стадирование · AJCC 9</h2><p>Версия 9 действует с 1 января 2025 года. При использовании AJCC 8 указывайте версию рядом со стадией. IVA по AJCC 8 означала T4 или N3 при M0. В AJCC 9 при M0 эти категории входят в стадию III, а IVA и IVB относятся только к M1.</p><p>${treatmentSource('https://www.cancer.org/cancer/types/nasopharyngeal-cancer/detection-diagnosis-staging/staging.html', 'Группы стадий AJCC 9 · ACS')} · ${treatmentSource('https://www.facs.org/quality-programs/cancer-programs/education/ajcc-protocol-webinar-on-version-9-staging-system-for-nasopharynx-cancer/', 'Версия и дата вступления в силу · ACS/AJCC')}</p></div>` : ''}${c.id === 'c005' ? `<p class="fine"><a href="#card/c044">Отдельная карточка аденокарциномы прямой кишки</a></p>` : ''}${NON_TNM_CARD_INFO[c.id] ? renderNonTnmTreatment(c) : `<div class="panel"><h2>5. Лечение по стадиям${['c026', 'c027', 'c028'].includes(c.id) ? ' · Lugano' : ''}</h2><div class="tabs">${(CARD_STAGES[c.id] ?? STAGES).map(s=>`<button class="tab ${state.stage===s?'selected':''}" data-stage="${s}" aria-pressed="${state.stage===s}" onclick="setStage('${s}')">${s}</button>`).join('')}</div><p id="stageContent" aria-live="polite"><b>${state.stage}:</b> ${esc(c[state.stage])}</p>${(STAGE_MNEMONICS[c.id] ?? REMAINING_MNEMONICS[c.id])?.[state.stage]?`<p class="fine"><b>Кратко для запоминания:</b> ${esc((STAGE_MNEMONICS[c.id] ?? REMAINING_MNEMONICS[c.id])[state.stage])}</p>`:""}${stageExtras(c)}<p class="fine">Стадии приведены укрупнённо. Реальная тактика определяется гистотипом, подстадией, биомаркерами, резектабельностью, функциональным статусом и линией терапии.</p></div>`}<div class="notice"><b>Статус:</b> редакционный черновик. Независимая медицинская проверка не проведена.</div><div class="sources">Источники для проверки: ${sources.map(([n,u])=>`<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join(' · ')}</div>`,'catalog')}
 
 // Редакционные примеры режимов. Не использовать как индивидуальные назначения.
 const STAGES = ['I', 'II', 'III', 'IV'];
@@ -5388,7 +5639,7 @@ function treatmentSource(url, label) {
 }
 
 function renderRegimen(protocol) {
-  return `<article class="notice treatment-regimen" style="margin:10px 0">
+  return `<article class="notice treatment-regimen" id="regimen-${regimenKey(protocol)}" tabindex="-1" style="margin:10px 0">
     <p><strong>${esc(protocol.regimen)}</strong></p>
     <p><b>Препараты и дозы</b></p>
     <ul>${protocol.drugs.map(drug => `<li>${esc(drug)}</li>`).join('')}</ul>
@@ -5396,6 +5647,7 @@ function renderRegimen(protocol) {
     <p><b>Условия применения.</b> ${esc(protocol.notes)}</p>
     ${protocol.contraindications ? `<p><b>Абсолютные противопоказания по указанной инструкции.</b> ${esc(protocol.contraindications)}</p>` : ''}
     ${protocol.safety ? `<p><b>Сопроводительная терапия и мониторинг.</b> ${esc(protocol.safety)}</p>` : ''}
+    ${protocol.reviewScope ? `<p class="fine">${esc(protocol.reviewScope)} ${protocol.reviewSources.map(([label, url]) => treatmentSource(url, label)).join(' · ')}</p>` : ''}
     <p class="fine">${treatmentSource(protocol.url, protocol.sourceVersion || 'Источник схемы')}${protocol.reference ? ` · ${treatmentSource(protocol.reference[1], protocol.reference[0])}` : ''}${protocol.checkedOn ? ` · Сверено ${esc(protocol.checkedOn.split('-').reverse().join('.'))}` : ''}</p>
   </article>`;
 }
@@ -5679,6 +5931,7 @@ function tnmPage() {
       ['N · Регионарные лимфоузлы', entry.n], ['M · Отдалённые метастазы', entry.m]];
     return `${back}<h1>${esc(entry.title)}</h1>
       <p class="muted">${esc(entry.edition)}</p>
+      ${entry.verification ? `<p class="fine"><b>Редакционная сверка ${esc(entry.verification.date.split('-').reverse().join('.'))}.</b> ${esc(entry.verification.scope)}</p>` : ''}
       <p><a href="${esc(entry.url)}" target="_blank" rel="noopener">Источник критериев и подробные определения ↗</a></p>
       ${(entry.references ?? []).map(([label, url]) => `<p><a href="${esc(url)}" target="_blank" rel="noopener">${esc(label)} ↗</a></p>`).join('')}
       ${blocks.map(([title, value], i) => `<details class="marker-entry"${i === 0 ? ' open' : ''}>
@@ -5732,12 +5985,12 @@ const MARKERS = window.ONCO_MARKERS ?? [];
 function markers() {
   return shell('Онкомаркеры', `<p class="muted">Лабораторные онкомаркеры и показатели мониторинга. Референсные значения зависят от метода и лаборатории.</p>
     <input class="search" type="search" aria-label="Поиск онкомаркера" placeholder="Найти маркер или опухоль…" oninput="filterMarkers(this.value)">
-    <div id="markerList">${markerRows(MARKERS)}</div>`);
+    <div id="markerList">${markerRows(MARKERS[state.marker] ? [MARKERS[state.marker], ...MARKERS.filter(marker => marker !== MARKERS[state.marker])] : MARKERS)}</div>`);
 }
 
 function markerRows(entries) {
   if (!entries.length) return '<p class="panel muted" role="status">Маркеры не найдены.</p>';
-  return entries.map(marker => `<details class="marker-entry">
+  return entries.map(marker => `<details class="marker-entry"${MARKERS[state.marker] === marker ? ' open' : ''}>
     <summary>${esc(marker.name)}</summary>
     <div class="marker-detail">
       <p><b>Где применяют.</b> ${esc(marker.context)}.</p>

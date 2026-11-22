@@ -32,3 +32,7 @@ button:focus-visible,a:focus-visible{outline:2px solid #555;outline-offset:3px}
 .staging-result{text-decoration:none}
 .staging-back{display:inline-block;text-decoration:none}
 .staging-related{margin-top:20px}
+
+.global-results section+section{margin-top:18px}
+.global-results h3{margin:0 0 8px}
+.treatment-regimen[id],#molecular{scroll-margin-top:100px}

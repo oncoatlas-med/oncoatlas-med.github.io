@@ -13,7 +13,21 @@
       "t": "По размеру T1 ≤3 см, T2 >3–5 см, T3 >5–7 см, T4 >7 см. Инвазия и отдельные узлы могут повысить T независимо от размера.",
       "n": "N1 — ипсилатеральные внутрилёгочные/перибронхиальные или корневые узлы; N2a — одна, N2b — несколько ипсилатеральных медиастинальных/субкаринальных станций; N3 — контралатеральные медиастинальные/корневые или надключичные/лестничные узлы.",
       "m": "M1a — контралатеральный лёгочный узел, плевральные/перикардиальные очаги или злокачественный выпот; M1b — один внегрудной метастаз; M1c1 — несколько в одной системе органов; M1c2 — в нескольких системах.",
-      "groups": "Примеры: IA1 — T1mi/T1a N0 M0; IVА — M1a/M1b; IVB — M1c1/M1c2. Для МРЛ дополнительно клинически используют limited/extensive без взаимно-однозначного перевода в TNM."
+      "groups": "При M0: скрытая карцинома — TXN0. Стадия 0 — TisN0. IA1–IA3: N0 и T1mi/T1a, T1b, T1c соответственно. IB: T2aN0. IIA: T1a–cN1 или T2bN0. IIB: T1a–cN2a, T2a–bN1 либо T3N0. IIIA: T1a–cN2b, T2a–bN2a, T3N1/N2a или T4N0/N1. IIIB: T1a–cN3, T2a–bN2b/N3, T3N2b или T4N2a/N2b. IIIC: T3–4N3. При M1a/M1b — IVA, при M1c1/M1c2 — IVB независимо от T/N. Для МРЛ дополнительно используют limited/extensive.",
+      "references": [
+        [
+          "AJCC 9 · группы стадий, таблица 4 NCI PDQ",
+          "https://www.cancer.gov/types/lung/hp/non-small-cell-lung-treatment-pdq"
+        ],
+        [
+          "AJCC · действующая версия",
+          "https://www.facs.org/quality-programs/cancer-programs/american-joint-committee-on-cancer/version-9/"
+        ]
+      ],
+      "verification": {
+        "date": "2026-11-22",
+        "scope": "Группы стадий AJCC Version 9 по таблице 4 NCI PDQ. Категории определяют по подходящему клиническому или патологическому разделу. После неоадъювантной терапии фиксируют yc/ypTNM отдельно от исходного cTNM."
+      }
     },
     {
       "id": "breast",
@@ -470,7 +484,11 @@
           "AJCC Version 9 · редакции по локализации",
           "https://www.facs.org/quality-programs/cancer-programs/american-joint-committee-on-cancer/version-9/"
         ]
-      ]
+      ],
+      "verification": {
+        "date": "2026-11-22",
+        "scope": "Категории pN и правило для pN0 сверены по CAP 1.1.0.0, июнь 2026. Критерии cN и группы стадий следует сверять отдельно по AJCC Version 9."
+      }
     },
     {
       "id": "oropharynx-other",
