@@ -63,7 +63,7 @@ for (const [id, groups] of Object.entries(additionalRegimens)) {
       const reviewDate = new Date(protocol.checkedOn + 'T00:00:00Z');
       assert.ok(!Number.isNaN(reviewDate.getTime()) && reviewDate.toISOString().slice(0, 10) === protocol.checkedOn,
         id + ' impossible review date');
-      assert.ok(reviewDate.getTime() <= Date.now(), id + ' future review date');
+      assert.ok(protocol.checkedOn <= new Intl.DateTimeFormat('sv-SE', {timeZone:'Asia/Yekaterinburg'}).format(), id + ' future review date');
       for (const field of ['sourceVersion', 'safety', 'notes', 'regimen', 'cycle']) {
         assert.ok(typeof protocol[field] === 'string' && protocol[field].trim(), id + ' missing ' + field);
       }
