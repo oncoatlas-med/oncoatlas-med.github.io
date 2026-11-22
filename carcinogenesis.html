@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Фундаментальный канцерогенез — ОнкоАтлас</title>
+  <link rel="icon" type="image/svg+xml" href="./atlas-icon.svg">
+  <style>
+    :root{font-family:Inter,system-ui,-apple-system,Arial,sans-serif;background:#fafafa;color:#191919}
+    *{box-sizing:border-box}
+    body{margin:0}
+    a{color:inherit;text-underline-offset:3px}
+    header{background:#fff;border-bottom:1px solid #ddd}
+    header div,main{width:min(820px,100%);margin:auto;padding:16px 20px}
+    header div{display:flex;align-items:center;gap:12px;font-weight:750}
+    main{padding-top:26px;padding-bottom:64px}
+    h1{font-size:clamp(27px,5vw,38px);line-height:1.15;letter-spacing:-.03em}
+    h2{font-size:21px}
+    p,li{line-height:1.6}
+    .back,.muted,figcaption{color:#585858}
+    figure,details{background:#fff;border:1px solid #ddd;border-radius:15px}
+    figure{margin:22px 0;padding:20px}
+    figure h2{margin-top:0}
+    .path,.branches{list-style:none;margin:0;padding:0;display:grid;justify-items:center;gap:10px}
+    .path>li{width:min(100%,480px);text-align:center}
+    .path>li+li::before{display:block;content:"↓";font-weight:bold;margin-bottom:9px}
+    .node{display:block;background:#f4f4f4;border:1px solid #ddd;border-radius:10px;padding:8px 10px;line-height:1.35}
+    .branches{grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
+    .branches li{width:100%;display:grid;align-self:start}
+    .branches li::before{content:"↓";margin-bottom:5px}
+    .branch-next{margin-top:8px}
+    .branches li:last-child .node{background:#222;color:#fff;border-color:#222}
+    figcaption{margin-top:16px;font-size:.875rem;line-height:1.5}
+    details{margin:9px 0}
+    summary{cursor:pointer;padding:14px 16px;font-weight:720}
+    details>div{padding:0 16px 14px}
+    details p{margin-top:0}
+    details[id]{scroll-margin-top:12px}
+    .ref{font-size:.875rem;color:#4e4e4e}
+    .references li{margin:.45em 0;overflow-wrap:anywhere}
+    @media(max-width:480px){main,header div{padding-inline:14px}figure{padding:14px}.node{font-size:.875rem}}
+  </style>
+</head>
+<body>
+  <header><div><img src="./atlas-icon.svg" width="34" height="34" alt=""><a href="./index.html">ОнкоАтлас</a></div></header>
+  <main>
+    <a class="back" href="./learning-library.html">← Библиотека знаний</a>
+    <h1>Фундаментальный канцерогенез</h1>
+    <p class="muted">Как возникают драйверные изменения, почему одни клоны расширяются и что позволяет опухолевым клеткам основать метастаз.</p>
+
+    <figure aria-labelledby="path-heading">
+      <h2 id="path-heading">От воздействия до метастаза</h2>
+      <ol class="path">
+        <li><a class="node" href="#damage">Воздействия и эндогенные процессы</a></li>
+        <li><a class="node" href="#drivers">Сохранившиеся изменения и появление драйверов</a></li>
+        <li>
+          <a class="node" href="#evolution">Клональная экспансия и ветвление</a>
+          <ul class="branches" aria-label="Примеры разных исходов">
+            <li><span class="node">Клон может остаться локальным</span></li>
+            <li><a class="node" href="#invasion">Возможна инвазия и диссеминация</a><div class="branch-next" aria-hidden="true">↓</div><a class="node" href="#metastasis">Выживание в новой ткани → покой или рост очага</a></li>
+          </ul>
+        </li>
+      </ol>
+      <figcaption>Упрощённая схема. В инвазивной ветви показан один возможный путь. Распространение может начинаться в разные моменты, а диссеминированные клетки часто погибают или сохраняются без роста.</figcaption>
+    </figure>
+
+    <h2>Этапы и механизмы</h2>
+    <details id="damage">
+      <summary>1. Воздействие и клеточный ответ</summary>
+      <div>
+        <p>Табачные канцерогены могут образовывать аддукты ДНК, УФ-излучение — фотопродукты в ДНК. Источниками изменений также служат ошибки репликации и эндогенные повреждения. Хроническое воспаление может одновременно усиливать повреждение тканей и менять условия отбора клеток.</p>
+        <p>Повреждение ДНК и мутация — разные события. Репарация может устранить повреждение, контрольные точки — остановить деление, а тяжёлый стресс — привести к старению клетки или её гибели. Мутация может закрепиться, если повреждение сохраняется до репликации или исправляется с ошибкой.</p>
+        <p><strong>Как читать IARC.</strong> Группа отражает силу доказательств канцерогенности. Величину риска для конкретной экспозиции оценивают отдельно с учётом дозы, длительности и обстоятельств контакта.</p>
+        <p class="ref">Источники <a href="#src-iarc">IARC</a>, <a href="#src-weinberg">Weinberg</a>.</p>
+      </div>
+    </details>
+    <details id="drivers">
+      <summary>2. Драйверы и наследственная предрасположенность</summary>
+      <div>
+        <p>Драйверное изменение способствует росту или выживанию клона в данном контексте. Пассажирское изменение накапливается вместе с ним без такого преимущества. Активирующие изменения в онкогенах, например <strong>KRAS</strong>, могут поддерживать пролиферацию. Утрата функций супрессоров, например <strong>TP53</strong>, ослабляет защитные клеточные ответы. Дефекты генов репарации, например компонентов <strong>MMR</strong>, могут увеличить вероятность накопления новых изменений.</p>
+        <p>Драйверами могут быть точечные варианты, амплификации, делеции или перестройки. Устойчивые эпигенетические изменения тоже могут менять экспрессию генов: пример — сайленсинг <strong>MLH1</strong> при метилировании промотора. Герминальный патогенный вариант может давать предрасположенность, а последующие соматические события формируют конкретный опухолевый клон.</p>
+        <p class="ref">Источники <a href="#src-nci">NCI</a>, <a href="#src-genomes">Vogelstein и соавт.</a>, <a href="#src-hanahan">Hanahan</a>.</p>
+      </div>
+    </details>
+    <details id="evolution">
+      <summary>3. Отбор клонов и свойства злокачественности</summary>
+      <div>
+        <p>Если изменение даёт преимущество в данной ткани, клон может расшириться. В его потомстве возникают новые варианты. Одни ветви сохраняются, другие увеличиваются или исчезают. Общие изменения образуют ствол дерева, а изменения отдельных субклонов — ветви. Даже гистологически нормальная ткань может содержать крупные мутантные клоны.</p>
+        <p>Модель <em>Hallmarks of Cancer</em> описывает функции, которые поддерживают опухолевый рост. Среди них устойчивый пролиферативный сигнал, уклонение от супрессии роста и клеточной гибели, репликативное бессмертие, доступ к сосудам и уклонение от иммунного ответа. Геномная нестабильность, воспаление и клеточная пластичность могут способствовать появлению этих свойств. Их сочетание и порядок различаются между опухолями.</p>
+        <p class="ref">Источники <a href="#src-clones">Greaves и Maley</a>, <a href="#src-normal">Martincorena и соавт.</a>, <a href="#src-hanahan">Hanahan</a>.</p>
+      </div>
+    </details>
+    <details id="invasion">
+      <summary>4. Локальная инвазия и диссеминация</summary>
+      <div>
+        <p>При инвазии эпителиальной опухоли клетки выходят за пределы базальной мембраны и мигрируют через строму поодиночке или группами. До инвазии в ряде эпителиальных опухолей можно морфологически выделить дисплазию и карциному in situ. Для других опухолей такая последовательность не универсальна. Вклад в инвазию вносят изменения адгезии, перестройка внеклеточного матрикса, взаимодействие с фибробластами и иммунными клетками. Частичные эпителиально-мезенхимальные состояния могут облегчать миграцию, при этом разные опухоли пользуются разными программами инвазии.</p>
+        <p>Клетки или клеточные кластеры могут проникать в лимфатические и кровеносные сосуды. В циркуляции они сталкиваются с механическим стрессом, потерей контакта с матриксом и иммунным надзором. Выжившие клетки могут задержаться в сосудистом русле другого органа и выйти в ткань.</p>
+        <p class="ref">Источники <a href="#src-hanahan">Hanahan</a>, <a href="#src-metastasis">Massagué и Obenauf</a>, <a href="#src-immune">обзор иммунного уклонения</a>.</p>
+      </div>
+    </details>
+    <details id="metastasis">
+      <summary>5. Покой и метастатическая колонизация</summary>
+      <div>
+        <p>Выход в ткань другого органа открывает следующий этап отбора. Выживание и рост зависят от совместимости опухолевой клетки с локальной нишей. На них влияют сигналы стромы, свойства матрикса, доступ к сосудам и иммунный ответ. Этим отчасти объясняется органотропность метастазов наряду с особенностями кровотока.</p>
+        <p>Диссеминированная клетка может погибнуть, сохраняться в состоянии покоя или начать деление. При длительном сохранении очага покой может поддерживаться как остановкой деления отдельных клеток, так и равновесием между ростом и гибелью в микрометастазе. Клинически выявляемый метастаз формируется, когда потомство клеток способно устойчиво расти в новом органе.</p>
+        <p class="ref">Источники <a href="#src-metastasis">Massagué и Obenauf</a>, <a href="#src-dormancy">Nature Reviews Cancer, 2026</a>.</p>
+      </div>
+    </details>
+
+    <section class="references" aria-labelledby="sources">
+      <h2 id="sources">Литература</h2>
+      <ul>
+        <li id="src-hanahan">Hanahan D. <a href="https://pubmed.ncbi.nlm.nih.gov/41616779/">Hallmarks of cancer—Then and now, and beyond.</a> <em>Cell</em>, 2026. См. также <a href="https://pubmed.ncbi.nlm.nih.gov/35022204/">Hallmarks of Cancer: New Dimensions.</a> <em>Cancer Discovery</em>, 2022.</li>
+        <li id="src-weinberg">Weinberg RA. <a href="https://wwnorton.co.uk/books/9780393887587-the-biology-of-cancer-007c6d0d-a81d-4406-931a-054f546307d1">The Biology of Cancer.</a> 3-е изд. W. W. Norton, 2023.</li>
+        <li id="src-iarc">IARC. <a href="https://www.iarc.who.int/infographics/iarc-monographs-classification/">Monographs hazard classification</a> и <a href="https://monographs.iarc.who.int/wp-content/uploads/2025/06/KCW-FINAL.pdf">критерии оценки механистических данных</a>.</li>
+        <li id="src-nci">National Cancer Institute. <a href="https://www.cancer.gov/about-cancer/causes-prevention/genetics">The Genetics of Cancer.</a></li>
+        <li id="src-genomes">Vogelstein B et al. <a href="https://pubmed.ncbi.nlm.nih.gov/23539594/">Cancer genome landscapes.</a> <em>Science</em>, 2013.</li>
+        <li id="src-clones">Greaves M, Maley CC. <a href="https://www.nature.com/articles/nature10762">Clonal evolution in cancer.</a> <em>Nature</em>, 2012.</li>
+        <li id="src-normal">Martincorena I et al. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6298579/">Somatic mutant clones colonize the human esophagus with age.</a> <em>Science</em>, 2018.</li>
+        <li id="src-metastasis">Massagué J, Obenauf AC. <a href="https://www.nature.com/articles/nature17038">Metastatic colonization by circulating tumour cells.</a> <em>Nature</em>, 2016.</li>
+        <li id="src-immune"><a href="https://www.nature.com/articles/s41590-024-01960-4">The complexity of immune evasion mechanisms throughout the metastatic cascade.</a> <em>Nature Immunology</em>, 2024.</li>
+        <li id="src-dormancy"><a href="https://www.nature.com/articles/s41568-026-00928-w">The sleeping threat: targeting cancer dormancy to transform metastasis therapy.</a> <em>Nature Reviews Cancer</em>, 2026.</li>
+      </ul>
+    </section>
+  </main>
+  <script>
+    function openLinkedModule() {
+      const module = document.getElementById(location.hash.slice(1));
+      if (module?.tagName === 'DETAILS') module.open = true;
+    }
+    window.addEventListener('hashchange', openLinkedModule);
+    openLinkedModule();
+  </script>
+</body>
+</html>
