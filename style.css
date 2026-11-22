@@ -36,3 +36,10 @@ button:focus-visible,a:focus-visible{outline:2px solid #555;outline-offset:3px}
 .global-results section+section{margin-top:18px}
 .global-results h3{margin:0 0 8px}
 .treatment-regimen[id],#molecular{scroll-margin-top:100px}
+
+.regimen-filters{display:grid;grid-template-columns:minmax(0,2fr) repeat(2,minmax(0,1fr));gap:12px}
+.regimen-filters select{width:100%;min-width:0}
+.regimen-result{margin-bottom:10px;padding:14px}
+.regimen-result h3,.regimen-result p{margin:0 0 8px;overflow-wrap:anywhere}
+.regimen-result .actions{margin:0}
+@media(max-width:700px){.regimen-filters{grid-template-columns:1fr}}

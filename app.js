@@ -14,7 +14,7 @@ function start() {
   let path = '';
   try { path = decodeURIComponent(location.hash.slice(1)); } catch { /* Invalid deep link. */ }
   const [page, id, section, key] = path.split('/');
-  const pages = ['home', 'catalog', 'card', 'tnm', 'calculators', 'scales', 'markers', 'sources', 'favorites', 'about', 'admin'];
+  const pages = ['home', 'catalog', 'card', 'tnm', 'calculators', 'scales', 'markers', 'regimens', 'sources', 'favorites', 'about', 'admin'];
   state.page = pages.includes(page) ? page : 'home';
   if (state.page === 'card' && state.card !== id) {
     state.stage = 'I';
@@ -48,6 +48,7 @@ const TILE_ICONS = {
   calculators: '<path d="m7 13-2-1 5-8 3 2-2 3m-1-5 1-2 3 2-1 2M5 12l-1 2 2 1 1-2m7-2c4 2 5 6 2 9m-3-7c2 1 3 4 1 6M3 17h7m-4 0 2 3m9 0H8a3 3 0 0 0-3 3h15a3 3 0 0 0-3-3Z"/><circle cx="12" cy="11" r="2"/>',
   markers: '<path d="m6.5 15.5 3.8-4m3.4 0 3.8 4"/><circle cx="12" cy="9.5" r="2.6"/><circle cx="4.7" cy="17.3" r="2.5"/><circle cx="19.3" cy="17.3" r="2.5"/>',
   scales: '<path d="M6 4H5c-1 0-2 1-2 2.5C3 12 5.5 15 9 15s6-3 6-8.5C15 5 14 4 13 4h-1m-3 11v2a5 5 0 0 0 10 0v-2"/><circle cx="19" cy="12.5" r="2.5"/>',
+  regimens: '<path d="M4 11l7-7a6.36 6.36 0 0 1 9 9l-7 7a6.36 6.36 0 0 1-9-9Zm3.5-3.5 9 9"/>',
   sources: '<path d="M12 6C9.5 4 6 3.5 2.5 4.5V19c3.5-1 7-.5 9.5 1.5 2.5-2 6-2.5 9.5-1.5V4.5C18 3.5 14.5 4 12 6Zm0 0v14.5"/>',
 };
 
@@ -55,7 +56,7 @@ function tileIcon(page) {
   return `<svg class="tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${TILE_ICONS[page]}</svg>`;
 }
 
-function home(){const tiles=[['Карточки ЗНО',`${DATA.length} нозологий: гистология, диагностика, лечение`,'catalog'],['TNM-справочник','Краткие критерии и версии классификаций','tnm'],['Калькуляторы','BSA, Calvert, CKD-EPI 2021, RECIST','calculators'],['Онкомаркеры','Показания и ограничения','markers'],['Шкалы','ECOG, Khorana, Child–Pugh, IMDC','scales'],['Источники','Рекомендации, журналы и базы исследований','sources']];return `<div class="intro"><h1>ОнкоАтлас</h1><p class="muted">Краткий клинический справочник по онкологии. Свободный доступ, без регистрации.</p></div><input class="search" aria-label="Поиск по справочнику" placeholder="Опухоль, МКБ‑10, схема, препарат или биомаркер…" oninput="searchHome(this.value)"><div id="quickSearch" aria-live="polite"></div><div class="tiles">${tiles.map(([n,d,p])=>`<button class="tile" onclick="view('${p}')">${tileIcon(p)}<h3>${n}</h3><p>${d}</p></button>`).join('')}</div><div class="notice">Медицинский контент — справочная редакция, <b>не прошедшая независимую клиническую экспертизу</b>. Для назначения терапии используйте актуальные руководства и инструкции. Данные пациентов на сайт не вводите.</div>`}
+function home(){const tiles=[['Карточки ЗНО',`${DATA.length} нозологий: гистология, диагностика, лечение`,'catalog'],['TNM-справочник','Краткие критерии и версии классификаций','tnm'],['Калькуляторы','BSA, Calvert, CKD-EPI 2021, RECIST','calculators'],['Онкомаркеры','Показания и ограничения','markers'],['Шкалы','ECOG, Khorana, Child–Pugh, IMDC','scales'],['Источники','Рекомендации, журналы и базы исследований','sources'],['Схемы лечения','Поиск по схеме, препарату и нозологии','regimens']];return `<div class="intro"><h1>ОнкоАтлас</h1><p class="muted">Краткий клинический справочник по онкологии. Свободный доступ, без регистрации.</p></div><input class="search" aria-label="Поиск по справочнику" placeholder="Опухоль, МКБ‑10, схема, препарат или биомаркер…" oninput="searchHome(this.value)"><div id="quickSearch" aria-live="polite"></div><div class="tiles">${tiles.map(([n,d,p])=>`<button class="tile" onclick="view('${p}')">${tileIcon(p)}<h3>${n}</h3><p>${d}</p></button>`).join('')}</div><div class="notice">Медицинский контент — справочная редакция, <b>не прошедшая независимую клиническую экспертизу</b>. Для назначения терапии используйте актуальные руководства и инструкции. Данные пациентов на сайт не вводите.</div>`}
 const SEARCH_LIBRARY = [
   ['Фундаментальный канцерогенез · повреждение ДНК', './carcinogenesis.html#damage', 'мутационные подписи УФ табак канцерогены репарация'],
   ['Фундаментальный канцерогенез · драйверы и MMR/MSI', './carcinogenesis.html#drivers', 'MSI dMMR микросателлитная нестабильность KRAS APC TP53 MLH1 драйвер'],
@@ -74,9 +75,7 @@ function regimenKey(protocol) {
 }
 
 function globalSearch(query) {
-  const normalize = value => normalizeSearch(value.replace(/(^|\s)с(?=\d)/gi, '$1c'))
-    .replace(/прям(?:ая|ой|ую) кишк(?:а|и|у)/g, 'прямая кишка')
-    .replace(/рака (почки|легкого|желудка)/g, 'рак $1');
+  const normalize = normalizeRegimenSearch;
   const terms = normalize(query).split(' ').filter(Boolean);
   if (!terms.length) return '';
   const matches = value => {
@@ -87,17 +86,9 @@ function globalSearch(query) {
     ['Стадирование', stagingData.entries.filter(entry => DATA.some(card => entry.cards.includes(card.id) &&
       matches([card.title, ...card.icd10, entry.title, entry.edition].join(' '))))
       .map(entry => [entry.title, '#tnm/' + entry.id, entry.edition])],
-    ['Схемы лечения', DATA.flatMap(card => {
-      const contextual = Boolean(NON_TNM_CARD_INFO[card.id]);
-      return (contextual ? ['I'] : CARD_STAGES[card.id] ?? STAGES).flatMap(stage =>
-        regimensFor(card.id, stage).filter(protocol => {
-          const regimenText = [protocol.regimen, ...protocol.drugs].join(' ');
-          return terms.some(term => normalize(regimenText).includes(term)) &&
-            matches([regimenText, card.title, ...card.icd10, 'стадия', stage].join(' '));
-        })
-          .map(protocol => [protocol.regimen, '#card/' + card.id + '/' + stage + '/' + regimenKey(protocol),
-            card.title + ' · ' + (contextual ? 'Клиническая ситуация' : 'Стадия ' + stage)]));
-    })],
+    ['Схемы лечения', REGIMEN_INDEX.filter(row => terms.some(term => row.drugText.includes(term)))
+      .flatMap(row => row.contexts.filter(context => matches([row.searchText, context.label].join(' ')))
+        .map(context => [row.protocol.regimen, context.href, row.card.title + ' · ' + context.label]))],
     ['Онкомаркеры', MARKERS.filter(marker => matches([marker.name, marker.aliases, marker.context].join(' ')))
       .map((marker) => [marker.name, '#markers/' + MARKERS.indexOf(marker), marker.context])],
     ['Библиотека знаний', SEARCH_LIBRARY.filter(([title, , keywords]) => matches(title + ' ' + keywords))
@@ -1861,6 +1852,103 @@ function normalizeSearch(value) {
     .replace(/[‐‑‒–—−]/g, '-').replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
 }
 
+function normalizeRegimenSearch(value) {
+  return normalizeSearch(value.replace(/(^|\s)с(?=\d)/gi, '$1c'))
+    .replace(/прям(?:ая|ой|ую) кишк(?:а|и|у)/g, 'прямая кишка')
+    .replace(/рака (почки|легкого|желудка)/g, 'рак $1');
+}
+
+const REGIMEN_LINES = [
+  ['Первая линия', /первая линия|первой линии|1 линия|1 й линии/],
+  ['Вторая линия', /вторая линия|второй линии|2 линия|2 й линии/],
+  ['Последующие линии', /последующ\p{L}* лини|треть\p{L}* лини|3 я линия|3 й линии/u],
+];
+const REGIMEN_PURPOSES = [
+  ['Неоадъювантная', /неоадъювант|предоперацион/],
+  ['Адъювантная', /(?:^| )адъювант|послеоперацион/],
+  ['Периоперационная', /периоперацион/],
+  ['Дефинитивная химиолучевая', /дефинитивн\p{L}* (?:хлт|химиолуч)|радикальн\p{L}* (?:хлт|химиолуч)/u],
+  ['Поддерживающая', /поддерживающ|поддержка/],
+  ['Индукция', /индукци/],
+  ['Консолидация', /консолидаци/],
+  ['Паллиативная', /паллиатив/],
+];
+
+function labelsFromTitle(title, rules) {
+  return rules.filter(([, pattern]) => pattern.test(title)).map(([label]) => label);
+}
+
+function buildRegimenIndex() {
+  const rows = new Map();
+  for (const card of DATA) {
+    const contextual = Boolean(NON_TNM_CARD_INFO[card.id]);
+    for (const stage of contextual ? ['I'] : CARD_STAGES[card.id] ?? STAGES) {
+      for (const protocol of regimensFor(card.id, stage)) {
+        const key = card.id + ':' + JSON.stringify(protocol);
+        const drugText = normalizeRegimenSearch([protocol.regimen, ...protocol.drugs].join(' '));
+        if (!rows.has(key)) {
+          const title = normalizeRegimenSearch(protocol.regimen);
+          rows.set(key, {
+            card, protocol, drugText, contexts: [],
+            searchText: [drugText, card.title, ...(card.icd10 ?? [])].join(' '),
+            lines: labelsFromTitle(title, REGIMEN_LINES),
+            purposes: labelsFromTitle(title, REGIMEN_PURPOSES),
+          });
+        }
+        rows.get(key).contexts.push({
+          label: contextual ? 'Клиническая ситуация' : 'Стадия ' + stage,
+          href: '#card/' + card.id + '/' + stage + '/' + regimenKey(protocol),
+        });
+      }
+    }
+  }
+  return [...rows.values()];
+}
+
+const REGIMEN_INDEX = buildRegimenIndex();
+
+function regimenResults(query, cardId, line, purpose) {
+  const terms = normalizeRegimenSearch(query).split(' ').filter(Boolean);
+  return REGIMEN_INDEX.filter(row =>
+    (!cardId || row.card.id === cardId) &&
+    (!line || (line === 'unspecified' ? !row.lines.length : row.lines.includes(line))) &&
+    (!purpose || (purpose === 'unspecified' ? !row.purposes.length : row.purposes.includes(purpose))) &&
+    terms.every(term => normalizeRegimenSearch([row.searchText, ...row.contexts.map(context => context.label)].join(' ')).includes(term)));
+}
+
+function regimenOptionList(rules) {
+  return rules.map(([label]) => `<option>${esc(label)}</option>`).join('') +
+    '<option value="unspecified">Не указано в названии</option>';
+}
+
+function regimenIndexPage() {
+  const cards = [...new Map(REGIMEN_INDEX.map(({card}) => [card.id, card])).values()]
+    .sort((a, b) => a.title.localeCompare(b.title, 'ru'));
+  return shell('Указатель лекарственных схем', `
+    <p class="muted">Поиск по названию схемы, препарату или опухоли. Ссылки открывают дозировки и условия применения в карточке ЗНО.</p>
+    <input id="regimenQuery" class="search" type="search" aria-label="Поиск лекарственной схемы" placeholder="Например, FOLFOX, пембролизумаб или C64" oninput="filterRegimenIndex()">
+    <div class="regimen-filters">
+      <label class="field">Нозология<select id="regimenCard" onchange="filterRegimenIndex()"><option value="">Все нозологии</option>${cards.map(card => `<option value="${esc(card.id)}">${esc(card.title)}</option>`).join('')}</select></label>
+      <label class="field">Линия<select id="regimenLine" onchange="filterRegimenIndex()"><option value="">Все линии</option>${regimenOptionList(REGIMEN_LINES)}</select></label>
+      <label class="field">Цель или этап<select id="regimenPurpose" onchange="filterRegimenIndex()"><option value="">Все цели и этапы</option>${regimenOptionList(REGIMEN_PURPOSES)}</select></label>
+    </div>
+    <p class="fine">Фильтры «Линия» и «Цель или этап» используют обозначения из названия схемы. Показания уточняйте в карточке.</p>
+    <p id="regimenCount" class="muted" role="status"></p>
+    <div id="regimenResults"></div>`);
+}
+
+function filterRegimenIndex() {
+  const rows = regimenResults($('#regimenQuery').value, $('#regimenCard').value,
+    $('#regimenLine').value, $('#regimenPurpose').value);
+  $('#regimenCount').textContent = 'Найдено: ' + rows.length;
+  $('#regimenResults').innerHTML = rows.map(row => `<article class="panel regimen-result">
+    <h3>${esc(row.protocol.regimen)}</h3>
+    <p class="muted">${esc([row.card.title, ...row.lines, ...row.purposes].join(' · '))}</p>
+    <div class="actions">${row.contexts.map(context =>
+      `<a class="btn secondary" href="${esc(context.href)}">${esc(context.label)}</a>`).join('')}</div>
+  </article>`).join('') || '<p class="panel muted">Схемы не найдены.</p>';
+}
+
 const searchIndex = new Map(DATA.map(c => {
   const regimens = (CARD_STAGES[c.id] ?? STAGES).flatMap(stage => regimensFor(c.id, stage));
   const drugNames = regimens.flatMap(protocol => [protocol.regimen, ...protocol.drugs]);
@@ -2224,6 +2312,6 @@ function sourcesPage() {
 function favorites(){let cs=DATA.filter(c=>favs().includes(c.id));return shell('Избранное',cs.length?cs.map(c=>`<button class="item" onclick="view('card','${c.id}')"><span><strong>${esc(c.title)}</strong><small>${esc(c.group)}</small></span>→</button>`).join(''):'<div class="panel muted">Пока нет избранных карточек.</div>')}
 function about(){return shell('О проекте',`<div class="panel"><h2>ОнкоАтлас</h2><p>Бесплатный русскоязычный образовательный справочник для врачей. Все материалы открыты без регистрации.</p><p><b>Редакция:</b> 0.2 · 21 ноября 2026 года. <b>Статус:</b> рабочая бета-версия; клиническая экспертиза ещё не завершена.</p><p>Тексты карточек — сокращённые алгоритмы, не официальные рекомендации. Локальная регистрация лекарств и стандарты лечения различаются по странам.</p><p>Источники для редакционной проверки: ${sources.map(([n,u])=>`<a href="${u}" target="_blank">${n}</a>`).join(', ')}.</p><p><b>Конфиденциальность:</b> не вводите персональные данные пациентов. Калькуляторы выполняются в браузере. Избранное хранится локально.</p></div>`)}
 function admin(){return shell('Администрирование',`<div class="panel"><h2>Публичный сайт — только чтение</h2><p>Защищённое редактирование ещё не подключено. Пароли в исходном коде отсутствуют. Вход «Икбал Р.В.» не будет реализован как небезопасная клиентская проверка.</p><p>Пока обновления выполняются заменой файлов после медицинской проверки. Для редактирования через чат потребуется подключение к репозиторию с ограниченными правами и подтверждением публикации.</p></div>`)}
-function render(){const pages={home,catalog,card,tnm:tnmPage,calculators:calcPage,scales,markers,sources:sourcesPage,favorites,about,admin};$('#app').innerHTML=(pages[state.page]||home)();allNodes('[data-nav]').forEach(x=>x.classList.toggle('active',x.dataset.nav===state.page));if(state.page==='catalog')listCards()}
-window.view=view;window.toggleFav=toggleFav;window.setStage=setStage;window.searchHome=searchHome;window.listCards=listCards;window.filterStaging=filterStaging;window.calculate=calculate;window.khorana=khorana;window.child=child;window.imdc=imdc;window.filterMarkers=filterMarkers;
+function render(){const pages={home,catalog,card,tnm:tnmPage,calculators:calcPage,scales,markers,regimens:regimenIndexPage,sources:sourcesPage,favorites,about,admin};$('#app').innerHTML=(pages[state.page]||home)();allNodes('[data-nav]').forEach(x=>x.classList.toggle('active',x.dataset.nav===state.page));if(state.page==='catalog')listCards();if(state.page==='regimens')filterRegimenIndex()}
+window.view=view;window.toggleFav=toggleFav;window.setStage=setStage;window.searchHome=searchHome;window.filterRegimenIndex=filterRegimenIndex;window.listCards=listCards;window.filterStaging=filterStaging;window.calculate=calculate;window.khorana=khorana;window.child=child;window.imdc=imdc;window.filterMarkers=filterMarkers;
 start();
