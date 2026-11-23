@@ -25,6 +25,8 @@ function start() {
   state.staging = state.page === 'tnm' ? id : undefined;
   state.marker = state.page === 'markers' && /^\d+$/.test(id ?? '') ? Number(id) : -1;
   let target;
+  if (state.page === 'regimens' && id === 'complications') state.complication = section;
+  if (['calculators', 'scales'].includes(state.page) && /^[a-z0-9-]+$/.test(id ?? '')) target = '#' + state.page + '-' + id;
   if (state.page === 'card' && DATA.some(card => card.id === id)) {
     if (section === 'molecular') target = '#molecular';
     else if ((CARD_STAGES[id] ?? STAGES).includes(section)) {
@@ -57,15 +59,52 @@ function tileIcon(page) {
   return `<svg class="tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${TILE_ICONS[page]}</svg>`;
 }
 
-function home(){const tiles=[['Карточки ЗНО',`${DATA.length} нозологий: гистология, диагностика, лечение`,'catalog'],['TNM-справочник','Краткие критерии и версии классификаций','tnm'],['Калькуляторы','BSA, Calvert, CKD-EPI 2021, RECIST','calculators'],['Онкомаркеры','Показания и ограничения','markers'],['Шкалы','ECOG, Khorana, Child–Pugh, IMDC','scales'],['Источники','Рекомендации, журналы и базы исследований','sources'],['Схемы лечения','Лекарственные схемы и осложнения терапии','regimens']];return `<div class="intro"><h1>ОнкоАтлас</h1><p class="muted">Краткий клинический справочник по онкологии. Свободный доступ, без регистрации.</p></div><input class="search" aria-label="Поиск по справочнику" placeholder="Опухоль, МКБ‑10, схема, препарат или биомаркер…" oninput="searchHome(this.value)"><div id="quickSearch" aria-live="polite"></div><div class="tiles">${tiles.map(([n,d,p])=>`<button class="tile" onclick="view('${p}')">${tileIcon(p)}<h3>${n}</h3><p>${d}</p></button>`).join('')}</div><div class="notice">Медицинский контент — справочная редакция, <b>не прошедшая независимую клиническую экспертизу</b>. Для назначения терапии используйте актуальные руководства и инструкции. Данные пациентов на сайт не вводите.</div>`}
+function home(){const tiles=[['Карточки ЗНО',`${DATA.length} нозологий: гистология, диагностика, лечение`,'catalog'],['TNM-справочник','Краткие критерии и версии классификаций','tnm'],['Калькуляторы','BSA, Calvert, CKD-EPI 2021, RECIST','calculators'],['Онкомаркеры','Показания и ограничения','markers'],['Шкалы','ECOG, Khorana, Child–Pugh, IMDC','scales'],['Источники','Рекомендации, журналы и базы исследований','sources'],['Схемы лечения','Лекарственные схемы и осложнения терапии','regimens']];return `<div class="intro"><h1>ОнкоАтлас</h1><p class="muted">Краткий клинический справочник по онкологии. Свободный доступ, без регистрации.</p></div><input class="search" aria-label="Поиск по справочнику" placeholder="Опухоль, схема, маркер, осложнение…" oninput="searchHome(this.value)"><div id="quickSearch" aria-live="polite"></div><div class="tiles">${tiles.map(([n,d,p])=>`<button class="tile" onclick="view('${p}')">${tileIcon(p)}<h3>${n}</h3><p>${d}</p></button>`).join('')}</div><div class="notice">Медицинский контент — справочная редакция, <b>не прошедшая независимую клиническую экспертизу</b>. Для назначения терапии используйте актуальные руководства и инструкции. Данные пациентов на сайт не вводите.</div>`}
 const SEARCH_LIBRARY = [
   ['Фундаментальный канцерогенез · триггер и фиксация мутаций', './carcinogenesis.html#damage', 'повреждение ДНК репликация репарация кодон кодоны рамка считывания'],
   ['Фундаментальный канцерогенез · драйверы, аберрации и эпигенетика', './carcinogenesis.html#drivers', 'MSI dMMR микросателлитная нестабильность MLH1 драйвер хромосомные аберрации хромотрипсис эпигенетическая перестройка хроматин метилирование'],
   ['Фундаментальный канцерогенез · клональная эволюция', './carcinogenesis.html#evolution', 'субклон гетерогенность TRACERx hallmarks'],
-  ['Фундаментальный канцерогенез · инвазия и диссеминация', './carcinogenesis.html#invasion', 'интравазация экстравазация EMT'],
+  ['Фундаментальный канцерогенез · инвазия и диссеминация', './carcinogenesis.html#invasion', 'интравазация выход из кровотока EMT'],
   ['Фундаментальный канцерогенез · метастатическая колонизация', './carcinogenesis.html#metastasis', 'метастазы органотропность покой ниша'],
-  ['Библиотека знаний · схемы и классификации', './learning-library.html', 'сигнальные пути MAPK WNT PI3K RECIST гистотипы препараты'],
+  ['Гены-супрессоры опухолей', './carcinogenesis.html#suppressors', 'RB1 TP53 CDKN2A инактивация потеря аллеля'],
+  ['Онкогены', './carcinogenesis.html#oncogenes', 'KRAS ERBB2 BCR ABL1 активация протоонкогены'],
+  ['Девять признаков злокачественности', './carcinogenesis.html#hallmarks', 'hallmarks Hanahan теломеры ангиогенез пластичность'],
+  ['Библиотека знаний', './learning-library.html', 'схемы и классификации'],
+  ['Гистогенез и гистотипы', './learning-library.html#topic-1', 'карциномы классификация ЗНО'],
+  ['Группы противоопухолевых препаратов', './learning-library.html#topic-2', 'цитотоксическая эндокринная терапия'],
+  ['Молекулярные подтипы и биомаркеры', './learning-library.html#topic-3', 'биология опухоли'],
+  ['Молекулярные мишени и препараты', './learning-library.html#topic-4', 'таргетная терапия'],
+  ['Иммунотерапия: основные подходы', './learning-library.html#topic-5', 'иммуноонкология'],
+  ['Ключевые признаки опухолей', './learning-library.html#topic-6', 'hallmarks of cancer'],
+  ['Сигнальные пути канцерогенеза', './learning-library.html#topic-7', 'MAPK WNT PI3K внутриклеточные каскады'],
+  ['RECIST 1.1: основы', './learning-library.html#topic-8', 'оценка ответа на лечение'],
 ];
+
+const SEARCH_TOOLS = [
+  ['Площадь поверхности тела (Mosteller)', '#calculators/bsa', 'BSA ППТ Мостеллер'],
+  ['Карбоплатин (Calvert)', '#calculators/cal', 'AUC Калверт доза'],
+  ['CKD-EPI 2021', '#calculators/ckdepi', 'рСКФ СКФ креатинин'],
+  ['Индекс массы тела', '#calculators/bmi', 'ИМТ BMI'],
+  ['Абсолютное число нейтрофилов', '#calculators/anc', 'АЧН ANC нейтропения'],
+  ['Скорректированный кальций', '#calculators/ca', 'альбумин'],
+  ['QTc по Fridericia', '#calculators/qtc', 'Фридериция QT интервал'],
+  ['RECIST 1.1', '#calculators/recist', 'оценка ответа таргетные очаги'],
+  ['ECOG Performance Status', '#scales/ecog', 'функциональный статус'],
+  ['Karnofsky', '#scales/kps', 'KPS Карновский'],
+  ['Khorana', '#scales/khorana', 'Хорана риск ВТЭО тромбоз'],
+  ['Child–Pugh', '#scales/child-pugh', 'Чайлд Пью печень цирроз'],
+  ['IMDC', '#scales/imdc', 'метастатический рак почки'],
+  ['CTCAE', '#scales/other', 'критерии степени нежелательных явлений токсичность'],
+];
+
+const CARD_SEARCH_ALIASES = {
+  c001: 'НМРЛ NSCLC', c002: 'НМРЛ NSCLC', c003: 'МРЛ SCLC',
+  c004: 'РМЖ breast cancer', c005: 'КРР CRC', c008: 'поджелудочная PDAC',
+  c009: 'ГЦК HCC', c013: 'РПЖ простата', c015: 'РЭ рак тела матки',
+  c017: 'РШМ', c027: 'ДВККЛ DLBCL', c029: 'ММ multiple myeloma',
+  c030: 'ОМЛ AML', c031: 'ХМЛ CML', c046: 'CLL SLL',
+  c050: 'ALL', c056: 'MCL',
+};
 
 function regimenKey(protocol) {
   let hash = 2166136261;
@@ -83,14 +122,25 @@ function globalSearch(query) {
     const haystack = normalize(value);
     return terms.every(term => haystack.includes(term));
   };
+  const compactQuery = markerSearchText(query);
   const sections = [
+    ['Осложнения терапии', THERAPY_COMPLICATIONS.filter(topic => matches([topic.title, topic.aliases, topic.signs].join(' ')))
+      .map(topic => [topic.title, '#regimens/complications/' + topic.id, 'Признаки · срочность · первые действия'])],
+    ['Калькуляторы и шкалы', SEARCH_TOOLS.filter(([title, , keywords]) => matches(title + ' ' + keywords))
+      .map(([title, href]) => [title, href, href.startsWith('#scales') ? 'Клиническая шкала' : 'Калькулятор'])],
+    ['Источники', SOURCE_SECTIONS.flatMap(([group, sources]) => sources.filter(([name, description]) =>
+      matches([group, name, description].join(' '))).map(([name, , url]) => [name, url, group]))],
+    ['Другие системы стадирования', DATA.filter(card => stagingData.other[card.id] &&
+      matches([card.title, CARD_SEARCH_ALIASES[card.id], stagingData.other[card.id]].join(' ')))
+      .map(card => [card.title, '#card/' + card.id, stagingData.other[card.id]])],
     ['Стадирование', stagingData.entries.filter(entry => DATA.some(card => entry.cards.includes(card.id) &&
-      matches([card.title, ...card.icd10, entry.title, entry.edition].join(' '))))
+      matches([card.title, CARD_SEARCH_ALIASES[card.id], ...card.icd10, entry.title, entry.edition].join(' '))))
       .map(entry => [entry.title, '#tnm/' + entry.id, entry.edition])],
-    ['Схемы лечения', REGIMEN_INDEX.filter(row => terms.some(term => row.drugText.includes(term)))
-      .flatMap(row => row.contexts.filter(context => matches([row.searchText, context.label].join(' ')))
+    ['Схемы лечения', REGIMEN_INDEX
+      .flatMap(row => row.contexts.filter(context => matches([row.searchText, CARD_SEARCH_ALIASES[row.card.id], context.label, ...row.lines, ...row.purposes].join(' ')))
         .map(context => [row.protocol.regimen, context.href, row.card.title + ' · ' + context.label]))],
-    ['Онкомаркеры', MARKERS.filter(marker => matches([marker.name, marker.aliases, marker.context].join(' ')))
+    ['Онкомаркеры', MARKERS.filter(marker => matches([marker.name, marker.aliases, marker.context, marker.definition].join(' ')) ||
+      (compactQuery.length >= 3 && markerSearchText(marker.name + ' ' + marker.aliases).includes(compactQuery)))
       .map((marker) => [marker.name, '#markers/' + MARKERS.indexOf(marker), marker.context])],
     ['Библиотека знаний', SEARCH_LIBRARY.filter(([title, , keywords]) => matches(title + ' ' + keywords))
       .map(([title, href]) => [title, href, 'Учебный материал'])],
@@ -1940,6 +1990,8 @@ function regimenOptionList(rules) {
 
 const THERAPY_COMPLICATIONS = [
   {
+    id: 'febrile-neutropenia',
+    aliases: 'ФН лихорадка при нейтропении нейтропеническая лихорадка',
     title: 'Фебрильная нейтропения',
     signs: 'После миелосупрессивной терапии: температура во рту ≥38,3 °C однократно или ≥38,0 °C в течение часа при абсолютном числе нейтрофилов <0,5 × 10⁹/л либо ожидаемом снижении ниже этого уровня в ближайшие 48 часов.',
     urgent: 'Лихорадка после химиотерапии с подозрением на нейтропению требует немедленной очной оценки. При гипотензии, спутанности сознания или дыхательной недостаточности активируют протокол сепсиса.',
@@ -1951,6 +2003,8 @@ const THERAPY_COMPLICATIONS = [
     sources: [['ASCO/IDSA · лихорадка и нейтропения', 'https://www.idsociety.org/practice-guideline/fever-and-neutropenia-in-adults-with-cancer/']],
   },
   {
+    id: 'infusion-reaction',
+    aliases: 'гиперчувствительность анафилактический шок',
     title: 'Инфузионная реакция и анафилаксия',
     signs: 'Во время или вскоре после инфузии возможны приливы, зуд, крапивница, озноб, одышка, свистящее дыхание и падение давления. Анафилаксия возможна без кожных проявлений.',
     urgent: 'При стридоре, бронхоспазме, гипотензии или коллапсе немедленно вызвать реанимационную команду. При подозрении на анафилаксию препарат первой линии — адреналин внутримышечно по протоколу.',
@@ -1965,6 +2019,8 @@ const THERAPY_COMPLICATIONS = [
     ],
   },
   {
+    id: 'extravasation',
+    aliases: 'везикант инфильтрация SLAP',
     title: 'Экстравазация противоопухолевого препарата',
     signs: 'Боль, жжение, отёк или изменение цвета кожи возле доступа, подтекание, сопротивление при введении или потеря обратного тока крови.',
     urgent: 'При подозрении сразу остановить введение и вызвать помощь. При экстравазации везиканта или подозрении на повреждение центрального доступа срочно согласовать дальнейшие действия с профильной командой.',
@@ -1979,6 +2035,8 @@ const THERAPY_COMPLICATIONS = [
     ],
   },
   {
+    id: 'immune-toxicity',
+    aliases: 'ирНЯ irAE иммунная токсичность иммунотерапия пневмонит миокардит колит',
     title: 'Иммунозависимые нежелательные явления',
     signs: 'На фоне ингибиторов контрольных точек или после их отмены возможны новые кашель и одышка, диарея, сыпь, желтуха, выраженная слабость или неврологические симптомы.',
     urgent: 'Боль в груди, аритмия, синкопе, гипоксемия, выраженная мышечная слабость или признаки надпочечникового криза требуют неотложной оценки. Возможный миокардит оценивают срочно даже при слабо выраженных симптомах.',
@@ -1998,7 +2056,7 @@ function therapyComplicationsPage() {
   return shell('Осложнения лекарственной терапии', `
     <p><a class="back" href="#regimens">← Указатель лекарственных схем</a></p>
     <p class="muted">Первичная оценка осложнений противоопухолевой терапии у взрослых. Для лечения используйте полный протокол учреждения.</p>
-    ${THERAPY_COMPLICATIONS.map(topic => `<details class="marker-entry">
+    ${THERAPY_COMPLICATIONS.map(topic => `<details class="marker-entry"${state.complication === topic.id ? ' open' : ''}>
       <summary>${esc(topic.title)}</summary>
       <div class="marker-detail">
         <p><b>Когда заподозрить.</b> ${esc(topic.signs)}</p>
@@ -2043,7 +2101,7 @@ function filterRegimenIndex() {
 const searchIndex = new Map(DATA.map(c => {
   const regimens = (CARD_STAGES[c.id] ?? STAGES).flatMap(stage => regimensFor(c.id, stage));
   const drugNames = regimens.flatMap(protocol => [protocol.regimen, ...protocol.drugs]);
-  const text = [c.title, c.group, c.origin, c.location, c.molecular, c.markers, ...(c.icd10 ?? []), ...drugNames].join(' ');
+  const text = [c.title, CARD_SEARCH_ALIASES[c.id], c.group, c.origin, c.location, c.molecular, c.markers, ...(c.icd10 ?? []), ...drugNames].join(' ');
   return [c.id, normalizeSearch(text)];
 }));
 
@@ -2594,14 +2652,14 @@ ${calcBox('Скорректированный кальций','ca',[['cat','Об
 ${calcBox('QTc по Fridericia','qtc',[['qt','QT, мс','380'],['rr','RR, мс','850']],'QTcF = QT / ∛(RR в секундах). Оценивать с ЭКГ и клиническим контекстом.')}
 ${calcBox('RECIST 1.1 — ориентир','recist',[['base','Сумма таргетных очагов исходно, мм','100'],['nadir','Минимальная сумма за наблюдение, мм','100'],['current','Текущая сумма, мм','65']],'PR: снижение ≥30% от исходной; PD: рост ≥20% от надира и ≥5 мм абсолютного прироста. Новые очаги и нетаргетные изменения оцениваются отдельно.',[['newlesion','Новые очаги','Нет','Есть']])}
 </div>`)}
-function calcBox(title,id,fields,note,selects=[]){return `<div class="panel"><h2>${title}</h2>${fields.map(([k,label,ph])=>`<label class="field">${label}<input type="number" step="any" data-calc="${id}" id="${id}_${k}" placeholder="${ph}" oninput="calculate('${id}')"></label>`).join('')}${selects.map(([k,label,...opts])=>`<label class="field">${label}<select id="${id}_${k}" onchange="calculate('${id}')">${opts.map((v,i)=>`<option value="${i}">${v}</option>`).join('')}</select></label>`).join('')}<div class="result" id="res_${id}">Введите значения</div><p class="fine">${note}</p></div>`}
+function calcBox(title,id,fields,note,selects=[]){return `<div class="panel" id="calculators-${id}" tabindex="-1"><h2>${title}</h2>${fields.map(([k,label,ph])=>`<label class="field">${label}<input type="number" step="any" data-calc="${id}" id="${id}_${k}" placeholder="${ph}" oninput="calculate('${id}')"></label>`).join('')}${selects.map(([k,label,...opts])=>`<label class="field">${label}<select id="${id}_${k}" onchange="calculate('${id}')">${opts.map((v,i)=>`<option value="${i}">${v}</option>`).join('')}</select></label>`).join('')}<div class="result" id="res_${id}">Введите значения</div><p class="fine">${note}</p></div>`}
 function calculate(id){const v=k=>{let s=$(`#${id}_${k}`)?.value;return s===''||s==null?NaN:Number(s)};const valid=(...a)=>a.every(x=>Number.isFinite(x)&&x>=0);let out='Проверьте введённые значения';const f=(x,d=2)=>x.toLocaleString('ru-RU',{maximumFractionDigits:d,minimumFractionDigits:d});if(id==='bsa'&&valid(v('h'),v('w'))&&v('h')>0&&v('w')>0)out=f(Math.sqrt(v('h')*v('w')/3600),3)+' м²';if(id==='cal'&&valid(v('auc'),v('gfr'))&&v('auc')>0&&v('gfr')>0&&v('gfr')<=250)out=f(v('auc')*(v('gfr')+25),0)+' мг (расчёт, не назначение)';if(id==='ckdepi'&&valid(v('age'),v('scr'))&&v('age')>=18&&v('age')<=120&&v('scr')>0){const female=v('sex')===1,creat=v('scr')/88.4,k=female?0.7:0.9,alpha=female?-0.241:-0.302,ratio=creat/k;const egfr=142*Math.pow(Math.min(ratio,1),alpha)*Math.pow(Math.max(ratio,1),-1.2)*Math.pow(0.9938,v('age'))*(female?1.012:1);out=f(egfr,1)+' мл/мин/1,73 м²';if(valid(v('height'),v('weight'))&&v('height')>0&&v('weight')>0){const bsa=Math.sqrt(v('height')*v('weight')/3600);out+=' · абсолютная рСКФ '+f(egfr*bsa/1.73,1)+' мл/мин'}}if(id==='bmi'&&valid(v('bh'),v('bw'))&&v('bh')>0&&v('bw')>0)out=f(v('bw')/((v('bh')/100)**2),1)+' кг/м²';if(id==='anc'&&valid(v('wbc'),v('neu'),v('bands'))&&v('neu')+v('bands')<=100)out=f(v('wbc')*(v('neu')+v('bands'))/100,2)+' ×10⁹/л';if(id==='ca'&&valid(v('cat'),v('alb')))out=f(v('cat')+.02*(40-v('alb')),2)+' ммоль/л';if(id==='qtc'&&valid(v('qt'),v('rr'))&&v('rr')>0)out=f(v('qt')/Math.cbrt(v('rr')/1000),0)+' мс';if(id==='recist'&&valid(v('base'),v('nadir'),v('current'))&&v('base')>0&&v('nadir')>0){let p=(v('current')-v('base'))/v('base')*100,dp=(v('current')-v('nadir'))/v('nadir')*100;out=v('newlesion')===1?'Подозрение на PD: новый очаг':dp>=20&&v('current')-v('nadir')>=5?'Размерные критерии PD':p<=-30?'Размерные критерии PR':'Размерные критерии SD (если нет иных признаков PD/CR)';out+=` · Δ исходно ${f(p,1)}%`};$(`#res_${id}`).textContent=out}
-function scales(){return shell('Клинические шкалы',`<div class="panel"><h2>ECOG Performance Status</h2>${['0 — Полностью активен','1 — Ограничена тяжёлая активность; лёгкая работа сохранена','2 — Самообслуживание сохранено, не способен работать; активен >50% дня','3 — Ограниченное самообслуживание; в постели/кресле >50% дня','4 — Полностью обездвижен, самообслуживание невозможно','5 — Смерть'].map(s=>`<p class="scale-row">${s}</p>`).join('')}</div>
-<div class="panel"><h2>Karnofsky (KPS)</h2><p>100 — без жалоб; 90 — обычная активность, минимальные симптомы; 80 — обычная активность с усилием; 70 — обслуживает себя, не способен к обычной работе; 60 — нужна периодическая помощь; 50 — значительная помощь; 40 — инвалидизирован; 30 — госпитализация показана; 20 — тяжёлое состояние; 10 — терминальное состояние; 0 — смерть.</p></div>
-<div class="panel"><h2>Khorana — риск ВТЭО при ХТ</h2><label class="field">Локализация<select id="kh_site" onchange="khorana()"><option value="0">Другие</option><option value="1">Лёгкое, лимфома, гинекологическая, мочевой пузырь, яичко</option><option value="2">Желудок или поджелудочная железа</option></select></label>${[['kh_pl','Тромбоциты ≥350 ×10⁹/л'],['kh_hb','Hb <100 г/л или ЭПО'],['kh_wbc','Лейкоциты >11 ×10⁹/л'],['kh_bmi','ИМТ ≥35 кг/м²']].map(([id,label])=>`<label class="check"><input id="${id}" type="checkbox" onchange="khorana()"> ${label}</label>`).join('')}<div class="result" id="kh_result">0 баллов — низкий риск</div><p class="fine">Шкала не заменяет оценку риска кровотечения и показаний к тромбопрофилактике.</p></div>
-<div class="panel"><h2>Child–Pugh</h2>${[['cp_bili','Билирубин, мкмоль/л',['<34','34–50','>50']],['cp_alb','Альбумин, г/л',['>35','28–35','<28']],['cp_inr','INR',['<1,7','1,7–2,3','>2,3']],['cp_asc','Асцит',['Нет','Лёгкий/контролируемый','Выраженный/рефрактерный']],['cp_enc','Энцефалопатия',['Нет','I–II','III–IV']]].map(([id,label,opts])=>`<label class="field">${label}<select id="${id}" onchange="child()">${opts.map((o,i)=>`<option value="${i+1}">${o}</option>`).join('')}</select></label>`).join('')}<div class="result" id="cp_result">5 баллов — класс A</div><p class="fine">Клинические категории асцита и энцефалопатии требуют врачебной оценки.</p></div>
-<div class="panel"><h2>IMDC — метастатический рак почки</h2>${[['im_time','Время от диагноза до системной терапии <1 года'],['im_kps','Karnofsky <80%'],['im_hb','Hb ниже нижней границы нормы'],['im_ca','Скорректированный Ca выше верхней границы нормы'],['im_neu','Нейтрофилы выше верхней границы нормы'],['im_pl','Тромбоциты выше верхней границы нормы']].map(([id,label])=>`<label class="check"><input id="${id}" type="checkbox" onchange="imdc()"> ${label}</label>`).join('')}<div class="result" id="im_result">0 факторов — благоприятный риск</div></div>
-<div class="panel"><h2>Другие шкалы</h2><p><b>CTCAE:</b> степени 1–5 зависят от конкретного нежелательного явления; универсальной формулы нет. <b>MASCC:</b> требует полного набора клинических признаков и валидации; автоматический подсчёт пока не активирован. <b>R-ISS:</b> необходимы β2-микроглобулин, альбумин, ЛДГ и FISH; применяйте оригинальные критерии.</p></div>`)}
+function scales(){return shell('Клинические шкалы',`<div class="panel" id="scales-ecog" tabindex="-1"><h2>ECOG Performance Status</h2>${['0 — Полностью активен','1 — Ограничена тяжёлая активность; лёгкая работа сохранена','2 — Самообслуживание сохранено, не способен работать; активен >50% дня','3 — Ограниченное самообслуживание; в постели/кресле >50% дня','4 — Полностью обездвижен, самообслуживание невозможно','5 — Смерть'].map(s=>`<p class="scale-row">${s}</p>`).join('')}</div>
+<div class="panel" id="scales-kps" tabindex="-1"><h2>Karnofsky (KPS)</h2><p>100 — без жалоб; 90 — обычная активность, минимальные симптомы; 80 — обычная активность с усилием; 70 — обслуживает себя, не способен к обычной работе; 60 — нужна периодическая помощь; 50 — значительная помощь; 40 — инвалидизирован; 30 — госпитализация показана; 20 — тяжёлое состояние; 10 — терминальное состояние; 0 — смерть.</p></div>
+<div class="panel" id="scales-khorana" tabindex="-1"><h2>Khorana — риск ВТЭО при ХТ</h2><label class="field">Локализация<select id="kh_site" onchange="khorana()"><option value="0">Другие</option><option value="1">Лёгкое, лимфома, гинекологическая, мочевой пузырь, яичко</option><option value="2">Желудок или поджелудочная железа</option></select></label>${[['kh_pl','Тромбоциты ≥350 ×10⁹/л'],['kh_hb','Hb <100 г/л или ЭПО'],['kh_wbc','Лейкоциты >11 ×10⁹/л'],['kh_bmi','ИМТ ≥35 кг/м²']].map(([id,label])=>`<label class="check"><input id="${id}" type="checkbox" onchange="khorana()"> ${label}</label>`).join('')}<div class="result" id="kh_result">0 баллов — низкий риск</div><p class="fine">Шкала не заменяет оценку риска кровотечения и показаний к тромбопрофилактике.</p></div>
+<div class="panel" id="scales-child-pugh" tabindex="-1"><h2>Child–Pugh</h2>${[['cp_bili','Билирубин, мкмоль/л',['<34','34–50','>50']],['cp_alb','Альбумин, г/л',['>35','28–35','<28']],['cp_inr','INR',['<1,7','1,7–2,3','>2,3']],['cp_asc','Асцит',['Нет','Лёгкий/контролируемый','Выраженный/рефрактерный']],['cp_enc','Энцефалопатия',['Нет','I–II','III–IV']]].map(([id,label,opts])=>`<label class="field">${label}<select id="${id}" onchange="child()">${opts.map((o,i)=>`<option value="${i+1}">${o}</option>`).join('')}</select></label>`).join('')}<div class="result" id="cp_result">5 баллов — класс A</div><p class="fine">Клинические категории асцита и энцефалопатии требуют врачебной оценки.</p></div>
+<div class="panel" id="scales-imdc" tabindex="-1"><h2>IMDC — метастатический рак почки</h2>${[['im_time','Время от диагноза до системной терапии <1 года'],['im_kps','Karnofsky <80%'],['im_hb','Hb ниже нижней границы нормы'],['im_ca','Скорректированный Ca выше верхней границы нормы'],['im_neu','Нейтрофилы выше верхней границы нормы'],['im_pl','Тромбоциты выше верхней границы нормы']].map(([id,label])=>`<label class="check"><input id="${id}" type="checkbox" onchange="imdc()"> ${label}</label>`).join('')}<div class="result" id="im_result">0 факторов — благоприятный риск</div></div>
+<div class="panel" id="scales-other" tabindex="-1"><h2>Другие шкалы</h2><p><b>CTCAE:</b> степени 1–5 зависят от конкретного нежелательного явления; универсальной формулы нет. <b>MASCC:</b> требует полного набора клинических признаков и валидации; автоматический подсчёт пока не активирован. <b>R-ISS:</b> необходимы β2-микроглобулин, альбумин, ЛДГ и FISH; применяйте оригинальные критерии.</p></div>`)}
 function khorana(){let n=Number($('#kh_site').value)+['kh_pl','kh_hb','kh_wbc','kh_bmi'].filter(x=>$('#'+x).checked).length;$('#kh_result').textContent=n+' балл(ов) — '+(n===0?'низкий':n<=2?'промежуточный':'высокий')+' риск (исходная классификация)'}
 function child(){let n=['cp_bili','cp_alb','cp_inr','cp_asc','cp_enc'].reduce((a,x)=>a+Number($('#'+x).value),0);$('#cp_result').textContent=n+' баллов — Child–Pugh '+(n<=6?'A':n<=9?'B':'C')}
 function imdc(){let n=['im_time','im_kps','im_hb','im_ca','im_neu','im_pl'].filter(x=>$('#'+x).checked).length;$('#im_result').textContent=n+' факторов — '+(n===0?'благоприятный':n<=2?'промежуточный':'неблагоприятный')+' риск'}
