@@ -5,7 +5,16 @@
     "context": "Гепатоцеллюлярная карцинома, несеминомные герминогенные опухоли",
     "use": "Вместе с УЗИ при наблюдении групп риска ГЦК, при герминогенных опухолях — для оценки риска и динамики.",
     "limit": "Повышается при беременности и хронических болезнях печени. Нормальное значение не исключает ГЦК.",
-    "url": "https://www.cancer.gov/about-cancer/diagnosis-staging/diagnosis/tumor-markers-list"
+    "url": "https://www.cancer.gov/about-cancer/diagnosis-staging/diagnosis/tumor-markers-list",
+    "definition": "Альфа-фетопротеин, белок, который в норме вырабатывается преимущественно печенью плода.",
+    "values": [
+      {
+        "label": "Клинический порог",
+        "text": "При наблюдении пациентов группы риска ГЦК по AASLD АФП ≥20 нг/мл или рост АФП в динамике служит поводом для многофазной КТ или МРТ с контрастированием.",
+        "source": "AASLD",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10663390/"
+      }
+    ]
   },
   {
     "name": "β-ХГЧ",
@@ -13,7 +22,16 @@
     "context": "Гестационная трофобластическая неоплазия, герминогенные опухоли",
     "use": "Оценка ответа и наблюдение, при герминогенных опухолях — также исходное стадирование.",
     "limit": "Учитывать беременность и интерференцию анализа. При PSTT/ETT уровень может быть относительно низким.",
-    "url": "https://www.cancer.gov/about-cancer/diagnosis-staging/diagnosis/tumor-markers-list"
+    "url": "https://www.cancer.gov/about-cancer/diagnosis-staging/diagnosis/tumor-markers-list",
+    "definition": "Бета-субъединица хорионического гонадотропина человека. Этот гормон вырабатывается трофобластом, а также может секретироваться опухолью.",
+    "values": [
+      {
+        "label": "Прогностические границы",
+        "text": "При распространённой несеминомной герминогенной опухоли границы IGCCCG для β-ХГЧ составляют 5 000 и 50 000 мМЕ/мл. Группу риска определяют вместе с АФП, ЛДГ, локализацией первичной опухоли и метастазов.",
+        "source": "SEOM–GG / IGCCCG",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11467073/"
+      }
+    ]
   },
   {
     "name": "ПСА",
@@ -21,7 +39,16 @@
     "context": "Рак предстательной железы",
     "use": "Оценка индивидуального риска, контроль ответа и наблюдение после лечения.",
     "limit": "Повышается при ДГПЖ и простатите. Диагноз устанавливают по совокупности данных.",
-    "url": "https://www.cancer.gov/about-cancer/diagnosis-staging/diagnosis/tumor-markers-list"
+    "url": "https://www.cancer.gov/about-cancer/diagnosis-staging/diagnosis/tumor-markers-list",
+    "definition": "Простатический специфический антиген (KLK3), фермент, который вырабатывают клетки эпителия предстательной железы.",
+    "values": [
+      {
+        "label": "Клинический ориентир",
+        "text": "При ПСА 3–10 нг/мл у бессимптомного мужчины с нормальным пальцевым ректальным исследованием EAU рекомендует повторить анализ перед дальнейшим обследованием.",
+        "source": "EAU",
+        "url": "https://uroweb.org/guidelines/prostate-cancer/chapter/diagnostic-evaluation"
+      }
+    ]
   },
   {
     "name": "РЭА",
@@ -29,7 +56,16 @@
     "context": "Колоректальный рак, медуллярный рак щитовидной железы",
     "use": "Исходная оценка и мониторинг при колоректальном раке. При медуллярном раке оценивают вместе с кальцитонином.",
     "limit": "Может повышаться у курящих и при неопухолевых состояниях. Для скрининга не применяют.",
-    "url": "https://www.cancer.gov/about-cancer/diagnosis-staging/diagnosis/tumor-markers-list"
+    "url": "https://www.cancer.gov/about-cancer/diagnosis-staging/diagnosis/tumor-markers-list",
+    "definition": "Раково-эмбриональный антиген (CEACAM5), поверхностный гликопротеин эпителиальных клеток.",
+    "values": [
+      {
+        "label": "Пример референса",
+        "text": "Сыворотка, Mayo Clinic Laboratories. У некурящих ≤3,0 нг/мл. У курящих уровень может быть выше, обычно <5,0 нг/мл.",
+        "source": "Mayo Clinic Laboratories",
+        "url": "https://www.mayocliniclabs.com/test-catalog/Overview/800012"
+      }
+    ]
   },
   {
     "name": "CA 19-9",
@@ -37,7 +73,16 @@
     "context": "Рак поджелудочной железы и желчных путей",
     "use": "Вспомогательная оценка динамики при установленном диагнозе.",
     "limit": "Холестаз может повышать показатель. При отрицательном фенотипе Lewis уровень может оставаться низким.",
-    "url": "https://www.cancer.gov/about-cancer/diagnosis-staging/diagnosis/tumor-markers-list"
+    "url": "https://www.cancer.gov/about-cancer/diagnosis-staging/diagnosis/tumor-markers-list",
+    "definition": "Углеводный антиген sialyl-Lewis A на поверхности гликопротеинов и гликолипидов.",
+    "values": [
+      {
+        "label": "Пример референса",
+        "text": "Сыворотка, Mayo Clinic Laboratories. <35 Ед/мл.",
+        "source": "Mayo Clinic Laboratories",
+        "url": "https://www.mayocliniclabs.com/api/sitecore/TestCatalog/DownloadTestCatalog?testId=9288"
+      }
+    ]
   },
   {
     "name": "CA 125",
@@ -45,7 +90,16 @@
     "context": "Эпителиальный рак яичников",
     "use": "Оценка ответа и динамики, если показатель информативен исходно.",
     "limit": "Повышается при эндометриозе и других доброкачественных состояниях. Для скрининга общей популяции не применяют.",
-    "url": "https://www.cancer.gov/about-cancer/diagnosis-staging/diagnosis/tumor-markers-list"
+    "url": "https://www.cancer.gov/about-cancer/diagnosis-staging/diagnosis/tumor-markers-list",
+    "definition": "Антиген муцина MUC16, крупного гликопротеина на поверхности ряда эпителиальных клеток.",
+    "values": [
+      {
+        "label": "Пример референса",
+        "text": "Сыворотка, Mayo Clinic Laboratories. Для женщин <46 Ед/мл на указанной платформе. В других лабораториях граница может отличаться.",
+        "source": "Mayo Clinic Laboratories",
+        "url": "https://www.mayocliniclabs.com/api/sitecore/TestCatalog/DownloadTestCatalog?testId=9289"
+      }
+    ]
   },
   {
     "name": "CA 15-3",
@@ -53,7 +107,16 @@
     "context": "Метастатический рак молочной железы",
     "use": "Вспомогательный показатель динамики вместе с клинической оценкой и визуализацией.",
     "limit": "Не используют для скрининга или рутинного наблюдения после радикального лечения.",
-    "url": "https://www.cancer.gov/about-cancer/diagnosis-staging/diagnosis/tumor-markers-list"
+    "url": "https://www.cancer.gov/about-cancer/diagnosis-staging/diagnosis/tumor-markers-list",
+    "definition": "Антиген муцина MUC1, измеряемый иммунологическим методом.",
+    "values": [
+      {
+        "label": "Пример референса",
+        "text": "Сыворотка, Mayo Clinic Laboratories. Для женщин <30 Ед/мл.",
+        "source": "Mayo Clinic Laboratories",
+        "url": "https://www.mayocliniclabs.com/api/sitecore/TestCatalog/DownloadTestCatalog?testId=81607"
+      }
+    ]
   },
   {
     "name": "CA 27.29",
@@ -61,7 +124,16 @@
     "context": "Метастатический рак молочной железы",
     "use": "Вспомогательный показатель динамики при лечении распространённой болезни.",
     "limit": "Изолированный рост не является основанием для смены терапии.",
-    "url": "https://www.cancer.gov/about-cancer/diagnosis-staging/diagnosis/tumor-markers-list"
+    "url": "https://www.cancer.gov/about-cancer/diagnosis-staging/diagnosis/tumor-markers-list",
+    "definition": "Антиген муцина MUC1, определяемый анализом с другим набором антител, чем в тесте CA 15-3.",
+    "values": [
+      {
+        "label": "Пример референса",
+        "text": "Сыворотка, Mayo Clinic Laboratories. Для взрослых ≥18 лет ≤38 Ед/мл.",
+        "source": "Mayo Clinic Laboratories",
+        "url": "https://www.mayocliniclabs.com/api/sitecore/TestCatalog/DownloadTestCatalog?testId=606583"
+      }
+    ]
   },
   {
     "name": "CA 72-4",
@@ -69,7 +141,8 @@
     "context": "Рак желудка",
     "use": "Может быть дополнительным показателем динамики, если был повышен до лечения.",
     "limit": "Неспецифичен. Не применяют для скрининга или подтверждения диагноза.",
-    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7747489/"
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7747489/",
+    "definition": "Антиген, определяемый по эпитопам опухоль-ассоциированного гликопротеина TAG-72."
   },
   {
     "name": "HE4",
@@ -77,7 +150,8 @@
     "context": "Эпителиальный рак яичников",
     "use": "Может дополнять оценку образования придатков или мониторинг в выбранных ситуациях.",
     "limit": "Повышается при снижении функции почек. Для скрининга общей популяции не применяют.",
-    "url": "https://www.cancer.gov/about-cancer/diagnosis-staging/diagnosis/tumor-markers-list"
+    "url": "https://www.cancer.gov/about-cancer/diagnosis-staging/diagnosis/tumor-markers-list",
+    "definition": "Секретируемый белок WFDC2, известный как белок 4 эпидидимиса человека."
   },
   {
     "name": "SCC-антиген",
@@ -85,7 +159,8 @@
     "context": "Плоскоклеточный рак шейки матки",
     "use": "Дополнительный показатель динамики при исходном повышении, если это предусмотрено протоколом.",
     "limit": "Неспецифичен. Для скрининга и подтверждения диагноза не подходит.",
-    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5155072/"
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5155072/",
+    "definition": "Антигены SCCA1 и SCCA2, белки семейства серпинов, экспрессируемые в плоском эпителии."
   },
   {
     "name": "CYFRA 21-1",
@@ -93,7 +168,8 @@
     "context": "Немелкоклеточный рак лёгкого",
     "use": "Изучался как дополнительный показатель прогноза и ответа.",
     "limit": "Не заменяет морфологию и визуализацию. Рутинное применение ограничено.",
-    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5155072/"
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5155072/",
+    "definition": "Растворимые фрагменты цитокератина 19, белка промежуточных филаментов эпителиальных клеток."
   },
   {
     "name": "NSE",
@@ -101,7 +177,8 @@
     "context": "Мелкоклеточный рак лёгкого, нейробластома",
     "use": "Вспомогательный показатель динамики в отдельных случаях.",
     "limit": "Гемолиз может ложно повысить результат. Для подтверждения диагноза недостаточен.",
-    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5155072/"
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5155072/",
+    "definition": "Нейронспецифическая енолаза, фермент гликолиза, присутствующий в нейронах и нейроэндокринных клетках."
   },
   {
     "name": "ProGRP",
@@ -109,7 +186,8 @@
     "context": "Мелкоклеточный рак лёгкого",
     "use": "Вспомогательный показатель при оценке мелкоклеточного фенотипа и динамики.",
     "limit": "Почечная недостаточность снижает специфичность. Диагноз подтверждают морфологически.",
-    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5155072/"
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5155072/",
+    "definition": "Фрагмент предшественника гастрин-рилизинг-пептида, который может выделяться нейроэндокринными опухолевыми клетками."
   },
   {
     "name": "ЛДГ",
@@ -117,7 +195,16 @@
     "context": "Лимфомы, герминогенные опухоли, метастатическая меланома",
     "use": "Прогностический показатель в отдельных системах оценки риска и стадирования.",
     "limit": "Неспецифична. Повышается при гемолизе и повреждении тканей.",
-    "url": "https://www.cancer.gov/about-cancer/diagnosis-staging/diagnosis/tumor-markers-list"
+    "url": "https://www.cancer.gov/about-cancer/diagnosis-staging/diagnosis/tumor-markers-list",
+    "definition": "Лактатдегидрогеназа, внутриклеточный фермент, активность которого в крови может возрастать при повреждении тканей.",
+    "values": [
+      {
+        "label": "Прогностические границы",
+        "text": "При распространённой несеминомной герминогенной опухоли IGCCCG использует 1,5 и 10 × ВГН. ВГН — верхняя граница нормы конкретной лаборатории. Категорию определяют вместе с остальными критериями.",
+        "source": "SEOM–GG / IGCCCG",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11467073/"
+      }
+    ]
   },
   {
     "name": "β₂-микроглобулин",
@@ -125,7 +212,16 @@
     "context": "Множественная миелома, ХЛЛ, лимфомы",
     "use": "Используется в прогностических системах.",
     "limit": "Повышается при снижении функции почек. Изолированный результат не подтверждает опухоль.",
-    "url": "https://www.cancer.gov/about-cancer/diagnosis-staging/diagnosis/tumor-markers-list"
+    "url": "https://www.cancer.gov/about-cancer/diagnosis-staging/diagnosis/tumor-markers-list",
+    "definition": "Малая белковая субъединица молекул HLA класса I, определяемая в сыворотке.",
+    "values": [
+      {
+        "label": "Прогностические границы",
+        "text": "При установленной множественной миеломе ISS I соответствует β₂-микроглобулину <3,5 мг/л при альбумине ≥35 г/л. β₂-микроглобулин ≥5,5 мг/л соответствует ISS III.",
+        "source": "NCI, система ISS",
+        "url": "https://healthcaredelivery.cancer.gov/poc/POC_2014_Diagnosis_Year_Patient_Eligibilty_and_Data_Items_accessible.pdf"
+      }
+    ]
   },
   {
     "name": "Кальцитонин",
@@ -133,7 +229,16 @@
     "context": "Медуллярный рак щитовидной железы",
     "use": "Помогает при диагностической оценке и наблюдении после лечения.",
     "limit": "Интерпретация зависит от метода, уровня и клинического контекста.",
-    "url": "https://www.cancer.gov/about-cancer/diagnosis-staging/diagnosis/tumor-markers-list"
+    "url": "https://www.cancer.gov/about-cancer/diagnosis-staging/diagnosis/tumor-markers-list",
+    "definition": "Пептидный гормон парафолликулярных C-клеток щитовидной железы.",
+    "values": [
+      {
+        "label": "Пример референса",
+        "text": "Сыворотка, взрослые, Mayo Clinic Laboratories. Мужчины ≤14,3 пг/мл, женщины ≤7,6 пг/мл. Интерпретируют по референсу использованного метода.",
+        "source": "Mayo Clinic Laboratories",
+        "url": "https://www.mayocliniclabs.com/api/sitecore/TestCatalog/DownloadTestCatalog?testId=800236"
+      }
+    ]
   },
   {
     "name": "Тиреоглобулин",
@@ -141,7 +246,8 @@
     "context": "Дифференцированный рак щитовидной железы",
     "use": "После лечения используют для наблюдения в зависимости от объёма операции и терапии.",
     "limit": "Измеряют вместе с антителами к тиреоглобулину. Учитывают ТТГ и остаточную ткань.",
-    "url": "https://www.cancer.gov/about-cancer/diagnosis-staging/diagnosis/tumor-markers-list"
+    "url": "https://www.cancer.gov/about-cancer/diagnosis-staging/diagnosis/tumor-markers-list",
+    "definition": "Гликопротеин фолликулярных клеток щитовидной железы, служащий предшественником тиреоидных гормонов."
   },
   {
     "name": "Хромогранин A",
@@ -149,7 +255,8 @@
     "context": "Нейроэндокринные опухоли",
     "use": "Вспомогательный показатель в отдельных клинических ситуациях.",
     "limit": "Ингибиторы протонной помпы и почечная недостаточность могут повышать уровень.",
-    "url": "https://arupconsult.com/content/neuroendocrine-tumors"
+    "url": "https://arupconsult.com/content/neuroendocrine-tumors",
+    "definition": "Белок секреторных гранул нейроэндокринных клеток."
   },
   {
     "name": "5‑ГИУК",
@@ -157,7 +264,16 @@
     "context": "Серотонин-секретирующие нейроэндокринные опухоли",
     "use": "В моче или плазме помогает оценить карциноидный синдром.",
     "limit": "При подготовке учитывать пищевые и лекарственные ограничения конкретного метода.",
-    "url": "https://arupconsult.com/content/neuroendocrine-tumors"
+    "url": "https://arupconsult.com/content/neuroendocrine-tumors",
+    "definition": "5-гидроксииндолуксусная кислота, основной метаболит серотонина.",
+    "values": [
+      {
+        "label": "Клинический ориентир",
+        "text": "В суточной моче >50 мкмоль/24 ч соответствует биохимической картине карциноидного синдрома при подходящей клинике. Для анализа плазмы применяют другие ориентиры.",
+        "source": "ENETS",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9539661/"
+      }
+    ]
   },
   {
     "name": "Серотонин",
@@ -165,7 +281,8 @@
     "context": "Нейроэндокринные опухоли",
     "use": "Может отражать секрецию серотонина. Для оценки карциноидного синдрома обычно используют 5‑ГИУК.",
     "limit": "Результат зависит от образца и условий забора.",
-    "url": "https://arupconsult.com/content/neuroendocrine-tumors"
+    "url": "https://arupconsult.com/content/neuroendocrine-tumors",
+    "definition": "5-гидрокситриптамин, биогенный амин, который вырабатывается, в частности, энтерохромаффинными клетками."
   },
   {
     "name": "Инсулин",
@@ -173,7 +290,8 @@
     "context": "Инсулинома",
     "use": "Исследуют с глюкозой, C‑пептидом и другими показателями во время документированной гипогликемии.",
     "limit": "Изолированный инсулин при нормогликемии для диагностики недостаточен.",
-    "url": "https://arupconsult.com/content/neuroendocrine-tumors"
+    "url": "https://arupconsult.com/content/neuroendocrine-tumors",
+    "definition": "Гормон β-клеток поджелудочной железы, регулирующий концентрацию глюкозы в крови."
   },
   {
     "name": "Гастрин",
@@ -181,7 +299,8 @@
     "context": "Гастринома",
     "use": "Оценивают натощак с учётом кислотности желудка.",
     "limit": "ИПП и ахлоргидрия повышают гастрин. Самостоятельно отменять ИПП для пробы небезопасно.",
-    "url": "https://arupconsult.com/content/neuroendocrine-tumors"
+    "url": "https://arupconsult.com/content/neuroendocrine-tumors",
+    "definition": "Гормон G-клеток, преимущественно антрального отдела желудка, стимулирующий секрецию кислоты."
   },
   {
     "name": "Глюкагон",
@@ -189,7 +308,8 @@
     "context": "Глюкагонома",
     "use": "Исследуют при характерном клиническом синдроме.",
     "limit": "Повышение возможно при неопухолевых состояниях. Интерпретируют с клиникой и визуализацией.",
-    "url": "https://arupconsult.com/content/neuroendocrine-tumors"
+    "url": "https://arupconsult.com/content/neuroendocrine-tumors",
+    "definition": "Гормон α-клеток поджелудочной железы, повышающий концентрацию глюкозы в крови."
   },
   {
     "name": "VIP",
@@ -197,7 +317,8 @@
     "context": "VIPома",
     "use": "Исследуют при выраженной водянистой диарее с характерными электролитными нарушениями.",
     "limit": "Соблюдают требования лаборатории к обработке образца.",
-    "url": "https://arupconsult.com/content/neuroendocrine-tumors"
+    "url": "https://arupconsult.com/content/neuroendocrine-tumors",
+    "definition": "Вазоактивный интестинальный пептид, сигнальная молекула, влияющая на секрецию и моторику кишечника."
   },
   {
     "name": "Ингибин B",
@@ -205,7 +326,8 @@
     "context": "Гранулёзоклеточная опухоль яичника",
     "use": "Может использоваться для наблюдения, особенно при исходном повышении.",
     "limit": "Учитывают возраст, менопаузальный статус и метод анализа.",
-    "url": "https://academic.oup.com/annonc/article/29/Supplement_4/iv1/4983953"
+    "url": "https://academic.oup.com/annonc/article/29/Supplement_4/iv1/4983953",
+    "definition": "Димерный гормон, секретируемый гранулёзными клетками яичников и клетками Сертоли. Участвует в регуляции ФСГ."
   },
   {
     "name": "АМГ",
@@ -213,7 +335,8 @@
     "context": "Гранулёзоклеточная опухоль яичника",
     "use": "Дополнительный показатель динамики, в том числе вместе с ингибином B.",
     "limit": "Уровень связан с возрастом и функцией яичников. Диагноз по одному анализу не устанавливают.",
-    "url": "https://academic.oup.com/annonc/article/29/Supplement_4/iv1/4983953"
+    "url": "https://academic.oup.com/annonc/article/29/Supplement_4/iv1/4983953",
+    "definition": "Антимюллеров гормон, гликопротеин, который в яичнике вырабатывают гранулёзные клетки растущих фолликулов."
   },
   {
     "name": "М-белок",
@@ -221,7 +344,8 @@
     "context": "Множественная миелома, моноклональные гаммапатии",
     "use": "Электрофорез и иммунофиксация помогают выявить и охарактеризовать моноклональный белок. Количественная динамика используется при наблюдении.",
     "limit": "Моноклональный белок встречается и при MGUS. Сам по себе не подтверждает миелому.",
-    "url": "https://www.cancer.gov/types/myeloma/hp/myeloma-treatment-pdq"
+    "url": "https://www.cancer.gov/types/myeloma/hp/myeloma-treatment-pdq",
+    "definition": "Моноклональный иммуноглобулин или его фрагмент, продуцируемый одним клоном плазматических или других B-клеток."
   },
   {
     "name": "Свободные лёгкие цепи",
@@ -229,7 +353,8 @@
     "context": "Множественная миелома, AL-амилоидоз",
     "use": "Определяют концентрации κ и λ и их соотношение. Полезны при легкоцепочечной миеломе и для мониторинга измеримой болезни.",
     "limit": "При снижении СКФ используют валидированные для метода референсы.",
-    "url": "https://www.cancer.gov/types/myeloma/hp/myeloma-treatment-pdq"
+    "url": "https://www.cancer.gov/types/myeloma/hp/myeloma-treatment-pdq",
+    "definition": "Иммуноглобулиновые цепи κ и λ, циркулирующие отдельно от тяжёлых цепей."
   },
   {
     "name": "Мезотелин",
@@ -237,7 +362,8 @@
     "context": "Мезотелиома плевры",
     "use": "Исследовался как дополнительный показатель при мезотелиоме.",
     "limit": "Недостаточен для скрининга и диагностики без морфологии.",
-    "url": "https://ascopubs.org/doi/full/10.1200/JCO.2017.76.6394"
+    "url": "https://ascopubs.org/doi/full/10.1200/JCO.2017.76.6394",
+    "definition": "Поверхностный гликопротеин мезотелиальных клеток. В крови могут определяться его растворимые производные."
   },
   {
     "name": "Фибулин-3",
@@ -245,7 +371,8 @@
     "context": "Мезотелиома плевры",
     "use": "Исследовательский маркер.",
     "limit": "Рутинное использование для диагностики или скрининга не рекомендовано.",
-    "url": "https://ascopubs.org/doi/full/10.1200/JCO.2017.76.6394"
+    "url": "https://ascopubs.org/doi/full/10.1200/JCO.2017.76.6394",
+    "definition": "Фибулин-3 (EFEMP1), гликопротеин внеклеточного матрикса."
   },
   {
     "name": "ДНК EBV",
@@ -253,7 +380,8 @@
     "context": "EBV-ассоциированный рак носоглотки",
     "use": "Исходный прогностический показатель и дополнительный инструмент мониторинга по протоколу центра.",
     "limit": "Не заменяет биопсию или анатомическое стадирование. Сравнивают результаты сопоставимых методов.",
-    "url": "https://www.cancer.gov/types/head-and-neck/hp/adult/nasopharyngeal-treatment-pdq"
+    "url": "https://www.cancer.gov/types/head-and-neck/hp/adult/nasopharyngeal-treatment-pdq",
+    "definition": "Генетический материал вируса Эпштейна–Барр, который в этом контексте количественно определяют в плазме крови."
   },
   {
     "name": "BCR::ABL1",
@@ -261,6 +389,15 @@
     "context": "Хронический миелоидный лейкоз",
     "use": "Количественная ПЦР по международной шкале для мониторинга молекулярного ответа при типичных транскриптах.",
     "limit": "При атипичных транскриптах требуется отдельная методика мониторинга.",
-    "url": "https://www.cancer.gov/types/leukemia/hp/cml-treatment-pdq"
+    "url": "https://www.cancer.gov/types/leukemia/hp/cml-treatment-pdq",
+    "definition": "Химерный транскрипт, возникающий при слиянии BCR и ABL1. Кодирует белок с повышенной активностью тирозинкиназы.",
+    "values": [
+      {
+        "label": "Пороги молекулярного ответа",
+        "text": "При ХМЛ стандартные транскрипты оценивают по международной шкале (IS). Большой молекулярный ответ (MMR) соответствует ≤0,1%, MR4 — ≤0,01%, MR4,5 — ≤0,0032% при достаточной чувствительности анализа.",
+        "source": "ELN 2025",
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12310532/"
+      }
+    ]
   }
 ]

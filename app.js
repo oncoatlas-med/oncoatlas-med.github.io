@@ -2248,7 +2248,7 @@ function imdc(){let n=['im_time','im_kps','im_hb','im_ca','im_neu','im_pl'].filt
 const MARKERS = window.ONCO_MARKERS ?? [];
 
 function markers() {
-  return shell('Онкомаркеры', `<p class="muted">Лабораторные онкомаркеры и показатели мониторинга. Референсные значения зависят от метода и лаборатории.</p>
+  return shell('Онкомаркеры', `<p class="muted">Лабораторные онкомаркеры и показатели мониторинга. Примеры референсов относятся к указанным методам и лабораториям. Клинические пороги применимы в описанной ситуации.</p>
     <input class="search" type="search" aria-label="Поиск онкомаркера" placeholder="Найти маркер или опухоль…" oninput="filterMarkers(this.value)">
     <div id="markerList">${markerRows(MARKERS[state.marker] ? [MARKERS[state.marker], ...MARKERS.filter(marker => marker !== MARKERS[state.marker])] : MARKERS)}</div>`);
 }
@@ -2258,8 +2258,11 @@ function markerRows(entries) {
   return entries.map(marker => `<details class="marker-entry"${MARKERS[state.marker] === marker ? ' open' : ''}>
     <summary>${esc(marker.name)}</summary>
     <div class="marker-detail">
+      <p><b>Определение.</b> ${esc(marker.definition)}</p>
       <p><b>Где применяют.</b> ${esc(marker.context)}.</p>
-      <p><b>Зачем.</b> ${esc(marker.use)}</p>
+      <p><b>Цель.</b> ${esc(marker.use)}</p>
+      ${(marker.values ?? []).map(value => `<p><b>${esc(value.label)}.</b> ${esc(value.text)}
+        <a class="fine" href="${esc(value.url)}" target="_blank" rel="noopener">${esc(value.source)}</a></p>`).join('')}
       <p><b>Ограничения.</b> ${esc(marker.limit)}</p>
       <a class="fine" href="${esc(marker.url)}" target="_blank" rel="noopener">Источник</a>
     </div>
@@ -2274,7 +2277,7 @@ function markerSearchText(value) {
 function filterMarkers(query) {
   const key = markerSearchText(query);
   $('#markerList').innerHTML = markerRows(MARKERS.filter(marker =>
-    [marker.name, marker.aliases, marker.context].some(value => markerSearchText(value).includes(key))));
+    [marker.name, marker.aliases, marker.context, marker.definition].some(value => markerSearchText(value).includes(key))));
 }
 const SOURCE_SECTIONS = [
   ['Клинические рекомендации и протоколы', [
