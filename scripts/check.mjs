@@ -49,12 +49,30 @@ const data = runInNewContext(app.replace(/\nstart\(\);\n$/, '\n') + `
       FOURTH_PASS_REGIMENS, FIFTH_PASS_REGIMENS, SIXTH_PASS_HEMATOLOGY, SEVENTH_PASS_REGIMENS,
       EIGHTH_PASS_REGIMENS, NINTH_PASS_REGIMENS, ADDITIONAL_REGIMENS, NON_TNM_CARD_INFO],
     nonTnm: Object.keys(NON_TNM_CARD_INFO),
+    cardMarkup: DATA.flatMap(c => {
+      state.card = c.id;
+      const stages = NON_TNM_CARD_INFO[c.id] ? ['I'] : CARD_STAGES[c.id] ?? STAGES;
+      return stages.flatMap(stage => ['drugs', 'surgery'].map(tab => {
+        state.stage = stage;
+        state.treatmentTab = tab;
+        return {id: c.id, stage, tab, count: NON_TNM_CARD_INFO[c.id] ? 0 : stages.length, html: card()};
+      }));
+    }),
     rows: DATA.map(c => (NON_TNM_CARD_INFO[c.id] ? ['I'] : CARD_STAGES[c.id] ?? STAGES).map(stage => ({
       id: c.id, stage, protocols: regimensFor(c.id, stage)
     })))
   })
-`, {window:{ONCO_CARDS:cards, ONCO_REGIMENS:additionalRegimens, addEventListener() {}}});
+`, {window:{ONCO_CARDS:cards, ONCO_REGIMENS:additionalRegimens, ONCO_STAGING:staging, addEventListener() {}}});
 assert.deepEqual([...data.nonTnm].sort(), contextualCards);
+for (const {id, stage, tab, count, html} of data.cardMarkup) {
+  const label = [id, stage, tab].join(' / ');
+  assert.equal((html.match(/data-stage=/g) ?? []).length, count, label + ' incorrect stage navigation');
+  assert.equal((html.match(/data-treatment=/g) ?? []).length, 2, label + ' incomplete treatment navigation');
+  assert.equal((html.match(/class="treatment-content print-only"/g) ?? []).length, 1, label + ' incorrect visible panel');
+  assert.match(html, new RegExp('data-treatment="' + tab + '" aria-pressed="true"'), label);
+  assert.doesNotMatch(html, />\s*(?:undefined|null)\s*</, label + ' missing content');
+}
+
 for (const [id, groups] of Object.entries(additionalRegimens)) {
   for (const [context, regimens] of Object.entries(groups)) {
     assert.ok(data.nonTnm.includes(id) ? context === 'all' : stages.includes(context), id + ' invalid context');
