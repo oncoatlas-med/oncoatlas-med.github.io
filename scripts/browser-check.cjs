@@ -8,7 +8,7 @@ const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const cards = require('../cards.json');
 
 const home = process.env.ONCOATLAS_TEST_URL || pathToFileURL(resolve(__dirname, '../index.html')).href;
-const nonTnm = new Set(['c025', 'c029', 'c030', 'c031', 'c045', 'c046', 'c050', 'c056']);
+const nonTnm = new Set(['c025', 'c029', 'c030', 'c031', 'c045', 'c046', 'c050', 'c056', ...cards.filter(card => card.treatmentContexts).map(card => card.id)]);
 const options = { executablePath: process.env.CHROMIUM_EXECUTABLE || undefined };
 const pdfDir = mkdtempSync(resolve(tmpdir(), 'oncoatlas-pdf-'));
 
@@ -41,7 +41,11 @@ async function main() {
       await page.getByRole('heading', {name:card.title, exact:true}).waitFor();
       if (nonTnm.has(card.id)) {
         assert.equal(await page.locator('[data-stage]').count(), 0);
-        assert.ok(await page.locator('.treatment-regimen:visible').count());
+        if (card.treatmentContexts) {
+          assert.match(await page.locator('#app').innerText(), /Лечение по клинической ситуации/);
+        } else {
+          assert.ok(await page.locator('.treatment-regimen:visible').count());
+        }
         contexts++;
         continue;
       }
