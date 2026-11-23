@@ -27,9 +27,9 @@ for (const id of Object.keys(staging.other)) {
 assert.deepEqual([...stagedCards].sort(), cards.map(card => card.id));
 const stages = ['I', 'II', 'III', 'IV'];
 const ids = cards.map(c => c.id);
-const contextualCards = ['c025', 'c029', 'c030', 'c031', 'c045', 'c046', 'c050', 'c056'];
-assert.deepEqual(ids, Array.from({length: 56}, (_, i) => 'c' + String(i + 1).padStart(3, '0')));
-assert.equal(new Set(cards.map(c => c.number)).size, 56);
+const contextualCards = ['c025', 'c029', 'c030', 'c031', 'c045', 'c046', 'c050', 'c056', ...cards.filter(card => card.treatmentContexts).map(card => card.id)];
+assert.deepEqual(ids, Array.from({length: cards.length}, (_, i) => 'c' + String(i + 1).padStart(3, '0')));
+assert.equal(new Set(cards.map(c => c.number)).size, cards.length);
 for (const card of cards) {
   assert.ok(Array.isArray(card.icd10) && card.icd10.length, card.id + ' missing ICD-10 codes');
   assert.equal(new Set(card.icd10).size, card.icd10.length, card.id + ' duplicate ICD-10 code');
