@@ -44,5 +44,7 @@ button:focus-visible,a:focus-visible{outline:2px solid #555;outline-offset:3px}
 .regimen-result .actions{margin:0}
 @media(max-width:700px){.regimen-filters{grid-template-columns:1fr}}
 
-.logo-home{display:inline-flex;flex:none;border-radius:14px}
+.logo-home{display:inline-flex;align-items:center;gap:12px;min-width:0;color:inherit;text-decoration:none;border-radius:14px}
+.logo-home .logo{flex:none}
+.logo-home .brand,.logo-home .sub{display:block}
 .logo-home:focus-visible{outline:2px solid #333;outline-offset:3px}
