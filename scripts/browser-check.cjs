@@ -41,11 +41,12 @@ async function main() {
       await page.getByRole('heading', {name:card.title, exact:true}).waitFor();
       if (nonTnm.has(card.id)) {
         assert.equal(await page.locator('[data-stage]').count(), 0);
-        if (card.treatmentContexts) {
-          assert.match(await page.locator('#app').innerText(), /Лечение по клинической ситуации/);
-        } else {
-          assert.ok(await page.locator('.treatment-regimen:visible').count());
-        }
+        await page.locator('[data-treatment=surgery]').click();
+        assert.equal(await page.locator('.treatment-content:visible').count(), 1);
+        assert.ok((await page.locator('.treatment-content:visible').innerText()).trim());
+        await page.locator('[data-treatment=drugs]').click();
+        assert.equal(await page.locator('.treatment-content:visible').count(), 1);
+        assert.match(await page.locator('#app').innerText(), /Лечение по клинической ситуации/);
         contexts++;
         continue;
       }
