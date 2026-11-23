@@ -181,12 +181,13 @@ const NON_TNM_CARD_INFO = {
 };
 function renderNonTnmTreatment(c) {
   const info = NON_TNM_CARD_INFO[c.id];
+  const tabbedTreatment = Boolean(STAGE_SURGERY[c.id]?.I);
   const regimens = regimensFor(c.id, 'I');
   const contexts = (info.contexts ?? []).map(([title, detail]) =>
     `<div class="notice" style="margin:10px 0"><p><b>${esc(title)}.</b> ${esc(detail)}</p></div>`).join('');
-  return `<div class="panel"><h2>5. Лечение по клинической ситуации</h2><p><b>${esc(info.heading)}</b></p><p>${esc(info.explanation)}</p><p class="fine">${treatmentSource(info.url, 'Источник по классификации и тактике')}</p>${contexts}<h3>Лекарственные режимы</h3><p class="fine">Режим приведён для конкретных показаний; не является универсальным назначением.</p>${regimens.map(renderRegimen).join('')}</div>`;
+  return `<div class="panel"><h2>5. Лечение по клинической ситуации</h2><p><b>${esc(info.heading)}</b></p><p>${esc(info.explanation)}</p><p class="fine">${treatmentSource(info.url, 'Источник по классификации и тактике')}</p>${contexts}${tabbedTreatment ? stageExtras(c, 'I') : `<h3>Лекарственные режимы</h3><p class="fine">Режим приведён для конкретных показаний; не является универсальным назначением.</p>${regimens.map(renderRegimen).join('')}`}</div>`;
 }
-function card(){const c=DATA.find(x=>x.id===state.card);if(!c)return shell('Карточка не найдена','<p>Выберите нозологию в каталоге.</p>','catalog');const f=favs().includes(c.id);return shell(esc(c.title),`<div class="eyebrow">Карточка №${String(c.number).padStart(3,'0')} · ${esc(c.group)}</div><div class="actions">${btn(f?'★ В избранном':'☆ В избранное',`toggleFav('${c.id}')`)}${btn('Сохранить PDF','window.print()','secondary')}${stagingCardLink(c.id)}</div><div class="panel"><h2>1. Гистотип и локализация</h2><p><b>МКБ‑10:</b> ${esc((c.icd10 ?? []).join(', '))}</p>${c.icd10Note ? `<p class="fine">${esc(c.icd10Note)}</p>` : ''}<p><b>Происхождение:</b> ${esc(c.origin)}</p><p><b>Локализация:</b> ${esc(c.location)}</p></div><div class="panel"><h2 id="molecular" tabindex="-1">2. Молекулярные паттерны</h2><p>${esc(c.molecular).split('; ').join(' · ')}</p></div><div class="panel"><h2>3. Диагностика</h2><p>${esc(c.diagnostics)}</p></div><div class="panel"><h2>4. Онкомаркеры${c.markers.includes('продукция:')? ' и гормональная продукция':''}</h2><p>${esc(c.markers)}</p></div>${c.id === 'c038' ? `<div class="panel"><h2>Стадирование · AJCC 9</h2><p>Версия 9 действует с 1 января 2025 года. При использовании AJCC 8 указывайте версию рядом со стадией. IVA по AJCC 8 означала T4 или N3 при M0. В AJCC 9 при M0 эти категории входят в стадию III, а IVA и IVB относятся только к M1.</p><p>${treatmentSource('https://www.cancer.org/cancer/types/nasopharyngeal-cancer/detection-diagnosis-staging/staging.html', 'Группы стадий AJCC 9 · ACS')} · ${treatmentSource('https://www.facs.org/quality-programs/cancer-programs/education/ajcc-protocol-webinar-on-version-9-staging-system-for-nasopharynx-cancer/', 'Версия и дата вступления в силу · ACS/AJCC')}</p></div>` : ''}${c.id === 'c005' ? `<p class="fine"><a href="#card/c044">Отдельная карточка аденокарциномы прямой кишки</a></p>` : ''}${NON_TNM_CARD_INFO[c.id] ? renderNonTnmTreatment(c) : `<div class="panel"><h2>5. Лечение по стадиям${['c026', 'c027', 'c028'].includes(c.id) ? ' · Lugano' : ''}</h2><div class="tabs">${(CARD_STAGES[c.id] ?? STAGES).map(s=>`<button class="tab ${state.stage===s?'selected':''}" data-stage="${s}" aria-pressed="${state.stage===s}" onclick="setStage('${s}')">${s}</button>`).join('')}</div><p id="stageContent" aria-live="polite"><b>${state.stage}:</b> ${esc(c[state.stage])}</p>${(STAGE_MNEMONICS[c.id] ?? REMAINING_MNEMONICS[c.id])?.[state.stage]?`<p class="fine"><b>Кратко для запоминания:</b> ${esc((STAGE_MNEMONICS[c.id] ?? REMAINING_MNEMONICS[c.id])[state.stage])}</p>`:""}${stageExtras(c)}<p class="fine">Стадии приведены укрупнённо. Реальная тактика определяется гистотипом, подстадией, биомаркерами, резектабельностью, функциональным статусом и линией терапии.</p></div>`}<div class="notice"><b>Статус:</b> редакционный черновик. Независимая медицинская проверка не проведена.</div><div class="sources">Источники для проверки: ${sources.map(([n,u])=>`<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join(' · ')}</div>`,'catalog')}
+function card(){const c=DATA.find(x=>x.id===state.card);if(!c)return shell('Карточка не найдена','<p>Выберите нозологию в каталоге.</p>','catalog');const f=favs().includes(c.id);return shell(esc(c.title),`<div class="eyebrow">Карточка №${String(c.number).padStart(3,'0')} · ${esc(c.group)}</div><div class="actions">${btn(f?'★ В избранном':'☆ В избранное',`toggleFav('${c.id}')`)}${btn('Сохранить PDF','window.print()','secondary')}${stagingCardLink(c.id)}</div><div class="panel"><h2>1. Гистотип и локализация</h2><p><b>МКБ‑10:</b> ${esc((c.icd10 ?? []).join(', '))}</p>${c.icd10Note ? `<p class="fine">${esc(c.icd10Note)}</p>` : ''}<p><b>Происхождение:</b> ${esc(c.origin)}</p><p><b>Локализация:</b> ${esc(c.location)}</p></div><div class="panel"><h2 id="molecular" tabindex="-1">2. Молекулярные паттерны</h2><p>${esc(c.molecular).split('; ').join(' · ')}</p></div><div class="panel"><h2>3. Диагностика</h2><p>${esc(c.diagnostics)}</p></div><div class="panel"><h2>4. Онкомаркеры${c.markers.includes('продукция:')? ' и гормональная продукция':''}</h2><p>${esc(c.markers)}</p></div>${c.id === 'c038' ? `<div class="panel"><h2>Стадирование · AJCC 9</h2><p>Версия 9 действует с 1 января 2025 года. При использовании AJCC 8 указывайте версию рядом со стадией. IVA по AJCC 8 означала T4 или N3 при M0. В AJCC 9 при M0 эти категории входят в стадию III, а IVA и IVB относятся только к M1.</p><p>${treatmentSource('https://www.cancer.org/cancer/types/nasopharyngeal-cancer/detection-diagnosis-staging/staging.html', 'Группы стадий AJCC 9 · ACS')} · ${treatmentSource('https://www.facs.org/quality-programs/cancer-programs/education/ajcc-protocol-webinar-on-version-9-staging-system-for-nasopharynx-cancer/', 'Версия и дата вступления в силу · ACS/AJCC')}</p></div>` : ''}${c.id === 'c005' ? `<p class="fine"><a href="#card/c044">Отдельная карточка аденокарциномы прямой кишки</a></p>` : ''}${NON_TNM_CARD_INFO[c.id] ? renderNonTnmTreatment(c) : `<div class="panel"><h2>5. Лечение по стадиям${['c026', 'c027', 'c028'].includes(c.id) ? ' · Lugano' : ''}</h2><div class="tabs">${(CARD_STAGES[c.id] ?? STAGES).map(s=>`<button class="tab ${state.stage===s?'selected':''}" data-stage="${s}" aria-pressed="${state.stage===s}" onclick="setStage('${s}')">${s}</button>`).join('')}</div>${c.stageTreatmentNote ? `<p class="fine">${esc(c.stageTreatmentNote)}</p>` : ''}<p id="stageContent" aria-live="polite"><b>${state.stage}:</b> ${esc(c[state.stage])}</p>${(STAGE_MNEMONICS[c.id] ?? REMAINING_MNEMONICS[c.id])?.[state.stage]?`<p class="fine"><b>Кратко для запоминания:</b> ${esc((STAGE_MNEMONICS[c.id] ?? REMAINING_MNEMONICS[c.id])[state.stage])}</p>`:""}${stageExtras(c)}<p class="fine">Стадии приведены укрупнённо. Реальная тактика определяется гистотипом, подстадией, биомаркерами, резектабельностью, функциональным статусом и линией терапии.</p></div>`}<div class="notice"><b>Статус:</b> редакционный черновик. Независимая медицинская проверка не проведена.</div><div class="sources">Источники для проверки: ${sources.map(([n,u])=>`<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join(' · ')}</div>`,'catalog')}
 
 // Редакционные примеры режимов. Не использовать как индивидуальные назначения.
 const STAGES = ['I', 'II', 'III', 'IV'];
@@ -1964,6 +1965,78 @@ function findCards(query, group = 'Все') {
 }
 
 const STAGE_DRUG_NOTES = {
+  "c057": {
+    "I": [
+      "При полностью удалённой низкозлокачественной форме рутинная ХТ не показана.",
+      "https://pmc.ncbi.nlm.nih.gov/articles/PMC11723950/"
+    ]
+  },
+  "c059": {
+    "I": [
+      "Для конвенциональной низкозлокачественной формы рутинной ХТ нет.",
+      "https://pmc.ncbi.nlm.nih.gov/articles/PMC11723950/"
+    ],
+    "II": [
+      "При конвенциональной форме рутинной ХТ нет. При мезенхимальной и отдельных дедифференцированных формах системную тактику обсуждают по гистотипу.",
+      "https://pmc.ncbi.nlm.nih.gov/articles/PMC11723950/"
+    ],
+    "III": [
+      "Выбор системного лечения зависит от подтипа. Единой дозовой схемы для хондросарком нет.",
+      "https://pmc.ncbi.nlm.nih.gov/articles/PMC11723950/"
+    ],
+    "IV": [
+      "Конвенциональная хондросаркома обычно малочувствительна к стандартной цитотоксической ХТ; при других подтипах оценивают отдельные режимы.",
+      "https://pmc.ncbi.nlm.nih.gov/articles/PMC11723950/"
+    ]
+  },
+  "c061": {
+    "I": [
+      "Рутинная системная терапия при низком риске после полного удаления не показана.",
+      "https://pmc.ncbi.nlm.nih.gov/articles/PMC12523295/"
+    ],
+    "II": [
+      "Периоперационную ХТ оценивают индивидуально по гистотипу, локализации и риску.",
+      "https://pmc.ncbi.nlm.nih.gov/articles/PMC12523295/"
+    ],
+    "III": [
+      "Периоперационную ХТ обсуждают для отдельных пациентов. Схемы при нерезектабельной или метастатической болезни приведены на вкладке IV.",
+      "https://pmc.ncbi.nlm.nih.gov/articles/PMC12523295/"
+    ]
+  },
+  "c062": {
+    "I": [
+      "Рутинная системная терапия при низком риске после полного удаления не показана.",
+      "https://pmc.ncbi.nlm.nih.gov/articles/PMC12523295/"
+    ],
+    "II": [
+      "Периоперационную ХТ оценивают индивидуально по гистотипу, локализации и риску.",
+      "https://pmc.ncbi.nlm.nih.gov/articles/PMC12523295/"
+    ],
+    "III": [
+      "Периоперационную ХТ обсуждают для отдельных пациентов. Схемы при нерезектабельной или метастатической болезни приведены на вкладке IV.",
+      "https://pmc.ncbi.nlm.nih.gov/articles/PMC12523295/"
+    ]
+  },
+  "c063": {
+    "I": [
+      "Рутинная системная терапия при низком риске после полного удаления не показана.",
+      "https://pmc.ncbi.nlm.nih.gov/articles/PMC12523295/"
+    ],
+    "II": [
+      "Периоперационную ХТ оценивают индивидуально по гистотипу, локализации и риску.",
+      "https://pmc.ncbi.nlm.nih.gov/articles/PMC12523295/"
+    ],
+    "III": [
+      "Периоперационную ХТ обсуждают для отдельных пациентов. Схемы при нерезектабельной или метастатической болезни приведены на вкладке IV.",
+      "https://pmc.ncbi.nlm.nih.gov/articles/PMC12523295/"
+    ]
+  },
+  "c060": {
+    "I": [
+      "Для обычной хордомы стандартной цитотоксической схемы нет. Системные варианты обсуждают в экспертном центре при прогрессировании.",
+      "https://pmc.ncbi.nlm.nih.gov/articles/PMC11723950/"
+    ]
+  },
   "c064": {
     "I": [
       "При R0 рутинная адъювантная химиотерапия не показана.",
@@ -2018,6 +2091,130 @@ const STAGE_DRUG_NOTES = {
 };
 
 const STAGE_SURGERY = {
+  "c057": {
+    "I": {
+      "procedure": "Широкая резекция первичной опухоли и биопсийного тракта.",
+      "limits": "Объём зависит от локализации и возможности получить отрицательные края.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11723950/"
+    },
+    "II": {
+      "procedure": "Широкая резекция с сохранением конечности, если возможен надёжный локальный контроль.",
+      "limits": "Выбор реконструкции, оценка краёв и патоморфологического ответа.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11723950/"
+    },
+    "III": {
+      "procedure": "Единый план резекции первичной опухоли и отдельных внутрикостных очагов.",
+      "limits": "Учитывают распространённость по МРТ, ожидаемые края и функцию.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11723950/"
+    },
+    "IV": {
+      "procedure": "Оценить резекцию первичной опухоли и метастазов, особенно лёгочных, у отобранных пациентов.",
+      "limits": "Учитывают возможность полного локального контроля, ответ и функциональный резерв.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11723950/"
+    }
+  },
+  "c059": {
+    "I": {
+      "procedure": "При отдельных атипичных хрящевых опухолях конечностей возможна ограниченная хирургия. При аксиальной хондросаркоме оценивают широкую резекцию.",
+      "limits": "Нужна совместная оценка визуализации и морфологии в профильном центре.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11723950/"
+    },
+    "II": {
+      "procedure": "Широкая резекция единым блоком.",
+      "limits": "Учитывают анатомические ограничения и возможность реконструкции.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11723950/"
+    },
+    "III": {
+      "procedure": "Резекция всех опухолевых участков в первичной зоне с планированием реконструкции.",
+      "limits": "При нерезектабельности рассматривают специализированную лучевую терапию по показаниям.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11723950/"
+    },
+    "IV": {
+      "procedure": "Локальное вмешательство у отдельных пациентов для контроля ограниченных очагов или симптомов.",
+      "limits": "Решение зависит от распространённости и цели лечения.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11723950/"
+    }
+  },
+  "c061": {
+    "I": {
+      "procedure": "Резекция с отрицательными краями в саркомном центре.",
+      "limits": "Для забрюшинной липосаркомы объём операции планируют по подтипу и анатомии. При миксоидной форме учитывают относительную радиочувствительность.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12523295/"
+    },
+    "II": {
+      "procedure": "Широкая резекция. По показаниям обсуждают периоперационное облучение.",
+      "limits": "Для забрюшинной липосаркомы объём операции планируют по подтипу и анатомии. При миксоидной форме учитывают относительную радиочувствительность.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12523295/"
+    },
+    "III": {
+      "procedure": "При технической возможности — резекция с отрицательными краями и оценка роли ЛТ.",
+      "limits": "Для забрюшинной липосаркомы объём операции планируют по подтипу и анатомии. При миксоидной форме учитывают относительную радиочувствительность.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12523295/"
+    },
+    "IV": {
+      "procedure": "Локальное вмешательство при ограниченных резектабельных очагах или для контроля симптомов.",
+      "limits": "Метастазэктомия возможна у отобранных пациентов. При регионарном поражении без отдалённых очагов тактику обсуждают отдельно.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12523295/"
+    }
+  },
+  "c062": {
+    "I": {
+      "procedure": "Резекция с отрицательными краями в саркомном центре.",
+      "limits": "При сосудистой первичной опухоли заранее планируют контроль магистрального сосуда и необходимость реконструкции.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12523295/"
+    },
+    "II": {
+      "procedure": "Широкая резекция. По показаниям обсуждают периоперационное облучение.",
+      "limits": "При сосудистой первичной опухоли заранее планируют контроль магистрального сосуда и необходимость реконструкции.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12523295/"
+    },
+    "III": {
+      "procedure": "При технической возможности — резекция с отрицательными краями и оценка роли ЛТ.",
+      "limits": "При сосудистой первичной опухоли заранее планируют контроль магистрального сосуда и необходимость реконструкции.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12523295/"
+    },
+    "IV": {
+      "procedure": "Локальное вмешательство при ограниченных резектабельных очагах или для контроля симптомов.",
+      "limits": "Метастазэктомия возможна у отобранных пациентов. При регионарном поражении без отдалённых очагов тактику обсуждают отдельно.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12523295/"
+    }
+  },
+  "c063": {
+    "I": {
+      "procedure": "Резекция с отрицательными краями в саркомном центре.",
+      "limits": "При высоком риске и химиочувствительном подтипе периоперационную химиотерапию обсуждают избирательно.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12523295/"
+    },
+    "II": {
+      "procedure": "Широкая резекция. По показаниям обсуждают периоперационное облучение.",
+      "limits": "При высоком риске и химиочувствительном подтипе периоперационную химиотерапию обсуждают избирательно.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12523295/"
+    },
+    "III": {
+      "procedure": "При технической возможности — резекция с отрицательными краями и оценка роли ЛТ.",
+      "limits": "При высоком риске и химиочувствительном подтипе периоперационную химиотерапию обсуждают избирательно.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12523295/"
+    },
+    "IV": {
+      "procedure": "Локальное вмешательство при ограниченных резектабельных очагах или для контроля симптомов.",
+      "limits": "Метастазэктомия возможна у отобранных пациентов. При регионарном поражении без отдалённых очагов тактику обсуждают отдельно.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12523295/"
+    }
+  },
+  "c058": {
+    "I": {
+      "procedure": "После индукции оценивают широкую резекцию первичной опухоли с отрицательными краями. При невозможности адекватной резекции используют лучевую терапию; её послеоперационную роль определяют по краям и ответу.",
+      "limits": "При метастатической болезни также оценивают локальный контроль, а при рецидиве — возможность индивидуального вмешательства.",
+      "url": "https://www.cancer.gov/types/bone/hp/ewing-treatment-pdq"
+    }
+  },
+  "c060": {
+    "I": {
+      "procedure": "При крестцовой или позвоночной хордоме оценивают резекцию единым блоком. При основании черепа обсуждают максимально безопасную резекцию в сочетании с высокодозной ЛТ.",
+      "limits": "Оценивают неврологический риск, ожидаемые края и возможность повторного локального лечения при прогрессировании.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11723950/"
+    }
+  },
   "c064": {
     "I": {
       "procedure": "Полная тимэктомия с опухолью, остатком тимуса и перитимической клетчаткой.",
@@ -2148,8 +2345,7 @@ const STAGE_SURGERY = {
   },
 };
 
-function stageExtras(c) {
-  const stage = state.stage;
+function stageExtras(c, stage = state.stage) {
   const treatment = treatmentFor(c.id, stage);
   const drugsSelected = state.treatmentTab === 'drugs';
   const regimens = regimensFor(c.id, stage);
