@@ -4519,6 +4519,7 @@ function start() {
     state.treatmentTab = 'drugs';
   }
   state.card = state.page === 'card' ? id : null;
+  state.regimenSection = state.page === 'regimens' ? id : undefined;
   state.staging = state.page === 'tnm' ? id : undefined;
   state.marker = state.page === 'markers' && /^\d+$/.test(id ?? '') ? Number(id) : -1;
   let target;
@@ -4546,7 +4547,7 @@ const TILE_ICONS = {
   calculators: '<path d="m7 13-2-1 5-8 3 2-2 3m-1-5 1-2 3 2-1 2M5 12l-1 2 2 1 1-2m7-2c4 2 5 6 2 9m-3-7c2 1 3 4 1 6M3 17h7m-4 0 2 3m9 0H8a3 3 0 0 0-3 3h15a3 3 0 0 0-3-3Z"/><circle cx="12" cy="11" r="2"/>',
   markers: '<path d="m6.5 15.5 3.8-4m3.4 0 3.8 4"/><circle cx="12" cy="9.5" r="2.6"/><circle cx="4.7" cy="17.3" r="2.5"/><circle cx="19.3" cy="17.3" r="2.5"/>',
   scales: '<path d="M6 4H5c-1 0-2 1-2 2.5C3 12 5.5 15 9 15s6-3 6-8.5C15 5 14 4 13 4h-1m-3 11v2a5 5 0 0 0 10 0v-2"/><circle cx="19" cy="12.5" r="2.5"/>',
-  regimens: '<path d="M4 11l7-7a6.36 6.36 0 0 1 9 9l-7 7a6.36 6.36 0 0 1-9-9Zm3.5-3.5 9 9"/>',
+  regimens: '<path d="M9 3h6m-5 0v6L4.4 18.3A1.8 1.8 0 0 0 6 21h12a1.8 1.8 0 0 0 1.6-2.7L14 9V3M7 14h10"/>',
   sources: '<path d="M12 6C9.5 4 6 3.5 2.5 4.5V19c3.5-1 7-.5 9.5 1.5 2.5-2 6-2.5 9.5-1.5V4.5C18 3.5 14.5 4 12 6Zm0 0v14.5"/>',
 };
 
@@ -4554,7 +4555,7 @@ function tileIcon(page) {
   return `<svg class="tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${TILE_ICONS[page]}</svg>`;
 }
 
-function home(){const tiles=[['Карточки ЗНО',`${DATA.length} нозологий: гистология, диагностика, лечение`,'catalog'],['TNM-справочник','Краткие критерии и версии классификаций','tnm'],['Калькуляторы','BSA, Calvert, CKD-EPI 2021, RECIST','calculators'],['Онкомаркеры','Показания и ограничения','markers'],['Шкалы','ECOG, Khorana, Child–Pugh, IMDC','scales'],['Источники','Рекомендации, журналы и базы исследований','sources'],['Схемы лечения','Поиск по схеме, препарату и нозологии','regimens']];return `<div class="intro"><h1>ОнкоАтлас</h1><p class="muted">Краткий клинический справочник по онкологии. Свободный доступ, без регистрации.</p></div><input class="search" aria-label="Поиск по справочнику" placeholder="Опухоль, МКБ‑10, схема, препарат или биомаркер…" oninput="searchHome(this.value)"><div id="quickSearch" aria-live="polite"></div><div class="tiles">${tiles.map(([n,d,p])=>`<button class="tile" onclick="view('${p}')">${tileIcon(p)}<h3>${n}</h3><p>${d}</p></button>`).join('')}</div><div class="notice">Медицинский контент — справочная редакция, <b>не прошедшая независимую клиническую экспертизу</b>. Для назначения терапии используйте актуальные руководства и инструкции. Данные пациентов на сайт не вводите.</div>`}
+function home(){const tiles=[['Карточки ЗНО',`${DATA.length} нозологий: гистология, диагностика, лечение`,'catalog'],['TNM-справочник','Краткие критерии и версии классификаций','tnm'],['Калькуляторы','BSA, Calvert, CKD-EPI 2021, RECIST','calculators'],['Онкомаркеры','Показания и ограничения','markers'],['Шкалы','ECOG, Khorana, Child–Pugh, IMDC','scales'],['Источники','Рекомендации, журналы и базы исследований','sources'],['Схемы лечения','Лекарственные схемы и осложнения терапии','regimens']];return `<div class="intro"><h1>ОнкоАтлас</h1><p class="muted">Краткий клинический справочник по онкологии. Свободный доступ, без регистрации.</p></div><input class="search" aria-label="Поиск по справочнику" placeholder="Опухоль, МКБ‑10, схема, препарат или биомаркер…" oninput="searchHome(this.value)"><div id="quickSearch" aria-live="polite"></div><div class="tiles">${tiles.map(([n,d,p])=>`<button class="tile" onclick="view('${p}')">${tileIcon(p)}<h3>${n}</h3><p>${d}</p></button>`).join('')}</div><div class="notice">Медицинский контент — справочная редакция, <b>не прошедшая независимую клиническую экспертизу</b>. Для назначения терапии используйте актуальные руководства и инструкции. Данные пациентов на сайт не вводите.</div>`}
 const SEARCH_LIBRARY = [
   ['Фундаментальный канцерогенез · триггер и фиксация мутаций', './carcinogenesis.html#damage', 'повреждение ДНК репликация репарация кодон кодоны рамка считывания'],
   ['Фундаментальный канцерогенез · драйверы, аберрации и эпигенетика', './carcinogenesis.html#drivers', 'MSI dMMR микросателлитная нестабильность MLH1 драйвер хромосомные аберрации хромотрипсис эпигенетическая перестройка хроматин метилирование'],
@@ -6435,11 +6436,85 @@ function regimenOptionList(rules) {
     '<option value="unspecified">Не указано в названии</option>';
 }
 
+const THERAPY_COMPLICATIONS = [
+  {
+    title: 'Фебрильная нейтропения',
+    signs: 'После миелосупрессивной терапии: температура во рту ≥38,3 °C однократно или ≥38,0 °C в течение часа при абсолютном числе нейтрофилов <0,5 × 10⁹/л либо ожидаемом снижении ниже этого уровня в ближайшие 48 часов.',
+    urgent: 'Лихорадка после химиотерапии с подозрением на нейтропению требует немедленной очной оценки. При гипотензии, спутанности сознания или дыхательной недостаточности активируют протокол сепсиса.',
+    steps: [
+      'Оценить жизненные показатели, время последнего цикла и возможный очаг. Выполнить общий анализ крови с лейкоформулой и взять посевы крови, если это не задержит лечение.',
+      'При подозрении на фебрильную нейтропению начать эмпирическую антибактериальную терапию в течение часа от триажа. Выбор препарата определяют тяжесть, локальная резистентность и протокол центра.',
+      'При высоком риске требуется стационар. Амбулаторное ведение рассматривают только после очной оценки риска, клинической стабильности и возможности быстрого повторного обращения.',
+    ],
+    sources: [['ASCO/IDSA · лихорадка и нейтропения', 'https://www.idsociety.org/practice-guideline/fever-and-neutropenia-in-adults-with-cancer/']],
+  },
+  {
+    title: 'Инфузионная реакция и анафилаксия',
+    signs: 'Во время или вскоре после инфузии возможны приливы, зуд, крапивница, озноб, одышка, свистящее дыхание и падение давления. Анафилаксия возможна без кожных проявлений.',
+    urgent: 'При стридоре, бронхоспазме, гипотензии или коллапсе немедленно вызвать реанимационную команду. При подозрении на анафилаксию препарат первой линии — адреналин внутримышечно по протоколу.',
+    steps: [
+      'Остановить инфузию, оценить проходимость дыхательных путей, дыхание и кровообращение. Контролировать давление, пульс и сатурацию; сохранить венозный доступ для неотложной терапии.',
+      'При анафилаксии действовать по реанимационному алгоритму. Антигистаминные препараты не заменяют адреналин и не должны задерживать его введение.',
+      'Зафиксировать препарат, время начала, проявления и ответ на меры. Возможность повторного введения зависит от тяжести, инструкции и оценки профильной команды.',
+    ],
+    sources: [
+      ['eviQ · реакции гиперчувствительности', 'https://www.eviq.org.au/clinical-resources/side-effect-and-toxicity-management/immunological/1831-hypersensitivity-reaction'],
+      ['Resuscitation Council UK · анафилаксия', 'https://www.resus.org.uk/library/additional-guidance/guidance-anaphylaxis/emergency-treatment-anaphylactic-reactions'],
+    ],
+  },
+  {
+    title: 'Экстравазация противоопухолевого препарата',
+    signs: 'Боль, жжение, отёк или изменение цвета кожи возле доступа, подтекание, сопротивление при введении или потеря обратного тока крови.',
+    urgent: 'При подозрении сразу остановить введение и вызвать помощь. При экстравазации везиканта или подозрении на повреждение центрального доступа срочно согласовать дальнейшие действия с профильной командой.',
+    steps: [
+      'Оставить доступ на месте для осторожной аспирации остатка препарата. Не промывать систему и не давить на область экстравазации.',
+      'Уточнить препарат, концентрацию и предполагаемый объём. Оценить и документировать границы поражения. Компресс, антидот и время удаления доступа выбирают по препарату и протоколу учреждения.',
+      'Назначить сроки повторной оценки. При нарастании боли, появлении пузырей или признаках некроза требуется срочный осмотр.',
+    ],
+    sources: [
+      ['ONS/ASCO · алгоритм для взрослых', 'https://www.ons.org/sites/default/files/2025-09/ons-asco-algorithm-on-antineoplastic-extravasation_09.2025.pdf'],
+      ['eviQ · клиническая процедура', 'https://www.eviq.org.au/clinical-resources/extravasation/4156-extravasation-management-clinical-procedure'],
+    ],
+  },
+  {
+    title: 'Иммунозависимые нежелательные явления',
+    signs: 'На фоне ингибиторов контрольных точек или после их отмены возможны новые кашель и одышка, диарея, сыпь, желтуха, выраженная слабость или неврологические симптомы.',
+    urgent: 'Боль в груди, аритмия, синкопе, гипоксемия, выраженная мышечная слабость или признаки надпочечникового криза требуют неотложной оценки. Возможный миокардит оценивают срочно даже при слабо выраженных симптомах.',
+    steps: [
+      'Уточнить препарат, дату последнего введения и динамику симптомов. Оценить жизненные показатели и тяжесть по CTCAE; при клинически значимой либо потенциально опасной токсичности приостановить следующее введение до оценки.',
+      'Обследовать по предполагаемому органу. При одышке — сатурация и оценка показаний к КТ; при подозрении на миокардит — ЭКГ, тропонин и срочная консультация; при значимой диарее — оценка обезвоживания и исключение инфекции.',
+      'Тактика зависит от органа и тяжести. Решения о глюкокортикоидах, другой иммуносупрессии и возобновлении лечения сверяют с органоспецифическим алгоритмом.',
+    ],
+    sources: [
+      ['SITC · органоспецифические алгоритмы', 'https://pmc.ncbi.nlm.nih.gov/articles/PMC8237720/'],
+      ['ASCO · руководство по иммунной токсичности', 'https://ascopubs.org/doi/10.1200/JCO.21.01440'],
+    ],
+  },
+];
+
+function therapyComplicationsPage() {
+  return shell('Осложнения лекарственной терапии', `
+    <p><a class="back" href="#regimens">← Указатель лекарственных схем</a></p>
+    <p class="muted">Первичная оценка осложнений противоопухолевой терапии у взрослых. Для лечения используйте полный протокол учреждения.</p>
+    ${THERAPY_COMPLICATIONS.map(topic => `<details class="marker-entry">
+      <summary>${esc(topic.title)}</summary>
+      <div class="marker-detail">
+        <p><b>Когда заподозрить.</b> ${esc(topic.signs)}</p>
+        <div class="notice"><b>Срочность.</b> ${esc(topic.urgent)}</div>
+        <h3>Первые действия</h3>
+        <ol>${topic.steps.map(step => `<li>${esc(step)}</li>`).join('')}</ol>
+        <p class="fine">${topic.sources.map(([label, url]) => treatmentSource(url, label)).join(' · ')}</p>
+      </div>
+    </details>`).join('')}`);
+}
+
 function regimenIndexPage() {
+  if (state.regimenSection === 'complications') return therapyComplicationsPage();
   const cards = [...new Map(REGIMEN_INDEX.map(({card}) => [card.id, card])).values()]
     .sort((a, b) => a.title.localeCompare(b.title, 'ru'));
   return shell('Указатель лекарственных схем', `
     <p class="muted">Поиск по названию схемы, препарату или опухоли. Ссылки открывают дозировки и условия применения в карточке ЗНО.</p>
+    <div class="actions"><a class="btn secondary" href="#regimens/complications">Справочник по осложнениям</a></div>
     <input id="regimenQuery" class="search" type="search" aria-label="Поиск лекарственной схемы" placeholder="Например, FOLFOX, пембролизумаб или C64" oninput="filterRegimenIndex()">
     <div class="regimen-filters">
       <label class="field">Нозология<select id="regimenCard" onchange="filterRegimenIndex()"><option value="">Все нозологии</option>${cards.map(card => `<option value="${esc(card.id)}">${esc(card.title)}</option>`).join('')}</select></label>
@@ -7098,7 +7173,7 @@ function sourcesPage() {
 function favorites(){let cs=DATA.filter(c=>favs().includes(c.id));return shell('Избранное',cs.length?cs.map(c=>`<button class="item" onclick="view('card','${c.id}')"><span><strong>${esc(c.title)}</strong><small>${esc(c.group)}</small></span>→</button>`).join(''):'<div class="panel muted">Пока нет избранных карточек.</div>')}
 function about(){return shell('О проекте',`<div class="panel"><h2>ОнкоАтлас</h2><p>Бесплатный русскоязычный образовательный справочник для врачей. Все материалы открыты без регистрации.</p><p><b>Редакция:</b> 0.2 · 21 ноября 2026 года. <b>Статус:</b> рабочая бета-версия; клиническая экспертиза ещё не завершена.</p><p>Тексты карточек — сокращённые алгоритмы, не официальные рекомендации. Локальная регистрация лекарств и стандарты лечения различаются по странам.</p><p>Источники для редакционной проверки: ${sources.map(([n,u])=>`<a href="${u}" target="_blank">${n}</a>`).join(', ')}.</p><p><b>Конфиденциальность:</b> не вводите персональные данные пациентов. Калькуляторы выполняются в браузере. Избранное хранится локально.</p></div>`)}
 function admin(){return shell('Администрирование',`<div class="panel"><h2>Публичный сайт — только чтение</h2><p>Защищённое редактирование ещё не подключено. Пароли в исходном коде отсутствуют. Вход «Икбал Р.В.» не будет реализован как небезопасная клиентская проверка.</p><p>Пока обновления выполняются заменой файлов после медицинской проверки. Для редактирования через чат потребуется подключение к репозиторию с ограниченными правами и подтверждением публикации.</p></div>`)}
-function render(){const pages={home,catalog,card,tnm:tnmPage,calculators:calcPage,scales,markers,regimens:regimenIndexPage,sources:sourcesPage,favorites,about,admin};$('#app').innerHTML=(pages[state.page]||home)();allNodes('[data-nav]').forEach(x=>x.classList.toggle('active',x.dataset.nav===state.page));if(state.page==='catalog')listCards();if(state.page==='regimens')filterRegimenIndex()}
+function render(){const pages={home,catalog,card,tnm:tnmPage,calculators:calcPage,scales,markers,regimens:regimenIndexPage,sources:sourcesPage,favorites,about,admin};$('#app').innerHTML=(pages[state.page]||home)();allNodes('[data-nav]').forEach(x=>x.classList.toggle('active',x.dataset.nav===state.page));if(state.page==='catalog')listCards();if(state.page==='regimens' && state.regimenSection!=='complications')filterRegimenIndex()}
 window.view=view;window.toggleFav=toggleFav;window.setStage=setStage;window.searchHome=searchHome;window.filterRegimenIndex=filterRegimenIndex;window.listCards=listCards;window.filterStaging=filterStaging;window.calculate=calculate;window.khorana=khorana;window.child=child;window.imdc=imdc;window.filterMarkers=filterMarkers;
 start();
 </script></body></html>
