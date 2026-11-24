@@ -4961,13 +4961,16 @@ function start() {
   let path = '';
   try { path = decodeURIComponent(location.hash.slice(1)); } catch { /* Invalid deep link. */ }
   const [page, id, section, key] = path.split('/');
-  const pages = ['home', 'catalog', 'card', 'tnm', 'calculators', 'scales', 'markers', 'regimens', 'sources', 'favorites', 'about', 'admin'];
+  const pages = ['home', 'catalog', 'card', 'tnm', 'calculators', 'scales', 'markers', 'regimens', 'surgery', 'sources', 'favorites', 'about', 'admin'];
   state.page = pages.includes(page) ? page : 'home';
   if (state.page === 'card' && state.card !== id) {
     state.stage = (CARD_STAGES[id] ?? STAGES)[0];
     state.treatmentTab = 'drugs';
   }
   state.card = state.page === 'card' ? id : null;
+  state.surgerySection = state.page === 'surgery' ? id : undefined;
+  state.surgeryOrigin = state.page === 'surgery' ? section : undefined;
+  state.surgeryStage = state.page === 'surgery' ? key : undefined;
   state.regimenSection = state.page === 'regimens' ? id : undefined;
   state.staging = state.page === 'tnm' ? id : undefined;
   state.marker = state.page === 'markers' && /^\d+$/.test(id ?? '') ? Number(id) : -1;
@@ -4978,7 +4981,7 @@ function start() {
     if (section === 'molecular') target = '#molecular';
     else if ((CARD_STAGES[id] ?? STAGES).includes(section)) {
       state.stage = section;
-      state.treatmentTab = 'drugs';
+      state.treatmentTab = key === 'surgery' ? 'surgery' : 'drugs';
       if (regimensFor(id, section).some(protocol => regimenKey(protocol) === key)) target = '#regimen-' + key;
     }
   }
@@ -4998,6 +5001,7 @@ const TILE_ICONS = {
   calculators: '<path d="m7 13-2-1 5-8 3 2-2 3m-1-5 1-2 3 2-1 2M5 12l-1 2 2 1 1-2m7-2c4 2 5 6 2 9m-3-7c2 1 3 4 1 6M3 17h7m-4 0 2 3m9 0H8a3 3 0 0 0-3 3h15a3 3 0 0 0-3-3Z"/><circle cx="12" cy="11" r="2"/>',
   markers: '<path d="m6.5 15.5 3.8-4m3.4 0 3.8 4"/><circle cx="12" cy="9.5" r="2.6"/><circle cx="4.7" cy="17.3" r="2.5"/><circle cx="19.3" cy="17.3" r="2.5"/>',
   scales: '<path d="M6 4H5c-1 0-2 1-2 2.5C3 12 5.5 15 9 15s6-3 6-8.5C15 5 14 4 13 4h-1m-3 11v2a5 5 0 0 0 10 0v-2"/><circle cx="19" cy="12.5" r="2.5"/>',
+  surgery: '<path d="m3 20 1-5 7-11a1.7 1.7 0 0 1 2.8 1.9L7 16l-4 4Zm1-5 3 2m9-11h1m3 0h2m-6 6h1m3 0h2m-6 6h1m3 0h2"/>',
   regimens: '<path d="M9 3h6m-5 0v6L4.4 18.3A1.8 1.8 0 0 0 6 21h12a1.8 1.8 0 0 0 1.6-2.7L14 9V3M7 14h10"/>',
   sources: '<path d="M12 6C9.5 4 6 3.5 2.5 4.5V19c3.5-1 7-.5 9.5 1.5 2.5-2 6-2.5 9.5-1.5V4.5C18 3.5 14.5 4 12 6Zm0 0v14.5"/>',
 };
@@ -5006,7 +5010,7 @@ function tileIcon(page) {
   return `<svg class="tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${TILE_ICONS[page]}</svg>`;
 }
 
-function home(){const tiles=[['Карточки ЗНО',`${DATA.length} нозологий: гистология, диагностика, лечение`,'catalog'],['TNM-справочник','Краткие критерии и версии классификаций','tnm'],['Калькуляторы','BSA, Calvert, CKD-EPI 2021, RECIST','calculators'],['Онкомаркеры','Показания и ограничения','markers'],['Шкалы','ECOG, Khorana, Child–Pugh, IMDC','scales'],['Источники','Рекомендации, журналы и базы исследований','sources'],['Схемы лечения','Лекарственные схемы и осложнения терапии','regimens']];return `<div class="intro"><h1>ОнкоАтлас</h1><p class="muted">Краткий клинический справочник по онкологии. Свободный доступ, без регистрации.</p></div><input class="search" aria-label="Поиск по справочнику" placeholder="Опухоль, схема, маркер, осложнение…" oninput="searchHome(this.value)"><div id="quickSearch" aria-live="polite"></div><div class="tiles">${tiles.map(([n,d,p])=>`<button class="tile" onclick="view('${p}')">${tileIcon(p)}<h3>${n}</h3><p>${d}</p></button>`).join('')}</div><div class="notice">Медицинский контент — справочная редакция, <b>не прошедшая независимую клиническую экспертизу</b>. Для назначения терапии используйте актуальные руководства и инструкции. Данные пациентов на сайт не вводите.</div>`}
+function home(){const tiles=[['Карточки ЗНО',`${DATA.length} нозологий: гистология, диагностика, лечение`,'catalog'],['TNM-справочник','Краткие критерии и версии классификаций','tnm'],['Калькуляторы','BSA, Calvert, CKD-EPI 2021, RECIST','calculators'],['Онкомаркеры','Показания и ограничения','markers'],['Шкалы','ECOG, Khorana, Child–Pugh, IMDC','scales'],['Источники','Рекомендации, журналы и базы исследований','sources'],['Схемы лечения','Лекарственные схемы и осложнения терапии','regimens'],['Хирургические алгоритмы','Основы онкохирургии и тактика по нозологиям','surgery']];return `<div class="intro"><h1>ОнкоАтлас</h1><p class="muted">Краткий клинический справочник по онкологии. Свободный доступ, без регистрации.</p></div><input class="search" aria-label="Поиск по справочнику" placeholder="Опухоль, схема, маркер, осложнение…" oninput="searchHome(this.value)"><div id="quickSearch" aria-live="polite"></div><div class="tiles">${tiles.map(([n,d,p])=>`<button class="tile" onclick="view('${p}')">${tileIcon(p)}<h3>${n}</h3><p>${d}</p></button>`).join('')}</div><div class="notice">Медицинский контент — справочная редакция, <b>не прошедшая независимую клиническую экспертизу</b>. Для назначения терапии используйте актуальные руководства и инструкции. Данные пациентов на сайт не вводите.</div>`}
 const SEARCH_LIBRARY = [
   ['Фундаментальный канцерогенез · триггер и фиксация мутаций', './carcinogenesis.html#damage', 'повреждение ДНК репликация репарация кодон кодоны рамка считывания'],
   ['Фундаментальный канцерогенез · драйверы, аберрации и эпигенетика', './carcinogenesis.html#drivers', 'MSI dMMR микросателлитная нестабильность MLH1 драйвер хромосомные аберрации хромотрипсис эпигенетическая перестройка хроматин метилирование'],
@@ -5072,6 +5076,12 @@ function globalSearch(query) {
   };
   const compactQuery = markerSearchText(query);
   const sections = [
+    ['Хирургические алгоритмы', [
+      ...(['Хирургические алгоритмы', 'Основы онкохирургии'].filter(title => matches(title))
+        .map(title => [title, '#surgery', 'Хирургия'])),
+      ...SURGICAL_ALGORITHMS.filter(item => matches(item.title + ' ' + item.keywords))
+        .map(item => [item.title, '#surgery/' + item.id, 'Хирургическая тактика']),
+    ]],
     ['Осложнения терапии', THERAPY_COMPLICATIONS.filter(topic => matches([topic.title, topic.aliases, topic.signs].join(' ')))
       .map(topic => [topic.title, '#regimens/complications/' + topic.id, 'Признаки · срочность · первые действия'])],
     ['Калькуляторы и шкалы', SEARCH_TOOLS.filter(([title, , keywords]) => matches(title + ' ' + keywords))
@@ -7567,11 +7577,14 @@ function renderDrugContent(id, stage, intro) {
 }
 
 function renderSurgeryContent(surgery) {
+  const algorithm = SURGICAL_ALGORITHMS.find(item => item.cards.includes(state.card));
+  const algorithmLink = algorithm ? '#surgery/' + algorithm.id + '/' + state.card + '/' + state.stage : null;
   return `<div class="notice" style="margin:10px 0">
     ${surgery?.procedure ? `<p>${esc(surgery.procedure)}</p>
       ${surgery.limits ? `<p><b>Ограничения и противопоказания.</b> ${esc(surgery.limits)}</p>` : ''}`
       : '<p>Для этой стадии в карточке нет отдельного хирургического алгоритма. Решение зависит от нозологии, резектабельности и цели лечения.</p>'}
     ${surgery?.url ? `<p class="fine">${treatmentSource(surgery.url, 'Источник хирургической тактики')}</p>` : ''}
+    ${algorithmLink ? `<p><a class="btn secondary" href="${esc(algorithmLink)}">Подробный хирургический алгоритм</a></p>` : ''}
   </div>`;
 }
 
@@ -7772,7 +7785,106 @@ function sourcesPage() {
 function favorites(){let cs=DATA.filter(c=>favs().includes(c.id));return shell('Избранное',cs.length?cs.map(c=>`<button class="item" onclick="view('card','${c.id}')"><span><strong>${esc(c.title)}</strong><small>${esc(c.group)}</small></span>→</button>`).join(''):'<div class="panel muted">Пока нет избранных карточек.</div>')}
 function about(){return shell('О проекте',`<div class="panel"><h2>ОнкоАтлас</h2><p>Бесплатный русскоязычный образовательный справочник для врачей. Все материалы открыты без регистрации.</p><p><b>Редакция:</b> 0.2 · 21 ноября 2026 года. <b>Статус:</b> рабочая бета-версия; клиническая экспертиза ещё не завершена.</p><p>Тексты карточек — сокращённые алгоритмы, не официальные рекомендации. Локальная регистрация лекарств и стандарты лечения различаются по странам.</p><p>Источники для редакционной проверки: ${sources.map(([n,u])=>`<a href="${u}" target="_blank">${n}</a>`).join(', ')}.</p><p><b>Конфиденциальность:</b> не вводите персональные данные пациентов. Калькуляторы выполняются в браузере. Избранное хранится локально.</p></div>`)}
 function admin(){return shell('Администрирование',`<div class="panel"><h2>Публичный сайт — только чтение</h2><p>Защищённое редактирование ещё не подключено. Пароли в исходном коде отсутствуют. Вход «Икбал Р.В.» не будет реализован как небезопасная клиентская проверка.</p><p>Пока обновления выполняются заменой файлов после медицинской проверки. Для редактирования через чат потребуется подключение к репозиторию с ограниченными правами и подтверждением публикации.</p></div>`)}
-function render(){const pages={home,catalog,card,tnm:tnmPage,calculators:calcPage,scales,markers,regimens:regimenIndexPage,sources:sourcesPage,favorites,about,admin};$('#app').innerHTML=(pages[state.page]||home)();allNodes('[data-nav]').forEach(x=>x.classList.toggle('active',x.dataset.nav===state.page));if(state.page==='catalog')listCards();if(state.page==='regimens' && state.regimenSection!=='complications')filterRegimenIndex()}
+const SURGICAL_BASICS = [
+  ['До операции', 'Сформулировать цель вмешательства, подтвердить диагноз и распространённость. Отдельно оценить возможность полного удаления опухоли и способность пациента перенести запланированный объём. На консилиуме согласовать необходимость предоперационного лечения и критерии повторной оценки.'],
+  ['План операции', 'Определить объём резекции и регионарного вмешательства по нозологии. Заранее обсудить сохранение функции, возможную реконструкцию и условия, при которых понадобится изменить план.'],
+  ['Операционный препарат', 'Согласовать с патоморфологом ориентацию препарата, маркировку краёв и раздельную передачу лимфоузлов или станций. В направлении указать локализацию, предшествующее лечение и значимые интраоперационные находки.'],
+  ['После операции', 'Проверить применимые pTNM или ypTNM, статус краёв, лимфоузлы и эффект предоперационной терапии. Обсудить дальнейшее лечение с учётом патоморфологии и восстановления пациента.'],
+];
+
+const SURGICAL_ALGORITHMS = [
+  {
+    id: 'breast', title: 'Рак молочной железы', cards: ['c004'],
+    pathway: 'Операбельна сейчас → выбрать объём резекции и тактику по аксилле. Показано предоперационное лечение → маркировать очаги, оценить ответ и повторно спланировать операцию.',
+    keywords: 'РМЖ мастэктомия органосохранение сторожевой узел аксиллярная лимфодиссекция',
+    sources: [
+      ['NCI PDQ · лечение рака молочной железы', 'https://www.cancer.gov/types/breast/hp/breast-treatment-pdq'],
+      ['ASCO 2025 · биопсия сторожевого узла', 'https://pubmed.ncbi.nlm.nih.gov/40209128/'],
+    ],
+    situations: [
+      ['Первичная операция при операбельном раке', 'По биопсии и визуализации оценить распространённость и ER/PR/HER2. При возможности получить отрицательные края и провести необходимую ЛТ обсудить органосохраняющую операцию. При показаниях к мастэктомии обсудить реконструкцию и возможную послеоперационную ЛТ.', 'При cN0 оценить показания к биопсии сторожевого узла. У отдельных пациенток с небольшим благоприятным HR+/HER2− раком и отрицательным УЗИ аксиллы критерии ASCO допускают её пропуск. Решение об аксиллярной диссекции зависит от числа поражённых узлов, операции и плана ЛТ.'],
+      ['Операция после неоадъювантного лечения', 'До начала лечения документировать исходный объём и согласовать маркировку очага и биопсированного положительного узла. После терапии оценить возможность органосохранения и спланировать операцию с учётом исходного распространения и ответа.', 'Тактика в аксилле зависит от исходного cN и ответа; алгоритм для первичной операции нельзя автоматически переносить на состояние после неоадъювантной терапии.'],
+    ],
+    pathology: 'Края, размер инвазивного компонента и DCIS, число исследованных и поражённых узлов. После предоперационной терапии — остаточная инвазивная опухоль, ypTNM и ответ по применимому протоколу.',
+  },
+  {
+    id: 'lung', title: 'Немелкоклеточный рак лёгкого', cards: ['c001', 'c002'],
+    pathway: 'Ранняя периферическая опухоль → оценить функциональный резерв и объём резекции. Центральная опухоль или подозрение на поражение средостения → уточнить стадию и обсудить последовательность лечения.',
+    keywords: 'НМРЛ NSCLC лобэктомия сегментэктомия резекция лёгкого медиастинальные узлы',
+    sources: [['NCI PDQ · лечение НМРЛ', 'https://www.cancer.gov/types/lung/hp/non-small-cell-lung-treatment-pdq']],
+    situations: [
+      ['Ранняя периферическая опухоль', 'Подтвердить распространённость и оценить лёгочный и сердечно-сосудистый резерв. Обсудить лобэктомию; для отобранных пациентов с периферической опухолью ≤2 см и подтверждённым N0 возможна сублобарная резекция.', 'При выборе меньшего объёма проверить достаточность краёв и полноценность оценки внутригрудных узлов. При медицинской неоперабельности обсудить стереотаксическую ЛТ.'],
+      ['Центральная опухоль или местнораспространённая болезнь', 'Оценить возможность полной резекции и показания к инвазивному стадированию средостения. На консилиуме определить место предоперационной терапии и критерии переоценки.', 'При центральной опухоли рассмотреть бронхопластическую резекцию, если она позволяет удалить опухоль с отрицательными краями и сохранить функционирующую паренхиму. Операцию в III стадии обсуждают избирательно.'],
+    ],
+    pathology: 'Тип и размер опухоли, хирургические края, плевральная инвазия и результаты по лимфатическим станциям. После предоперационного лечения — жизнеспособная опухоль и ypTNM.',
+  },
+  {
+    id: 'colon', title: 'Рак ободочной кишки', cards: ['c005'],
+    pathway: 'Рак в удалённом полипе → оценить полноту удаления и морфологический риск. Инвазивная резектабельная опухоль → планировать сегментарную онкологическую резекцию по локализации.',
+    keywords: 'КРР гемиколэктомия колэктомия злокачественный полип ободочная кишка',
+    sources: [
+      ['NCI PDQ · лечение рака ободочной кишки', 'https://www.cancer.gov/types/colorectal/hp/colon-treatment-pdq'],
+      ['ASCRS · лечение рака ободочной кишки', 'https://pubmed.ncbi.nlm.nih.gov/34775402/'],
+    ],
+    situations: [
+      ['Ранний рак в удалённом полипе', 'Проверить, удалён ли очаг единым блоком, и оценить край, глубину инвазии, дифференцировку, сосудистую инвазию и почкование. После полноценной резекции с благоприятной морфологией возможно наблюдение.', 'При неблагоприятных признаках или невозможности надёжно оценить края обсудить онкологическую резекцию с регионарными узлами.'],
+      ['Резектабельная инвазивная опухоль', 'Выбрать сегмент резекции по локализации и путям лимфооттока. План включает удаление опухоли и соответствующей брыжейки с регионарными лимфоузлами.', 'При подозрении на прорастание в соседний орган обсудить резекцию единым блоком при возможности R0. При непроходимости или перфорации первоочередная тактика зависит от стабильности и распространённости.'],
+    ],
+    pathology: 'Края, pT/pN, опухолевые депозиты, сосудистая и периневральная инвазия. При первичной резекции ориентир качества стадирования — исследование не менее 12 лимфоузлов.',
+  },
+  {
+    id: 'rectum', title: 'Рак прямой кишки', cards: ['c044'],
+    pathway: 'Благоприятная cT1N0 → оценить возможность локального иссечения. Местнораспространённая опухоль → обсудить предоперационное лечение. После него → переоценить ответ и выбрать дальнейшую тактику.',
+    keywords: 'КРР TME мезоректум мезоректумэктомия тотальная неоадъювантная терапия watch and wait',
+    sources: [
+      ['NCI PDQ · лечение рака прямой кишки', 'https://www.cancer.gov/types/colorectal/hp/rectal-treatment-pdq'],
+      ['ASCRS · дополнение по раку прямой кишки', 'https://www.ascrsu.com/ascrs/view/ASCRS-Toolkit/2851104/0/Management_of_Rectal_Cancer_2023_Supplement__2023_)'],
+    ],
+    situations: [
+      ['Ранняя опухоль cT1N0', 'МРТ таза и эндоскопия уточняют уровень опухоли и признаки риска. Трансанальное локальное иссечение рассматривают у тщательно отобранных пациентов с благоприятной небольшой cT1N0.', 'Если после иссечения обнаружены неблагоприятные признаки, обсудить завершение лечения радикальной резекцией. Локальное иссечение не обеспечивает оценку регионарных лимфоузлов.'],
+      ['Инвазивная или местнораспространённая опухоль', 'Оценить по МРТ уровень, мезоректальную фасцию, EMVI и узлы. Решить на консилиуме, нужна ли неоадъювантная терапия. При операции объём мезоректумэктомии зависит от уровня опухоли; при средней и нижней локализации обычно планируют TME.', 'Сохранение сфинктера зависит от возможности получить адекватные края и ожидаемой функции. При вовлечении сфинктерного комплекса или невозможности адекватного края обсуждают брюшно-промежностную экстирпацию.'],
+      ['Переоценка после неоадъювантного лечения', 'Сопоставить пальцевое исследование, эндоскопию и МРТ. При неполном клиническом ответе и резектабельности обсуждают операцию. При полном клиническом ответе у отобранных пациентов возможна стратегия наблюдения в опытном центре.', 'До выбора наблюдения согласовать интенсивный график контроля и возможность своевременной операции при возобновлении роста.'],
+    ],
+    pathology: 'Циркулярный и дистальный края, качество мезоректального препарата, узлы и опухолевые депозиты. После предоперационного лечения — ypTNM и степень регрессии.',
+  },
+];
+
+function surgeryPage() {
+  const algorithm = SURGICAL_ALGORITHMS.find(item => item.id === state.surgerySection);
+  if (algorithm) {
+    const returnCard = algorithm.cards.includes(state.surgeryOrigin) ? state.surgeryOrigin : null;
+    const stage = (CARD_STAGES[returnCard] ?? STAGES).includes(state.surgeryStage) ? state.surgeryStage : 'I';
+    const links = algorithm.cards.map(id => {
+      const card = DATA.find(item => item.id === id);
+      const href = '#card/' + id + '/' + (id === returnCard ? stage : 'I') + '/surgery';
+      return '<a class="btn secondary" href="' + esc(href) + '">' + esc(card.title) + '</a>';
+    }).join('');
+    return shell(esc(algorithm.title), `
+      <p><a class="back" href="#surgery">← Хирургические алгоритмы</a></p>
+      <div class="panel"><h2>Выберите клиническую ситуацию</h2>
+        <p>${esc(algorithm.pathway)}</p>
+        ${algorithm.situations.map(([title, plan, decision]) => `<details class="marker-entry">
+          <summary>${esc(title)}</summary><div class="marker-detail">
+          <p><b>План вмешательства.</b> ${esc(plan)}</p>
+          <p><b>Что меняет тактику.</b> ${esc(decision)}</p></div></details>`).join('')}
+        <h2>Послеоперационная морфология</h2><p>${esc(algorithm.pathology)}</p>
+        <p class="fine">Сверено с указанными источниками 24.11.2026. Независимая медицинская рецензия не проведена.</p>
+        <p class="fine">${algorithm.sources.map(([label, url]) => treatmentSource(url, label)).join(' · ')}</p>
+        <div class="actions">${links}${stagingCardLink(returnCard ?? algorithm.cards[0])}</div>
+      </div>`);
+  }
+  return shell('Хирургические алгоритмы', `
+    <section class="panel"><h2>Основы онкохирургии</h2>
+      ${SURGICAL_BASICS.map(([title, text]) => `<details class="marker-entry"><summary>${esc(title)}</summary>
+        <div class="marker-detail"><p>${esc(text)}</p></div></details>`).join('')}
+      <p class="fine">${treatmentSource('https://www.cap.org/protocols-and-guidelines/cancer-protocols/current-cancer-protocols/', 'CAP · протоколы исследования операционного материала')}</p>
+    </section>
+    <section class="panel"><h2>Алгоритмы по нозологиям</h2>
+      ${SURGICAL_ALGORITHMS.map(item => `<a class="item" href="#surgery/${esc(item.id)}"><strong>${esc(item.title)}</strong><span aria-hidden="true">→</span></a>`).join('')}
+    </section>`);
+}
+
+function render(){const pages={home,catalog,card,tnm:tnmPage,calculators:calcPage,scales,markers,regimens:regimenIndexPage,surgery:surgeryPage,sources:sourcesPage,favorites,about,admin};$('#app').innerHTML=(pages[state.page]||home)();allNodes('[data-nav]').forEach(x=>x.classList.toggle('active',x.dataset.nav===state.page));if(state.page==='catalog')listCards();if(state.page==='regimens' && state.regimenSection!=='complications')filterRegimenIndex()}
 window.view=view;window.toggleFav=toggleFav;window.setStage=setStage;window.searchHome=searchHome;window.filterRegimenIndex=filterRegimenIndex;window.listCards=listCards;window.filterStaging=filterStaging;window.calculate=calculate;window.khorana=khorana;window.child=child;window.imdc=imdc;window.filterMarkers=filterMarkers;
 start();
 </script></body></html>
