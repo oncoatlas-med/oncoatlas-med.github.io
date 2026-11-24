@@ -7840,6 +7840,11 @@ const SURGICAL_ALGORITHMS = [
   },
   {
     id: 'colon', title: 'Рак ободочной кишки', cards: ['c005'],
+    openVideos: [{
+      title: "Лапароскопическая правосторонняя гемиколэктомия с полной мезоколической эксцизией",
+      note: "Kalynovsky Minimal Access Surgery · 1 ч 02 мин · полная демонстрация вмешательства по описанию автора.",
+      url: "https://www.youtube.com/watch?v=M3AMiFKFcpE",
+    }],
     pathway: 'Рак в удалённом полипе → оценить полноту удаления и морфологический риск. Инвазивная резектабельная опухоль → планировать сегментарную онкологическую резекцию по локализации.',
     keywords: 'КРР гемиколэктомия колэктомия злокачественный полип ободочная кишка',
     video: {"title": "Открытая левосторонняя колэктомия с формированием колостомы", "note": "Journal of Medical Insight · клинический случай рака ободочной кишки. Колостома показана как часть вмешательства в данном случае.", "url": "https://jomi.com/article/29/open-left-colectomy-for-colon-cancer%3A-left-colon-and-sigmoid-resection-with-colostomy-formation/video"},
@@ -8032,6 +8037,11 @@ const SURGICAL_ALGORITHMS = [
   },
   {
     "id": "prostate",
+    openVideos: [{
+      title: "Робот-ассистированная радикальная простатэктомия с расширенной тазовой лимфодиссекцией",
+      note: "Bruno Benigno · 2 ч 22 мин · запись без монтажа по описанию автора. Комментарии на португальском языке.",
+      url: "https://www.youtube.com/watch?v=uLixCk2_Syg",
+    }],
     "title": "Рак предстательной железы",
     "cards": [
       "c013"
@@ -8553,6 +8563,9 @@ function surgeryPage() {
           <p>${treatmentSource(algorithm.video.url, algorithm.video.title + ' ↗')}</p>
           <p>${esc(algorithm.video.note)}</p>
           <p class="fine">Операционные кадры. Доступ к полной записи зависит от условий площадки.</p>` : '<p class="fine">Операционное видео: подходящая запись пока не подтверждена.</p>'}
+        ${algorithm.openVideos?.length ? `<h2>Полные записи без подписки</h2>
+          ${algorithm.openVideos.map(video => `<p>${treatmentSource(video.url, video.title + ' ↗')}</p>
+            <p>${esc(video.note)}</p>`).join('')}` : ''}
         <p class="fine">Дата редакции 24.11.2026. Независимая медицинская рецензия не проведена.</p>
         <p class="fine">${algorithm.sources.map(([label, url]) => treatmentSource(url, label)).join(' · ')}</p>
         <div class="actions">${links}${stagingCardLink(returnCard ?? algorithm.cards[0])}</div>
