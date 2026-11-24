@@ -54,14 +54,12 @@ const TILE_ICONS = {
   calculators: '<path d="m7 13-2-1 5-8 3 2-2 3m-1-5 1-2 3 2-1 2M5 12l-1 2 2 1 1-2m7-2c4 2 5 6 2 9m-3-7c2 1 3 4 1 6M3 17h7m-4 0 2 3m9 0H8a3 3 0 0 0-3 3h15a3 3 0 0 0-3-3Z"/><circle cx="12" cy="11" r="2"/>',
   markers: '<path d="m6.5 15.5 3.8-4m3.4 0 3.8 4"/><circle cx="12" cy="9.5" r="2.6"/><circle cx="4.7" cy="17.3" r="2.5"/><circle cx="19.3" cy="17.3" r="2.5"/>',
   scales: '<path d="M6 4H5c-1 0-2 1-2 2.5C3 12 5.5 15 9 15s6-3 6-8.5C15 5 14 4 13 4h-1m-3 11v2a5 5 0 0 0 10 0v-2"/><circle cx="19" cy="12.5" r="2.5"/>',
+  surgery: '<path d="m3 21 2-6 4-4 4 4-4 4-6 2Zm6-10 7-7a2.8 2.8 0 0 1 4 4l-7 7m-1-3 5-5"/>',
   regimens: '<path d="M9 3h6m-5 0v6L4.4 18.3A1.8 1.8 0 0 0 6 21h12a1.8 1.8 0 0 0 1.6-2.7L14 9V3M7 14h10"/>',
   sources: '<path d="M12 6C9.5 4 6 3.5 2.5 4.5V19c3.5-1 7-.5 9.5 1.5 2.5-2 6-2.5 9.5-1.5V4.5C18 3.5 14.5 4 12 6Zm0 0v14.5"/>',
 };
 
 function tileIcon(page) {
-  if (page === 'surgery') {
-    return '<span class="tile-icon surgery-icon" aria-hidden="true"></span>';
-  }
   return `<svg class="tile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${TILE_ICONS[page]}</svg>`;
 }
 

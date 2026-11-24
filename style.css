@@ -48,5 +48,3 @@ button:focus-visible,a:focus-visible{outline:2px solid #555;outline-offset:3px}
 .logo-home .logo{flex:none}
 .logo-home .brand,.logo-home .sub{display:block}
 .logo-home:focus-visible{outline:2px solid #333;outline-offset:3px}
-
-.surgery-icon{background:url("./surgical-icon-sheet.png") -1.37px -1.37px / 84.08px 56.05px no-repeat;border-radius:2.5px}
