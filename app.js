@@ -2853,6 +2853,7 @@ const SURGICAL_ALGORITHMS = [
     id: 'breast', title: 'Рак молочной железы', cards: ['c004'],
     pathway: 'Операбельна сейчас → выбрать объём резекции и тактику по аксилле. Показано предоперационное лечение → маркировать очаги, оценить ответ и повторно спланировать операцию.',
     keywords: 'РМЖ мастэктомия органосохранение сторожевой узел аксиллярная лимфодиссекция',
+    video: {"title": "Органосохраняющая операция с биопсией сторожевого лимфоузла", "note": "Journal of Medical Insight · клинический случай с системой Lumicell для интраоперационной оценки остаточной опухоли.", "url": "https://jomi.com/article/227/lumpectomy-and-sentinel-lymph-node-biopsy-using-lumicell-system-for-intraoperative-detection-of-residual-cancer/video"},
     sources: [
       ['NCI PDQ · лечение рака молочной железы', 'https://www.cancer.gov/types/breast/hp/breast-treatment-pdq'],
       ['ASCO 2025 · биопсия сторожевого узла', 'https://pubmed.ncbi.nlm.nih.gov/40209128/'],
@@ -2871,6 +2872,7 @@ const SURGICAL_ALGORITHMS = [
     id: 'lung', title: 'Немелкоклеточный рак лёгкого', cards: ['c001', 'c002'],
     pathway: 'Ранняя периферическая опухоль → оценить функциональный резерв и объём резекции. Центральная опухоль или подозрение на поражение средостения → уточнить стадию и обсудить последовательность лечения.',
     keywords: 'НМРЛ NSCLC лобэктомия сегментэктомия резекция лёгкого медиастинальные узлы',
+    video: {"title": "Однопортовая VATS-нижняя лобэктомия справа с лимфодиссекцией", "note": "CTSNet · клинический случай аденокарциномы лёгкого.", "url": "https://www.ctsnet.org/article-video/uniportal-vats-right-lower-lobectomy-and-lymphadenectomy-step-step/"},
     sources: [
       ['NCI PDQ · лечение НМРЛ', 'https://www.cancer.gov/types/lung/hp/non-small-cell-lung-treatment-pdq'],
       ['ERS/ESTS 2025 · оценка функциональной пригодности', 'https://publications.ersnet.org/lookup/pmid/41232938'],
@@ -2889,6 +2891,7 @@ const SURGICAL_ALGORITHMS = [
     id: 'colon', title: 'Рак ободочной кишки', cards: ['c005'],
     pathway: 'Рак в удалённом полипе → оценить полноту удаления и морфологический риск. Инвазивная резектабельная опухоль → планировать сегментарную онкологическую резекцию по локализации.',
     keywords: 'КРР гемиколэктомия колэктомия злокачественный полип ободочная кишка',
+    video: {"title": "Открытая левосторонняя колэктомия с формированием колостомы", "note": "Journal of Medical Insight · клинический случай рака ободочной кишки. Колостома показана как часть вмешательства в данном случае.", "url": "https://jomi.com/article/29/open-left-colectomy-for-colon-cancer%3A-left-colon-and-sigmoid-resection-with-colostomy-formation/video"},
     sources: [
       ['NCI PDQ · лечение рака ободочной кишки', 'https://www.cancer.gov/types/colorectal/hp/colon-treatment-pdq'],
       ['ASCRS · лечение рака ободочной кишки', 'https://pubmed.ncbi.nlm.nih.gov/34775402/'],
@@ -2907,6 +2910,7 @@ const SURGICAL_ALGORITHMS = [
     id: 'rectum', title: 'Рак прямой кишки', cards: ['c044'],
     pathway: 'Благоприятная cT1N0 → оценить возможность локального иссечения. Местнораспространённая опухоль → обсудить предоперационное лечение. После него → переоценить ответ и выбрать дальнейшую тактику.',
     keywords: 'КРР TME мезоректум мезоректумэктомия тотальная неоадъювантная терапия watch and wait',
+    video: {"title": "Роботическая низкая передняя резекция с TME и защитной илеостомой", "note": "Journal of Medical Insight · клинический случай местнораспространённого рака прямой кишки.", "url": "https://jomi.com/article/343/robotic-low-anterior-resection-with-diverting-loop-ileostomy-for-locally-advanced-rectal-cancer/video"},
     sources: [
       ['NCI PDQ · лечение рака прямой кишки', 'https://www.cancer.gov/types/colorectal/hp/rectal-treatment-pdq'],
       ['ASCRS · дополнение по раку прямой кишки', 'https://www.ascrsu.com/ascrs/view/ASCRS-Toolkit/2851104/0/Management_of_Rectal_Cancer_2023_Supplement__2023_)'],
@@ -2943,6 +2947,10 @@ function surgeryPage() {
           <p><b>План вмешательства.</b> ${esc(plan)}</p>
           <p><b>Что меняет тактику.</b> ${esc(decision)}</p></div></details>`).join('')}
         <h2>Послеоперационная морфология</h2><p>${esc(algorithm.pathology)}</p>
+        ${algorithm.video ? `<h2>Операционное видео</h2>
+          <p>${treatmentSource(algorithm.video.url, algorithm.video.title + ' ↗')}</p>
+          <p>${esc(algorithm.video.note)}</p>
+          <p class="fine">Реальные операционные кадры. Доступ к полной записи зависит от условий площадки.</p>` : ''}
         <p class="fine">Редакционная сверка с указанными источниками 24.11.2026. Независимая медицинская рецензия не проведена.</p>
         <p class="fine">${algorithm.sources.map(([label, url]) => treatmentSource(url, label)).join(' · ')}</p>
         <div class="actions">${links}${stagingCardLink(returnCard ?? algorithm.cards[0])}</div>
