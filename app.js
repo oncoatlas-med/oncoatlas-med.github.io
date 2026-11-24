@@ -3361,6 +3361,136 @@ const SURGICAL_CARD_NOTES = [
 ];
 
 const SURGICAL_VIDEO_SUPPLEMENTS = {
+  c010: {
+    title: "Роботическая резекция при перихилярной холангиокарциноме",
+    note: "Intelligent Surgery · видеостатья с резекцией печени и реконструкцией желчных путей в конкретном случае.",
+    url: "https://www.sciencedirect.com/science/article/pii/S2666676623000078",
+  },
+  c014: {
+    title: "Радикальная паховая орхиэктомия",
+    note: "Nicholas Farber, MD · запись правосторонней орхиэктомии при раке яичка.",
+    url: "https://www.youtube.com/watch?v=-UgvcRIuXmk",
+  },
+  c017: {
+    title: "Радикальная гистерэктомия при раке шейки матки",
+    note: "Journal of Minimally Invasive Gynecology · видеостатья о vNOTES. Это демонстрация изучаемого доступа, применимость определяют по клиническим рекомендациям.",
+    url: "https://www.sciencedirect.com/science/article/pii/S1553465024001730",
+  },
+  c018: {
+    title: "Иссечение опухоли вульвы и биопсия сторожевого узла",
+    note: "International Journal of Gynecological Cancer · видеостатья о картировании и реконструкции V–Y. Видео ищите в публикации.",
+    url: "https://ijgc.bmj.com/content/ijgc/31/2/300",
+  },
+  c019: {
+    title: "Шейная лимфодиссекция медиально-латеральным доступом",
+    note: "Head & Neck · описание хирургической техники со ссылкой на операционное видео. Показан регионарный этап.",
+    url: "https://doi.org/10.1002/hed.28105",
+  },
+  c024: {
+    title: "Лапароскопическая клиновидная резекция желудка при GIST",
+    note: "SAGES Video Library · клинический случай крупной гастроинтестинальной стромальной опухоли.",
+    url: "https://www.sages.org/video/v276-laparoscopic-gastric-wedge-resection-for-a-massive-gist/",
+  },
+  c033: {
+    title: "Лапароскопическая энуклеация нейроэндокринной опухоли поджелудочной железы",
+    note: "SAGES Video Library · энуклеация в отдельной клинической ситуации.",
+    url: "https://www.sages.org/video/laparoscopic-enucleation-of-a-pancreatic-neuroendocrine-tumor/",
+  },
+  c034: {
+    title: "Роботическая брюшно-промежностная экстирпация",
+    note: "Colorectal Disease · видеоприложение к случаю местнораспространённого плоскоклеточного рака анального канала. Объём отражает конкретный случай.",
+    url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC11701453/",
+  },
+  c035: {
+    title: "Частичная пенэктомия при раке полового члена",
+    note: "Bodyline Hospitals · короткий операционный фрагмент.",
+    url: "https://www.youtube.com/watch?v=rm6bSkNR9Gw",
+  },
+  c036: {
+    title: "Расширенная плеврэктомия с декортикацией",
+    note: "CTSNet · демонстрация вмешательства при мезотелиоме плевры. Показания к циторедукции определяют отдельно по современным рекомендациям.",
+    url: "https://www.ctsnet.org/article-video/laser-assisted-extended-pleurectomy-decortication-malignant-pleural-mesothelioma/",
+  },
+  c038: {
+    title: "Эндоскопическая назофарингэктомия при рецидиве",
+    note: "Visualized Cancer Medicine · видео спасительной резекции и реконструкции, Video 1.",
+    url: "https://vcm.edpsciences.org/10.1051/vcm/2021001#V1",
+  },
+  c039: {
+    title: "Радикальная гистерэктомия с вагинэктомией при первичном раке влагалища",
+    note: "Видеопубликация о хирургии у отобранной пациентки. Из записи PubMed можно перейти к издателю.",
+    url: "https://pubmed.ncbi.nlm.nih.gov/26825828/",
+  },
+  c047: {
+    title: "Трансоральное удаление плоскоклеточного рака языка",
+    note: "Видеопубликация о ранней опухоли подвижной части языка. Из записи PubMed можно перейти к издателю.",
+    url: "https://pubmed.ncbi.nlm.nih.gov/34148818/",
+  },
+  c048: {
+    title: "Роботическая латеральная орофарингэктомия",
+    note: "Toronto Video Atlas of Surgery · учебная операционная запись о трансоральной резекции.",
+    url: "https://pie.med.utoronto.ca/TVASurg/project/tors-radical-tonsillectomy/",
+  },
+  c049: {
+    title: "Тотальная ларингэктомия при раке гортани",
+    note: "Операционное дополнение к главе Open Access Atlas of Otolaryngology, Head and Neck Surgery.",
+    url: "https://www.youtube.com/watch?v=NsXqkJOKnpQ",
+  },
+  c051: {
+    title: "Лапароскопическая нефроуретерэктомия с манжетой мочевого пузыря",
+    note: "Операционная запись при уротелиальной карциноме верхнего отдела мочеточника.",
+    url: "https://www.youtube.com/watch?v=67szTirQvf4",
+  },
+  c053: {
+    title: "Радикальная холецистэктомия при раке желчного пузыря",
+    note: "Tata Memorial Centre · показана операция с резекцией сегментов IVb/V печени.",
+    url: "https://www.youtube.com/watch?v=ZHQ96SCR1fw",
+  },
+  c057: {
+    title: "Органосохраняющая резекция при остеосаркоме",
+    note: "James C. Wittig, MD · клинический случай остеосаркомы дистального отдела бедра с отдельным опухолевым очагом в большеберцовой кости.",
+    url: "https://www.youtube.com/watch?v=fFL4k8kCAf8",
+  },
+  c058: {
+    title: "Радикальная резекция проксимального отдела бедренной кости при саркоме Юинга",
+    note: "AAOS Orthopaedic Video Theater · доступ может требовать авторизации.",
+    url: "https://www.aaos.org/videos/video-detail-page/?cc=OVT&id=25464__Videos",
+  },
+  c059: {
+    title: "Резекция проксимального отдела бедренной кости при хондросаркоме",
+    note: "James C. Wittig, MD · операционная демонстрация органосохраняющей резекции и протезирования.",
+    url: "https://www.youtube.com/watch?v=SYVRGXWcB7A",
+  },
+  c060: {
+    title: "Эндоскопическая эндоназальная резекция хордомы ската",
+    note: "Neurosurgical Focus: Video · видеопубликация. Из записи PubMed можно перейти к издателю.",
+    url: "https://pubmed.ncbi.nlm.nih.gov/36284779/",
+  },
+  c061: {
+    title: "Роботическая резекция забрюшинного липоматозного образования",
+    note: "SAGES Video Library · запись при подозрении на липосаркому. Диагноз в подписи отражает предоперационное подозрение.",
+    url: "https://www.sages.org/video/v267-robot-assisted-resection-of-a-retroperitoneal-lipomatous-mass/",
+  },
+  c062: {
+    title: "Резекция нижней полой вены при сосудистой саркоме",
+    note: "Journal of Visceral Surgery · видеопубликация о лейомиосаркоме. Из записи PubMed можно перейти к издателю.",
+    url: "https://pubmed.ncbi.nlm.nih.gov/27618703/",
+  },
+  c063: {
+    title: "Резекция синовиальной саркомы сердца с аутотрансплантацией",
+    note: "JTCVS Techniques · редкая локализация и специальный объём. Операционное видео в приложении к статье.",
+    url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC9735421/",
+  },
+  c065: {
+    title: "Роботическая резекция карциномы тимуса с тимэктомией",
+    note: "CTSNet · клинический случай с резекцией перикарда.",
+    url: "https://www.ctsnet.org/article-video/robotic-excision-thymic-carcinoma-along-thymectomy-and-excision-pericardium/",
+  },
+  c054: {
+    title: "Лапароскопическая резекция проксимальной тощей кишки",
+    note: "Laparoscopic Surgery · видеоприложение к клиническому случаю аденокарциномы.",
+    url: "https://ls.amegroups.org/article/view/7294/html",
+  },
   c009: {
     title: 'Роботическая резекция печени',
     note: 'Journal of Medical Insight · операция при образовании с подозрением на ГЦК. Описание видео отражает исходный клинический диагноз.',
@@ -3459,7 +3589,7 @@ function surgeryPage() {
         ${algorithm.video ? `<h2>Операционное видео</h2>
           <p>${treatmentSource(algorithm.video.url, algorithm.video.title + ' ↗')}</p>
           <p>${esc(algorithm.video.note)}</p>
-          <p class="fine">Реальные операционные кадры. Доступ к полной записи зависит от условий площадки.</p>` : ''}
+          <p class="fine">Операционные кадры. Доступ к полной записи зависит от условий площадки.</p>` : '<p class="fine">Операционное видео: подходящая запись пока не подтверждена.</p>'}
         <p class="fine">Дата редакции 24.11.2026. Независимая медицинская рецензия не проведена.</p>
         <p class="fine">${algorithm.sources.map(([label, url]) => treatmentSource(url, label)).join(' · ')}</p>
         <div class="actions">${links}${stagingCardLink(returnCard ?? algorithm.cards[0])}</div>
