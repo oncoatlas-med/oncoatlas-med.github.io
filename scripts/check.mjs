@@ -35,7 +35,7 @@ for (const card of cards) {
   assert.equal(new Set(card.icd10).size, card.icd10.length, card.id + ' duplicate ICD-10 code');
   for (const code of card.icd10) assert.match(code, /^C\d{2}(?:\.\d)?$/, card.id + ' invalid ICD-10 code');
 
-  for (const field of ['title', 'group', 'origin', 'location', 'molecular', 'diagnostics', 'markers', ...(contextualCards.includes(card.id) ? [] : card.id === 'c014' ? stages.slice(0, 3) : stages)]) {
+  for (const field of ['title', 'group', 'origin', 'location', 'molecular', 'diagnostics', 'markers', ...(contextualCards.includes(card.id) ? [] : card.stages ?? (card.id === 'c014' ? stages.slice(0, 3) : stages))]) {
     assert.ok(typeof card[field] === 'string' && card[field].trim(), card.id + ' missing ' + field);
   }
 }
@@ -75,7 +75,7 @@ for (const {id, stage, tab, count, html} of data.cardMarkup) {
 
 for (const [id, groups] of Object.entries(additionalRegimens)) {
   for (const [context, regimens] of Object.entries(groups)) {
-    assert.ok(data.nonTnm.includes(id) ? context === 'all' : stages.includes(context), id + ' invalid context');
+    assert.ok(data.nonTnm.includes(id) ? context === 'all' : data.rows.find(row => row[0].id === id)?.some(row => row.stage === context), id + ' invalid context');
     for (const protocol of regimens) {
       assert.match(protocol.checkedOn, /^\d{4}-\d{2}-\d{2}$/, id + ' invalid review date format');
       const reviewDate = new Date(protocol.checkedOn + 'T00:00:00Z');

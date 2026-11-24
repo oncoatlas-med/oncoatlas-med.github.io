@@ -50,7 +50,7 @@ async function main() {
         contexts++;
         continue;
       }
-      const stages = card.id === 'c014' ? ['I','II','III'] : ['I','II','III','IV'];
+      const stages = card.stages ?? (card.id === 'c014' ? ['I','II','III'] : ['I','II','III','IV']);
       assert.equal(await page.locator('[data-stage]').count(), stages.length);
       for (const stage of stages) {
         await page.locator('[data-stage=' + stage + ']').click();
