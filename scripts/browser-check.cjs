@@ -65,6 +65,41 @@ async function main() {
       }
     }
 
+    const newCards = cards.filter(card => card.number >= 69 && card.number <= 76);
+    const stagingLinks = {
+      c071: 'lung', c072: 'adrenal', c073: 'sinonasal', c074: 'kidney', c075: 'sarcoma',
+    };
+    for (const card of newCards) {
+      await page.goto(home + '#card/' + card.id);
+      await page.getByRole('heading', {name:card.title, exact:true}).waitFor();
+      for (const heading of [/Гистотип и локализация/, /Молекулярные паттерны/, /Диагностика/, /Онкомаркеры/, /^5\. Лечение/]) {
+        assert.equal(await page.getByRole('heading', {name:heading}).count(), 1, card.id);
+      }
+      assert.ok(await page.locator('.sources').getByRole('link', {name:card.references[0][0]}).isVisible());
+      const staging = page.getByRole('link', {name:'Открыть стадирование'});
+      assert.equal(await staging.count(), stagingLinks[card.id] ? 1 : 0, card.id);
+      if (stagingLinks[card.id]) assert.equal(await staging.getAttribute('href'), '#tnm/' + stagingLinks[card.id]);
+      await page.locator('[data-treatment=surgery]').click();
+      const algorithm = page.getByRole('link', {name:'Подробный хирургический алгоритм'});
+      assert.equal(await algorithm.count(), card.treatmentContexts ? 0 : 1, card.id);
+      if (!card.treatmentContexts) {
+        const stage = card.stages?.at(-1) ?? 'IV';
+        await page.locator('[data-stage="' + stage + '"]').click();
+        await page.locator('[data-treatment=surgery]').click();
+        await algorithm.click();
+        await page.getByRole('heading', {name:'Выберите клиническую ситуацию'}).waitFor();
+        const returnLink = page.locator('#app .actions').getByRole('link', {name:card.title, exact:true});
+        await returnLink.click();
+        await page.locator('[data-stage="' + stage + '"][aria-pressed=true]').waitFor();
+        assert.equal(await page.locator('[data-treatment=surgery]').getAttribute('aria-pressed'), 'true', card.id);
+      }
+    }
+
+    await page.goto(home + '#card/c073/IV');
+    await page.getByText('Паллиативные цисплатин + фторурацил при синоназальном ПКР', {exact:true}).waitFor();
+    await page.goto(home + '#card/c076');
+    await page.getByText('Вемурафениб + ритуксимаб при рецидивном или рефрактерном классическом ВКЛ с BRAF V600E', {exact:true}).waitFor();
+
     await page.goto(home + '#card/c038');
     await page.locator('[data-stage=III]').click();
     assert.match(await page.locator('.treatment-content:visible').innerText(), /Индукционная ХТ/);
