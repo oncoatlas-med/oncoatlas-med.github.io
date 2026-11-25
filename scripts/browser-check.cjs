@@ -53,7 +53,7 @@ async function main() {
       const stages = card.stages ?? (card.id === 'c014' ? ['I','II','III'] : ['I','II','III','IV']);
       assert.equal(await page.locator('[data-stage]').count(), stages.length);
       for (const stage of stages) {
-        await page.locator('[data-stage=' + stage + ']').click();
+        await page.locator('[data-stage="' + stage + '"]').click();
         assert.ok((await page.locator('#stageContent').innerText()).startsWith(stage + ':'));
         await page.locator('[data-treatment=surgery]').click();
         assert.equal(await page.locator('.treatment-content:visible').count(), 1);

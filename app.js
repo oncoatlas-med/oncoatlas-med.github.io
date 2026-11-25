@@ -242,6 +242,7 @@ const NON_TNM_CARD_INFO = {
   }
 };
 const CONTEXTUAL_SURGERY = {
+  c076: "Хирургическая резекция не входит в стандартную лечебную тактику. Спленэктомию рассматривают лишь в редких индивидуальных ситуациях.",
   c025: 'При операбельности оценивают максимально безопасную резекцию с сохранением функции. Если резекция небезопасна, рассматривают стереотаксическую биопсию.',
   c029: 'Резекция опухоли не является основой лечения. При переломе, угрозе нестабильности или компрессии нервных структур оценивают необходимость стабилизации или декомпрессии.',
   c030: 'Хирургическая резекция не является методом лечения ОМЛ. Аллогенная трансплантация гемопоэтических клеток относится к отдельным лечебным подходам.',
@@ -262,11 +263,15 @@ function renderNonTnmTreatment(c) {
     <p><b>${esc(info.heading)}</b></p><p>${esc(info.explanation)}</p><p class="fine">${reference}</p>
     ${contexts}${renderTreatmentTabs(renderDrugContent(c.id, 'I'), renderSurgeryContent(surgery))}</div>`;
 }
-function card(){const c=DATA.find(x=>x.id===state.card);if(!c)return shell('Карточка не найдена','<p>Выберите нозологию в каталоге.</p>','catalog');const f=favs().includes(c.id);return shell(esc(c.title),`<div class="eyebrow">Карточка №${String(c.number).padStart(3,'0')} · ${esc(c.group)}</div><div class="actions">${btn(f?'★ В избранном':'☆ В избранное',`toggleFav('${c.id}')`)}${btn('Сохранить PDF','window.print()','secondary')}${stagingCardLink(c.id)}</div><div class="panel"><h2>1. Гистотип и локализация</h2><p><b>МКБ‑10:</b> ${esc((c.icd10 ?? []).join(', '))}</p>${c.icd10Note ? `<p class="fine">${esc(c.icd10Note)}</p>` : ''}<p><b>Происхождение:</b> ${esc(c.origin)}</p><p><b>Локализация:</b> ${esc(c.location)}</p></div><div class="panel"><h2 id="molecular" tabindex="-1">2. Молекулярные паттерны</h2><p>${esc(c.molecular).split('; ').join(' · ')}</p></div><div class="panel"><h2>3. Диагностика</h2><p>${esc(c.diagnostics)}</p></div><div class="panel"><h2>4. Онкомаркеры${c.markers.includes('продукция:')? ' и гормональная продукция':''}</h2><p>${esc(c.markers)}</p></div>${c.id === 'c038' ? `<div class="panel"><h2>Стадирование · AJCC 9</h2><p>Версия 9 действует с 1 января 2025 года. При использовании AJCC 8 указывайте версию рядом со стадией. IVA по AJCC 8 означала T4 или N3 при M0. В AJCC 9 при M0 эти категории входят в стадию III, а IVA и IVB относятся только к M1.</p><p>${treatmentSource('https://www.cancer.org/cancer/types/nasopharyngeal-cancer/detection-diagnosis-staging/staging.html', 'Группы стадий AJCC 9 · ACS')} · ${treatmentSource('https://www.facs.org/quality-programs/cancer-programs/education/ajcc-protocol-webinar-on-version-9-staging-system-for-nasopharynx-cancer/', 'Версия и дата вступления в силу · ACS/AJCC')}</p></div>` : ''}${c.id === 'c005' ? `<p class="fine"><a href="#card/c044">Отдельная карточка аденокарциномы прямой кишки</a></p>` : ''}${NON_TNM_CARD_INFO[c.id] ? renderNonTnmTreatment(c) : `<div class="panel"><h2>5. Лечение по стадиям${stagingData.other[c.id] === 'Lugano' ? ' · Lugano' : c.id === 'c041' ? ' · FIGO' : ''}</h2><div class="tabs">${(CARD_STAGES[c.id] ?? STAGES).map(s=>`<button class="tab ${state.stage===s?'selected':''}" data-stage="${s}" aria-pressed="${state.stage===s}" onclick="setStage('${s}')">${s}</button>`).join('')}</div>${c.stageTreatmentNote ? `<p class="fine">${esc(c.stageTreatmentNote)}</p>` : ''}
+function card(){const c=DATA.find(x=>x.id===state.card);if(!c)return shell('Карточка не найдена','<p>Выберите нозологию в каталоге.</p>','catalog');const f=favs().includes(c.id);return shell(esc(c.title),`<div class="eyebrow">Карточка №${String(c.number).padStart(3,'0')} · ${esc(c.group)}</div><div class="actions">${btn(f?'★ В избранном':'☆ В избранное',`toggleFav('${c.id}')`)}${btn('Сохранить PDF','window.print()','secondary')}${stagingCardLink(c.id)}</div><div class="panel"><h2>1. Гистотип и локализация</h2><p><b>МКБ‑10:</b> ${esc((c.icd10 ?? []).join(', '))}</p>${c.icd10Note ? `<p class="fine">${esc(c.icd10Note)}</p>` : ''}<p><b>Происхождение:</b> ${esc(c.origin)}</p><p><b>Локализация:</b> ${esc(c.location)}</p></div><div class="panel"><h2 id="molecular" tabindex="-1">2. Молекулярные паттерны</h2><p>${esc(c.molecular).split('; ').join(' · ')}</p></div><div class="panel"><h2>3. Диагностика</h2><p>${esc(c.diagnostics)}</p></div><div class="panel"><h2>4. Онкомаркеры${c.markers.includes('продукция:')? ' и гормональная продукция':''}</h2><p>${esc(c.markers)}</p></div>${c.id === 'c038' ? `<div class="panel"><h2>Стадирование · AJCC 9</h2><p>Версия 9 действует с 1 января 2025 года. При использовании AJCC 8 указывайте версию рядом со стадией. IVA по AJCC 8 означала T4 или N3 при M0. В AJCC 9 при M0 эти категории входят в стадию III, а IVA и IVB относятся только к M1.</p><p>${treatmentSource('https://www.cancer.org/cancer/types/nasopharyngeal-cancer/detection-diagnosis-staging/staging.html', 'Группы стадий AJCC 9 · ACS')} · ${treatmentSource('https://www.facs.org/quality-programs/cancer-programs/education/ajcc-protocol-webinar-on-version-9-staging-system-for-nasopharynx-cancer/', 'Версия и дата вступления в силу · ACS/AJCC')}</p></div>` : ''}${c.id === 'c005' ? `<p class="fine"><a href="#card/c044">Отдельная карточка аденокарциномы прямой кишки</a></p>` : ''}${NON_TNM_CARD_INFO[c.id] ? renderNonTnmTreatment(c) : `<div class="panel"><h2>5. ${esc(c.treatmentHeading ?? 'Лечение по стадиям')}${stagingData.other[c.id] === 'Lugano' ? ' · Lugano' : c.id === 'c041' ? ' · FIGO' : ''}</h2><div class="tabs">${(CARD_STAGES[c.id] ?? STAGES).map(s=>`<button class="tab ${state.stage===s?'selected':''}" data-stage="${s}" aria-pressed="${state.stage===s}" onclick="setStage('${s}')">${s}</button>`).join('')}</div>${c.stageTreatmentNote ? `<p class="fine">${esc(c.stageTreatmentNote)}</p>` : ''}
 ${stagingData.other[c.id] === 'Lugano' ? `<p class="fine">Распространённость определяют по Lugano. При выборе терапии дополнительно учитывают гистотип, объём поражения и факторы риска. ${treatmentSource('https://www.ncbi.nlm.nih.gov/books/NBK66038/table/CDR0000062675__176/', 'Критерии Lugano')}</p>` : ''}<p id="stageContent" aria-live="polite"><b>${state.stage}:</b> ${esc(c[state.stage])}</p>${(STAGE_MNEMONICS[c.id] ?? REMAINING_MNEMONICS[c.id])?.[state.stage]?`<p class="fine"><b>Кратко для запоминания:</b> ${esc((STAGE_MNEMONICS[c.id] ?? REMAINING_MNEMONICS[c.id])[state.stage])}</p>`:""}${stageExtras(c)}<p class="fine">Стадии приведены укрупнённо. Реальная тактика определяется гистотипом, подстадией, биомаркерами, резектабельностью, функциональным статусом и линией терапии.</p></div>`}<div class="notice"><b>Статус:</b> редакционный черновик. Независимая медицинская проверка не проведена.</div><div class="sources">Источники для проверки: ${sources.map(([n,u])=>`<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join(' · ')}</div>`,'catalog')}
 
 // Редакционные примеры режимов. Не использовать как индивидуальные назначения.
 const STAGES = ['I', 'II', 'III', 'IV'];
+function stageLabel(card, stage) {
+  if (card.stageLabel) return card.stageLabel + ' ' + stage;
+  return STAGES.includes(stage) ? 'Стадия ' + stage : stage;
+}
 const CARD_STAGES = {c014: ['I', 'II', 'III'],
   ...Object.fromEntries(DATA.filter(card => card.stages).map(card => [card.id, card.stages]))};
 const STAGE_PROTOCOLS={
@@ -1975,7 +1980,7 @@ function buildRegimenIndex() {
           });
         }
         rows.get(key).contexts.push({
-          label: contextual ? 'Клиническая ситуация' : 'Стадия ' + stage,
+          label: contextual ? 'Клиническая ситуация' : stageLabel(card, stage),
           href: '#card/' + card.id + '/' + stage + '/' + regimenKey(protocol),
         });
       }
@@ -2124,6 +2129,116 @@ function findCards(query, group = 'Все') {
 }
 
 const STAGE_DRUG_NOTES = {
+  "c069": {
+    "2": [
+      "После операции при показаниях к немедленной терапии — ЛТ с последующим PCV или темозоломидом. Если ЛТ и ХТ можно отложить, обсудить наблюдение либо ворасидениб у подходящих пациентов.",
+      "https://ascopubs.org/doi/10.1200/JCO-25-00250"
+    ],
+    "3": [
+      "После максимально безопасной резекции — ЛТ с последующим адъювантным темозоломидом (CATNON).",
+      "https://ascopubs.org/doi/10.1200/JCO-25-00250"
+    ],
+    "4": [
+      "После операции обсудить ЛТ и темозоломид. Выбор между подходом для IDH-мутантной астроцитомы grade 3 и химиолучевым подходом для глиобластомы индивидуален, поскольку прямые сравнительные данные ограничены.",
+      "https://ascopubs.org/doi/10.1200/JCO-25-00250"
+    ]
+  },
+  "c070": {
+    "2": [
+      "При необходимости адъювантной терапии — ЛТ с последующим PCV. Если ЛТ и ХТ можно отложить, обсудить наблюдение либо ворасидениб.",
+      "https://ascopubs.org/doi/10.1200/JCO-25-00250"
+    ],
+    "3": [
+      "ЛТ в сочетании с PCV. Темозоломид может быть альтернативой при неприемлемой токсичности PCV, сравнительная доказательная база слабее.",
+      "https://ascopubs.org/doi/10.1200/JCO-25-00250"
+    ]
+  },
+  "c071": {
+    "I": [
+      "Резекция с оценкой регионарных узлов при операбельности. Рутинной адъювантной системной терапии после R0 нет.",
+      "https://doi.org/10.1111/jne.70174"
+    ],
+    "II": [
+      "Резекция с оценкой узлов. После R0 стандартного адъювантного лекарственного режима нет.",
+      "https://doi.org/10.1111/jne.70174"
+    ],
+    "III": [
+      "При резектабельности обсудить операцию. При атипичном карциноиде с высоким риском послеоперационную терапию обсуждают индивидуально. При нерезектабельности тактика зависит от симптомов, темпа роста и распространённости.",
+      "https://doi.org/10.1111/jne.70174"
+    ],
+    "IV": [
+      "При прогрессировании учесть функцию опухоли, рецепторы соматостатина и темп роста. Возможны аналоги соматостатина, эверолимус, радиолигандная терапия или ХТ у отобранных пациентов.",
+      "https://doi.org/10.1111/jne.70174"
+    ]
+  },
+  "c072": {
+    "I": [
+      "Радикальная резекция. После R0 при низком риске обычно наблюдение; адъювантную тактику определяют по гистологии и риску.",
+      "https://academic.oup.com/ejendo/article/179/4/G1/6655445"
+    ],
+    "II": [
+      "Радикальная резекция. Митотан обсуждают при высоком риске рецидива, например при Ki-67 >10% или неполной микроскопической резекции.",
+      "https://academic.oup.com/ejendo/article/179/4/G1/6655445"
+    ],
+    "III": [
+      "Оценить возможность R0. После резекции при высоком риске обсуждают митотан; лучевую терапию рассматривают индивидуально.",
+      "https://academic.oup.com/ejendo/article/179/4/G1/6655445"
+    ],
+    "IV": [
+      "При распространённой прогрессирующей болезни у подходящих пациентов — EDP с митотаном. При менее агрессивной ограниченной болезни возможна монотерапия митотаном или индивидуальная локальная стратегия.",
+      "https://academic.oup.com/ejendo/article/179/4/G1/6655445"
+    ]
+  },
+  "c073": {
+    "I": [
+      "Резекция при достижимых отрицательных краях; послеоперационную ЛТ можно опустить у части пациентов с pT1 низкого риска.",
+      "https://pmc.ncbi.nlm.nih.gov/articles/PMC11889493/"
+    ],
+    "II": [
+      "Резекция при достижимых отрицательных краях. Послеоперационная ЛТ индивидуально по факторам риска.",
+      "https://pmc.ncbi.nlm.nih.gov/articles/PMC11889493/"
+    ],
+    "III": [
+      "Резекция с послеоперационной ЛТ при резектабельности. При высоком риске обсуждают совместную системную терапию; при нерезектабельности — дефинитивную ЛТ или ХЛТ.",
+      "https://pmc.ncbi.nlm.nih.gov/articles/PMC11889493/"
+    ],
+    "IV": [
+      "При M0 разделить резектабельные и нерезектабельные варианты; при отдельных опухолях обсуждают индукционную ХТ. При M1 или нерезектабельном рецидиве системная и симптоматическая тактика по результатам консилиума.",
+      "https://pmc.ncbi.nlm.nih.gov/articles/PMC11889493/"
+    ]
+  },
+  "c074": {
+    "I": [
+      "Резекция почки, если технически возможна. После полной резекции — наблюдение по риску.",
+      "https://uroweb.org/guidelines/renal-cell-carcinoma/chapter/disease-management"
+    ],
+    "II": [
+      "Нефрэктомия или органосохраняющая операция у отобранных пациентов. Рутинный адъювантный лекарственный режим для чистого хромофобного ПКР не установлен.",
+      "https://uroweb.org/guidelines/renal-cell-carcinoma/chapter/disease-management"
+    ],
+    "III": [
+      "Резекция при технической возможности; при опухолевом тромбе тактика в экспертном центре. После операции — наблюдение по риску или исследование.",
+      "https://uroweb.org/guidelines/renal-cell-carcinoma/chapter/disease-management"
+    ],
+    "IV": [
+      "При T4M0 индивидуально оценить резектабельность. При M1 предпочтительно исследование; возможные системные варианты обсуждают по данным для несветлоклеточного ПКР и доступности.",
+      "https://uroweb.org/guidelines/renal-cell-carcinoma/chapter/disease-management"
+    ]
+  },
+  "c075": {
+    "Локализованная": [
+      "При достижимой полной резекции — операция. Периоперационную ЛТ и системную терапию обсуждают с учётом локализации, риска и ранее полученной ЛТ.",
+      "https://www.cancer.gov/types/soft-tissue-sarcoma/hp/adult-soft-tissue-treatment-pdq"
+    ],
+    "Местнораспространённая": [
+      "Повторно оценить резектабельность в саркомном центре. При нерезектабельности возможен еженедельный паклитаксел, в том числе как часть стратегии с последующей повторной оценкой.",
+      "https://www.cancer.gov/types/soft-tissue-sarcoma/hp/adult-soft-tissue-treatment-pdq"
+    ],
+    "Метастатическая": [
+      "Паклитаксел или антрациклиновый подход по локализации, предшествующей терапии и состоянию пациента. Оценить возможность клинического исследования.",
+      "https://www.cancer.gov/types/soft-tissue-sarcoma/hp/adult-soft-tissue-treatment-pdq"
+    ]
+  },
   "c066": {
     "I": [
       "Рутинная периоперационная лекарственная терапия не установлена.",
@@ -2279,6 +2394,140 @@ const STAGE_DRUG_NOTES = {
 };
 
 const STAGE_SURGERY = {
+  "c069": {
+    "2": {
+      "procedure": "Максимально безопасная резекция с учётом функциональной анатомии.",
+      "limits": "Если резекция сопряжена с неприемлемым риском, рассмотреть биопсию.",
+      "url": "https://ascopubs.org/doi/10.1200/JCO-25-00250"
+    },
+    "3": {
+      "procedure": "Максимально безопасная резекция; при глубокой или функционально значимой локализации рассмотреть биопсию.",
+      "limits": "Функциональное картирование по показаниям.",
+      "url": "https://ascopubs.org/doi/10.1200/JCO-25-00250"
+    },
+    "4": {
+      "procedure": "Максимально безопасная резекция или биопсия с получением материала для интегрированного диагноза.",
+      "limits": "При рецидиве реоперация обсуждается индивидуально.",
+      "url": "https://ascopubs.org/doi/10.1200/JCO-25-00250"
+    }
+  },
+  "c070": {
+    "2": {
+      "procedure": "Максимально безопасная резекция; если она небезопасна, рассмотреть биопсию.",
+      "limits": "Цель операции согласовать с риском стойкого дефицита.",
+      "url": "https://ascopubs.org/doi/10.1200/JCO-25-00250"
+    },
+    "3": {
+      "procedure": "Максимально безопасная резекция или биопсия с достаточным объёмом материала.",
+      "limits": "После операции оценить остаточную опухоль на МРТ и сроки адъювантной терапии.",
+      "url": "https://ascopubs.org/doi/10.1200/JCO-25-00250"
+    }
+  },
+  "c071": {
+    "I": {
+      "procedure": "Резекция с систематической оценкой узлов; при центральной опухоли оценить бронхопластический вариант.",
+      "limits": "Объём зависит от морфологии, размеров, локализации и состояния узлов.",
+      "url": "https://doi.org/10.1111/jne.70174"
+    },
+    "II": {
+      "procedure": "Анатомическая резекция с оценкой регионарных узлов.",
+      "limits": "Сохранять паренхиму, если возможны отрицательные края и адекватное стадирование.",
+      "url": "https://doi.org/10.1111/jne.70174"
+    },
+    "III": {
+      "procedure": "При достижимой полной резекции обсуждать операцию в специализированной команде.",
+      "limits": "Оценить распространённость узлов и функциональный резерв.",
+      "url": "https://doi.org/10.1111/jne.70174"
+    },
+    "IV": {
+      "procedure": "Локальные вмешательства по симптомам или при ограниченном распространении после консилиума.",
+      "limits": "Операция не является рутинной при диссеминированном заболевании.",
+      "url": "https://doi.org/10.1111/jne.70174"
+    }
+  },
+  "c072": {
+    "I": {
+      "procedure": "Адреналэктомия единым блоком с окружающей клетчаткой, без повреждения капсулы.",
+      "limits": "Подход выбирают в экспертном центре по размеру и признакам инвазии.",
+      "url": "https://academic.oup.com/ejendo/article/179/4/G1/6655445"
+    },
+    "II": {
+      "procedure": "Адреналэктомия с целью R0; при подозрении на инвазию предпочтителен открытый доступ.",
+      "limits": "Не допускать разрыва опухоли.",
+      "url": "https://academic.oup.com/ejendo/article/179/4/G1/6655445"
+    },
+    "III": {
+      "procedure": "Резекция единым блоком при достижимой R0; при инвазии обсудить смежные органы и сосудистый этап.",
+      "limits": "При нерезектабельности оценить системную стратегию и возможность последующей операции.",
+      "url": "https://academic.oup.com/ejendo/article/179/4/G1/6655445"
+    },
+    "IV": {
+      "procedure": "Резекция первичного очага и метастазов только в отобранных ситуациях.",
+      "limits": "Оценить достижимость полного удаления, темп роста и цель вмешательства.",
+      "url": "https://academic.oup.com/ejendo/article/179/4/G1/6655445"
+    }
+  },
+  "c073": {
+    "I": {
+      "procedure": "Эндоскопическая или открытая резекция с контролем краёв.",
+      "limits": "Доступ определяется локализацией и достижимостью R0.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11889493/"
+    },
+    "II": {
+      "procedure": "Резекция с контролем краёв в профильном центре.",
+      "limits": "Оценить костные границы, состояние орбиты и основания черепа.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11889493/"
+    },
+    "III": {
+      "procedure": "При резектабельности планировать удаление с учётом орбиты, основания черепа и реконструкции.",
+      "limits": "Тактику в отношении шейных узлов согласовать с радиотерапевтом.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11889493/"
+    },
+    "IV": {
+      "procedure": "При M0 оперировать только при реалистичной полной резекции; при M1 локальное вмешательство по индивидуальной цели.",
+      "limits": "Инвазия критических нейроваскулярных структур может исключить радикальную резекцию.",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11889493/"
+    }
+  },
+  "c074": {
+    "I": {
+      "procedure": "Органосохраняющая резекция при технической возможности.",
+      "limits": "Учитывать функцию обеих почек и сложность опухоли.",
+      "url": "https://uroweb.org/guidelines/renal-cell-carcinoma/chapter/disease-management"
+    },
+    "II": {
+      "procedure": "Радикальная нефрэктомия или резекция в отобранных случаях.",
+      "limits": "При единственной почке оценить вероятность сохранения функционирующей паренхимы.",
+      "url": "https://uroweb.org/guidelines/renal-cell-carcinoma/chapter/disease-management"
+    },
+    "III": {
+      "procedure": "Нефрэктомия с удалением венозного тромба при наличии показаний.",
+      "limits": "Команду и доступ выбирать по уровню тромба и распространённости.",
+      "url": "https://uroweb.org/guidelines/renal-cell-carcinoma/chapter/disease-management"
+    },
+    "IV": {
+      "procedure": "При T4M0 оценить достижимость полной резекции. Циторедуктивная нефрэктомия при M1 — индивидуально.",
+      "limits": "Учитывать темп заболевания и необходимость немедленного системного лечения.",
+      "url": "https://uroweb.org/guidelines/renal-cell-carcinoma/chapter/disease-management"
+    }
+  },
+  "c075": {
+    "Локализованная": {
+      "procedure": "Широкое иссечение с целью R0, если анатомически возможно.",
+      "limits": "При кожной форме учитывать протяжённость и мультифокальность.",
+      "url": "https://www.cancer.gov/types/soft-tissue-sarcoma/hp/adult-soft-tissue-treatment-pdq"
+    },
+    "Местнораспространённая": {
+      "procedure": "При потенциальной достижимости R0 повторно оценить операцию после предоперационной терапии.",
+      "limits": "Учитывать предыдущую ЛТ, возможность реконструкции и реальный риск неполной резекции.",
+      "url": "https://www.cancer.gov/types/soft-tissue-sarcoma/hp/adult-soft-tissue-treatment-pdq"
+    },
+    "Метастатическая": {
+      "procedure": "Локальное вмешательство по симптомам, например для контроля кровотечения, у отобранных пациентов.",
+      "limits": "Тактику согласовать с системным лечением.",
+      "url": "https://www.cancer.gov/types/soft-tissue-sarcoma/hp/adult-soft-tissue-treatment-pdq"
+    }
+  },
   "c066": {
     "I": {
       "procedure": "Резекция первичного очага с объёмом по локализации; при околоушной опухоли стремятся сохранить функциональный и невовлечённый лицевой нерв.",
@@ -3324,6 +3573,13 @@ const SURGICAL_ALGORITHMS = [
 ];
 
 const SURGICAL_CARD_NOTES = [
+  ["c069", "Оценить функциональный риск и получить материал для интегрированного диагноза.", "Указать IDH, ATRX, статус 1p/19q по показаниям, CDKN2A/B и признаки, определяющие CNS WHO grade.", "25.11.2026"],
+  ["c070", "Планировать вмешательство по отношению опухоли к функциональным зонам.", "Подтвердить IDH и коделецию 1p/19q. Указать CNS WHO grade.", "25.11.2026"],
+  ["c071", "Определить возможность R0 и паренхимосберегающей операции.", "Указать митозы на 2 мм², некроз, гистотип, края, узлы и pTNM.", "25.11.2026"],
+  ["c072", "Планировать резекцию в экспертном центре с эндокринной оценкой.", "Зафиксировать края, Ki-67, морфологические критерии злокачественности, инвазию и ENSAT.", "25.11.2026"],
+  ["c073", "Сопоставить эндоскопию, КТ и МРТ для оценки достижимости отрицательных краёв.", "Описать подлокализацию, гистотип, края, кость, периневральную инвазию и узлы.", "25.11.2026"],
+  ["c074", "Планировать объём операции по распространённости, функции почек и анатомии.", "Указать гистотип, саркоматоидный компонент, инвазию, края и pTNM. Стандартный WHO/ISUP grade для хромофобного ПКР не применяют.", "25.11.2026"],
+  ["c075", "Определить протяжённость поражения и вероятность R0 в саркомном центре.", "Описать локализацию, размеры и мультифокальность, края и ответ на предоперационную терапию по применимым критериям.", "25.11.2026"],
   ["c003", "Операцию обсуждают только у тщательно отобранных cT1–2N0M0 после полноценного стадирования средостения. При выявлении узлов или более распространённой болезни переходят к нехирургическому алгоритму.", "Оценить края и узлы по станциям, отдельно отметить неожиданное pN+. После резекции обсудить необходимость адъювантной системной терапии и лучевой тактики."],
   ["c009", "Сначала оценить функцию печени, клинически значимую портальную гипертензию, остаточный объём и возможность трансплантации. При ранней болезни сопоставить резекцию, абляцию и трансплантацию.", "Число и размер очагов, сосудистая инвазия, края и фон печени. После резекции или трансплантации план наблюдения зависит также от функции печени и риска рецидива."],
   ["c010", "Развести внутрипечёночную, перихилярную и дистальную локализации. При крупных резекциях печени оценить будущий остаток, а при обструкции согласовать необходимость и цель билиарного дренирования.", "Края желчных протоков и печени по анатомии, узлы, сосудистая и периневральная инвазия. Для адъювантного решения уточнить локализацию и статус R."],
@@ -3569,7 +3825,7 @@ function supplementalSurgerySituations(card) {
   if (context) return context.contexts.map(([title, detail]) => [title, detail]);
   return (CARD_STAGES[card.id] ?? STAGES).map(stage => {
     const surgery = surgeryForStage(card, stage);
-    return ['Стадия ' + stage, surgery?.procedure ?? card[stage], surgery?.limits];
+    return [stageLabel(card, stage), surgery?.procedure ?? card[stage], surgery?.limits];
   });
 }
 
@@ -3583,12 +3839,12 @@ function supplementalSurgerySources(card) {
     [index === 0 ? 'Источник хирургической тактики' : 'Дополнительный источник ' + (index + 1), url]);
 }
 
-for (const [id, pathway, pathology] of SURGICAL_CARD_NOTES) {
+for (const [id, pathway, pathology, reviewDate] of SURGICAL_CARD_NOTES) {
   const card = DATA.find(item => item.id === id);
   if (!card) continue;
   SURGICAL_ALGORITHMS.push({
     id, title: card.title, cards: [id], keywords: [card.group, ...card.icd10].join(' '),
-    pathway, pathology, situations: supplementalSurgerySituations(card), sources: supplementalSurgerySources(card),
+    pathway, pathology, reviewDate, situations: supplementalSurgerySituations(card), sources: supplementalSurgerySources(card),
     video: SURGICAL_VIDEO_SUPPLEMENTS[id],
   });
 }
@@ -3619,7 +3875,7 @@ function surgeryPage() {
         ${algorithm.openVideos?.length ? `<h2>Полные записи без подписки</h2>
           ${algorithm.openVideos.map(video => `<p>${treatmentSource(video.url, video.title + ' ↗')}</p>
             <p>${esc(video.note)}</p>`).join('')}` : ''}
-        <p class="fine">Дата редакции 24.11.2026. Независимая медицинская рецензия не проведена.</p>
+        <p class="fine">Дата редакции ${esc(algorithm.reviewDate ?? '24.11.2026')}. Независимая медицинская рецензия не проведена.</p>
         <p class="fine">${algorithm.sources.map(([label, url]) => treatmentSource(url, label)).join(' · ')}</p>
         <div class="actions">${links}${stagingCardLink(returnCard ?? algorithm.cards[0])}</div>
       </div>`);
