@@ -100,6 +100,26 @@ async function main() {
     await page.goto(home + '#card/c076');
     await page.getByText('Вемурафениб + ритуксимаб при рецидивном или рефрактерном классическом ВКЛ с BRAF V600E', {exact:true}).waitFor();
 
+    await page.goto(home + '#home');
+    await page.getByRole('textbox', {name:'Поиск по справочнику'}).fill('ВКЛ');
+    await page.locator('#quickSearch a[href="#card/c076"]').first().waitFor();
+    await page.getByRole('textbox', {name:'Поиск по справочнику'}).fill('синоназальный ПКР');
+    await page.locator('#quickSearch a[href="#surgery/c073"]').waitFor();
+
+    await page.goto(home + '#regimens');
+    await page.locator('#regimenQuery').fill('ВКЛ вемурафениб');
+    await page.locator('#regimenCard').selectOption('c076');
+    await page.locator('#regimenResults .regimen-result').getByRole('link').click();
+    await page.getByRole('heading', {name:'Волосатоклеточный лейкоз', exact:true}).waitFor();
+    assert.match(await page.locator(':focus').innerText(), /Вемурафениб/);
+
+    await page.goto(home + '#regimens');
+    await page.locator('#regimenCard').selectOption('c073');
+    await page.locator('#regimenPurpose').selectOption('Паллиативная');
+    await page.locator('#regimenResults .regimen-result').getByRole('link', {name:'Стадия IV'}).click();
+    await page.locator('[data-stage=IV][aria-pressed=true]').waitFor();
+    assert.match(await page.locator(':focus').innerText(), /Паллиативные цисплатин/);
+
     await page.goto(home + '#card/c038');
     await page.locator('[data-stage=III]').click();
     assert.match(await page.locator('.treatment-content:visible').innerText(), /Индукционная ХТ/);

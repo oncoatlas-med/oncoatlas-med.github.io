@@ -49,6 +49,23 @@ const data = runInNewContext(app.replace(/\nstart\(\);\n$/, '\n') + `
       FOURTH_PASS_REGIMENS, FIFTH_PASS_REGIMENS, SIXTH_PASS_HEMATOLOGY, SEVENTH_PASS_REGIMENS,
       EIGHTH_PASS_REGIMENS, NINTH_PASS_REGIMENS, ADDITIONAL_REGIMENS, NON_TNM_CARD_INFO],
     nonTnm: Object.keys(NON_TNM_CARD_INFO),
+    catalogSearch: DATA.map(card => ({
+      id: card.id,
+      title: findCards(card.title).some(match => match.id === card.id),
+      code: findCards(card.id).some(match => match.id === card.id),
+      global: globalSearch(card.id).includes('#card/' + card.id),
+    })),
+    regimenSearch: REGIMEN_INDEX.map(row => ({
+      id: row.card.id,
+      title: row.protocol.regimen,
+      indexed: regimenResults(row.protocol.regimen, row.card.id, '', '').includes(row),
+      contexts: row.contexts.map(context => {
+        const [, id, stage, key] = context.href.split('/');
+        return id === row.card.id && regimensFor(id, stage).some(protocol => regimenKey(protocol) === key);
+      }),
+    })),
+    surgeryVideos: SURGICAL_ALGORITHMS.flatMap(algorithm =>
+      [algorithm.video, ...(algorithm.openVideos ?? [])].filter(Boolean)),
     cardMarkup: DATA.flatMap(c => {
       state.card = c.id;
       const stages = NON_TNM_CARD_INFO[c.id] ? ['I'] : CARD_STAGES[c.id] ?? STAGES;
@@ -64,6 +81,17 @@ const data = runInNewContext(app.replace(/\nstart\(\);\n$/, '\n') + `
   })
 `, {window:{ONCO_CARDS:cards, ONCO_REGIMENS:additionalRegimens, ONCO_STAGING:staging, addEventListener() {}}});
 assert.deepEqual([...data.nonTnm].sort(), contextualCards);
+for (const {id, title, code, global} of data.catalogSearch) {
+  assert.ok(title && code && global, id + ' missing from search');
+}
+for (const row of data.regimenSearch) {
+  assert.ok(row.indexed, row.id + ' missing indexed regimen: ' + row.title);
+  assert.ok(row.contexts.length && row.contexts.every(Boolean), row.id + ' invalid regimen link: ' + row.title);
+}
+for (const video of data.surgeryVideos) {
+  assert.equal(new URL(video.url).protocol, 'https:', video.title);
+  assert.ok(video.title.trim() && video.note.trim(), video.url);
+}
 for (const {id, stage, tab, count, html} of data.cardMarkup) {
   const label = [id, stage, tab].join(' / ');
   assert.equal((html.match(/data-stage=/g) ?? []).length, count, label + ' incorrect stage navigation');
@@ -71,6 +99,7 @@ for (const {id, stage, tab, count, html} of data.cardMarkup) {
   assert.equal((html.match(/class="treatment-content print-only"/g) ?? []).length, 1, label + ' incorrect visible panel');
   assert.match(html, new RegExp('data-treatment="' + tab + '" aria-pressed="true"'), label);
   assert.doesNotMatch(html, />\s*(?:undefined|null)\s*</, label + ' missing content');
+  assert.match(html, /Кратко для запоминания/, label + ' missing takeaway');
 }
 
 for (const [id, groups] of Object.entries(additionalRegimens)) {

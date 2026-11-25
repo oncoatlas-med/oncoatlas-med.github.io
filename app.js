@@ -108,6 +108,10 @@ const CARD_SEARCH_ALIASES = {
   c017: 'РШМ', c027: 'ДВККЛ DLBCL', c029: 'ММ multiple myeloma',
   c030: 'ОМЛ AML', c031: 'ХМЛ CML', c046: 'CLL SLL',
   c050: 'ALL', c056: 'MCL',
+  c069: 'IDH-mutant astrocytoma', c070: 'oligodendroglioma 1p19q',
+  c071: 'lung NET pulmonary carcinoid НЭО лёгкого', c072: 'ACC рак коры надпочечника',
+  c073: 'синоназальный ПКР SNSCC', c074: 'хромофобный ПКР chromophobe RCC',
+  c075: 'angiosarcoma', c076: 'ВКЛ HCL hairy cell leukemia',
   c066: 'аденокистозный мукоэпидермоидный протоковый SDC', c067: 'ATC', c068: 'MCC Merkel клеток Меркеля',
 };
 
@@ -261,10 +265,15 @@ function renderNonTnmTreatment(c) {
   const surgery = STAGE_SURGERY[c.id]?.I ?? {procedure: CONTEXTUAL_SURGERY[c.id], url: info.url};
   return `<div class="panel"><h2>5. Лечение по клинической ситуации</h2>
     <p><b>${esc(info.heading)}</b></p><p>${esc(info.explanation)}</p><p class="fine">${reference}</p>
-    ${contexts}${renderTreatmentTabs(renderDrugContent(c.id, 'I'), renderSurgeryContent(surgery))}</div>`;
+    ${contexts}${cardTakeaway(c, 'I')}${renderTreatmentTabs(renderDrugContent(c.id, 'I'), renderSurgeryContent(surgery))}</div>`;
 }
+function cardTakeaway(card, stage) {
+  const text = (STAGE_MNEMONICS[card.id] ?? REMAINING_MNEMONICS[card.id])?.[stage] ?? card.takeaway;
+  return text ? `<p class="fine"><b>Кратко для запоминания.</b> ${esc(text)}</p>` : '';
+}
+
 function card(){const c=DATA.find(x=>x.id===state.card);if(!c)return shell('Карточка не найдена','<p>Выберите нозологию в каталоге.</p>','catalog');const f=favs().includes(c.id);return shell(esc(c.title),`<div class="eyebrow">Карточка №${String(c.number).padStart(3,'0')} · ${esc(c.group)}</div><div class="actions">${btn(f?'★ В избранном':'☆ В избранное',`toggleFav('${c.id}')`)}${btn('Сохранить PDF','window.print()','secondary')}${stagingCardLink(c.id)}</div><div class="panel"><h2>1. Гистотип и локализация</h2><p><b>МКБ‑10:</b> ${esc((c.icd10 ?? []).join(', '))}</p>${c.icd10Note ? `<p class="fine">${esc(c.icd10Note)}</p>` : ''}<p><b>Происхождение:</b> ${esc(c.origin)}</p><p><b>Локализация:</b> ${esc(c.location)}</p></div><div class="panel"><h2 id="molecular" tabindex="-1">2. Молекулярные паттерны</h2><p>${esc(c.molecular).split('; ').join(' · ')}</p></div><div class="panel"><h2>3. Диагностика</h2><p>${esc(c.diagnostics)}</p></div><div class="panel"><h2>4. Онкомаркеры${c.markers.includes('продукция:')? ' и гормональная продукция':''}</h2><p>${esc(c.markers)}</p></div>${c.id === 'c038' ? `<div class="panel"><h2>Стадирование · AJCC 9</h2><p>Версия 9 действует с 1 января 2025 года. При использовании AJCC 8 указывайте версию рядом со стадией. IVA по AJCC 8 означала T4 или N3 при M0. В AJCC 9 при M0 эти категории входят в стадию III, а IVA и IVB относятся только к M1.</p><p>${treatmentSource('https://www.cancer.org/cancer/types/nasopharyngeal-cancer/detection-diagnosis-staging/staging.html', 'Группы стадий AJCC 9 · ACS')} · ${treatmentSource('https://www.facs.org/quality-programs/cancer-programs/education/ajcc-protocol-webinar-on-version-9-staging-system-for-nasopharynx-cancer/', 'Версия и дата вступления в силу · ACS/AJCC')}</p></div>` : ''}${c.id === 'c005' ? `<p class="fine"><a href="#card/c044">Отдельная карточка аденокарциномы прямой кишки</a></p>` : ''}${NON_TNM_CARD_INFO[c.id] ? renderNonTnmTreatment(c) : `<div class="panel"><h2>5. ${esc(c.treatmentHeading ?? 'Лечение по стадиям')}${stagingData.other[c.id] === 'Lugano' ? ' · Lugano' : c.id === 'c041' ? ' · FIGO' : ''}</h2><div class="tabs">${(CARD_STAGES[c.id] ?? STAGES).map(s=>`<button class="tab ${state.stage===s?'selected':''}" data-stage="${s}" aria-pressed="${state.stage===s}" onclick="setStage('${s}')">${s}</button>`).join('')}</div>${c.stageTreatmentNote ? `<p class="fine">${esc(c.stageTreatmentNote)}</p>` : ''}
-${stagingData.other[c.id] === 'Lugano' ? `<p class="fine">Распространённость определяют по Lugano. При выборе терапии дополнительно учитывают гистотип, объём поражения и факторы риска. ${treatmentSource('https://www.ncbi.nlm.nih.gov/books/NBK66038/table/CDR0000062675__176/', 'Критерии Lugano')}</p>` : ''}<p id="stageContent" aria-live="polite"><b>${state.stage}:</b> ${esc(c[state.stage])}</p>${(STAGE_MNEMONICS[c.id] ?? REMAINING_MNEMONICS[c.id])?.[state.stage]?`<p class="fine"><b>Кратко для запоминания:</b> ${esc((STAGE_MNEMONICS[c.id] ?? REMAINING_MNEMONICS[c.id])[state.stage])}</p>`:""}${stageExtras(c)}<p class="fine">${c.treatmentHeading ? 'Категории лечения приведены укрупнённо.' : 'Стадии приведены укрупнённо.'} Реальная тактика определяется гистотипом, подстадией, биомаркерами, резектабельностью, функциональным статусом и линией терапии.</p></div>`}<div class="notice"><b>Статус:</b> редакционный черновик. Независимая медицинская проверка не проведена.</div>${c.references?.length ? `<div class="sources">Источники по нозологии: ${c.references.map(([label, url]) => treatmentSource(url, label)).join(' · ')}</div>` : ''}<div class="sources">Источники для проверки: ${sources.map(([n,u])=>`<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join(' · ')}</div>`,'catalog')}
+${stagingData.other[c.id] === 'Lugano' ? `<p class="fine">Распространённость определяют по Lugano. При выборе терапии дополнительно учитывают гистотип, объём поражения и факторы риска. ${treatmentSource('https://www.ncbi.nlm.nih.gov/books/NBK66038/table/CDR0000062675__176/', 'Критерии Lugano')}</p>` : ''}<p id="stageContent" aria-live="polite"><b>${state.stage}:</b> ${esc(c[state.stage])}</p>${cardTakeaway(c, state.stage)}${stageExtras(c)}<p class="fine">${c.treatmentHeading ? 'Категории лечения приведены укрупнённо.' : 'Стадии приведены укрупнённо.'} Реальная тактика определяется гистотипом, подстадией, биомаркерами, резектабельностью, функциональным статусом и линией терапии.</p></div>`}<div class="notice"><b>Статус:</b> редакционный черновик. Независимая медицинская проверка не проведена.</div>${c.references?.length ? `<div class="sources">Источники по нозологии: ${c.references.map(([label, url]) => treatmentSource(url, label)).join(' · ')}</div>` : ''}<div class="sources">Источники для проверки: ${sources.map(([n,u])=>`<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join(' · ')}</div>`,'catalog')}
 
 // Редакционные примеры режимов. Не использовать как индивидуальные назначения.
 const STAGES = ['I', 'II', 'III', 'IV'];
@@ -1974,7 +1983,7 @@ function buildRegimenIndex() {
           const title = normalizeRegimenSearch(protocol.regimen);
           rows.set(key, {
             card, protocol, drugText, contexts: [],
-            searchText: [drugText, card.title, ...(card.icd10 ?? [])].join(' '),
+            searchText: [drugText, card.title, card.id, CARD_SEARCH_ALIASES[card.id], ...(card.icd10 ?? [])].join(' '),
             lines: labelsFromTitle(title, REGIMEN_LINES),
             purposes: labelsFromTitle(title, REGIMEN_PURPOSES),
           });
@@ -2118,12 +2127,12 @@ function filterRegimenIndex() {
 const searchIndex = new Map(DATA.map(c => {
   const regimens = (CARD_STAGES[c.id] ?? STAGES).flatMap(stage => regimensFor(c.id, stage));
   const drugNames = regimens.flatMap(protocol => [protocol.regimen, ...protocol.drugs]);
-  const text = [c.title, CARD_SEARCH_ALIASES[c.id], c.group, c.origin, c.location, c.molecular, c.markers, ...(c.icd10 ?? []), ...drugNames].join(' ');
-  return [c.id, normalizeSearch(text)];
+  const text = [c.title, c.id, CARD_SEARCH_ALIASES[c.id], c.group, c.origin, c.location, c.molecular, c.markers, ...(c.icd10 ?? []), ...drugNames].join(' ');
+  return [c.id, normalizeRegimenSearch(text)];
 }));
 
 function findCards(query, group = 'Все') {
-  const terms = normalizeSearch(query).split(' ').filter(Boolean);
+  const terms = normalizeRegimenSearch(query).split(' ').filter(Boolean);
   return DATA.filter(c => (group === 'Все' || c.group === group) &&
     terms.every(term => searchIndex.get(c.id).includes(term)));
 }
@@ -3627,6 +3636,22 @@ const SURGICAL_CARD_NOTES = [
 ];
 
 const SURGICAL_VIDEO_SUPPLEMENTS = {
+  c037: {
+    title: 'Иссечение плоскоклеточного рака кожи предплечья и кожная пластика',
+    note: 'Journal of Medical Insight · клинический случай с пластикой расщеплённым кожным трансплантатом. Полная запись может требовать подписку.',
+    url: 'https://jomi.com/article/290.16/squamous-cell-carcinoma-excision-from-right-forearm-with-split-thickness-skin-graft-from-the-thigh/video',
+  },
+  c003: {"title": "Лобэктомия с лимфодиссекцией: пример техники", "note": "CTSNet · в опубликованном случае аденокарцинома. Демонстрирует технику анатомической резекции, применимость операции при МРЛ оценивают отдельно.", "url": "https://www.ctsnet.org/article-video/uniportal-vats-right-lower-lobectomy-and-lymphadenectomy-step-step/"},
+  c021: {"title": "Тиреоидэктомия с центральной шейной диссекцией", "note": "YouTube · демонстрация техники. Гистотип сверяйте с описанием случая.", "url": "https://www.youtube.com/watch?v=M4UDc2jUYmE"},
+  c032: {"title": "Мезентериальная диссекция при НЭО тонкой кишки", "note": "YouTube · короткий операционный фрагмент, демонстрирующий этап мезентериальной диссекции.", "url": "https://www.youtube.com/watch?v=d5UtlD2UMC4"},
+  c043: {"title": "Роботическое рестадирование при гранулёзоклеточной опухоли яичника", "note": "Клинический случай с видео по ссылке издателя. Доступ к записи зависит от площадки.", "url": "https://pubmed.ncbi.nlm.nih.gov/40212140/"},
+  c069: {"title": "Резекция астроцитомы левой лобной доли при краниотомии с пробуждением", "note": "Operative Neurosurgery · клинический случай с операционным видео. Переход к записи через статью издателя.", "url": "https://pubmed.ncbi.nlm.nih.gov/38953629/"},
+  c070: {"title": "Резекция олигодендроглиомы через височно-теменной доступ", "note": "YouTube · операционная демонстрация. Молекулярные критерии опухоли и применимость доступа оценивают по данным конкретного случая.", "url": "https://www.youtube.com/watch?v=Mq8c55Xum8k"},
+  c071: {"title": "Бронхопластическая резекция правого главного бронха при карциноиде", "note": "CTSNet · паренхимосберегающий вариант при центральной локализации.", "url": "https://www.ctsnet.org/article-video/right-main-bronchus-sleeve-resection/"},
+  c072: {"title": "Лапароскопическая резекция локального рецидива адренокортикального рака", "note": "YouTube · клинический случай рецидива у ворот почки и магистральных сосудов. Доступ и тактика первичной операции оцениваются отдельно.", "url": "https://www.youtube.com/watch?v=8CYBoqGm5z4"},
+  c073: {"title": "Комбинированная резекция синоназального ПКР", "note": "Operative Neurosurgery · операционное видео транскраниального и эндоскопического эндоназального этапов.", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9440979/"},
+  c074: {"title": "Робот-ассистированная резекция опухоли почки", "note": "Urology NSW · короткая демонстрация органосохраняющей операции. Гистологический подтип в описании отсутствует.", "url": "https://www.youtube.com/watch?v=pawYxbKgfdQ"},
+  c075: {"title": "Операционная демонстрация при ангиосаркоме молочной железы", "note": "YouTube · учебная запись с операционными кадрами. Объём хирургии относится к представленному случаю.", "url": "https://www.youtube.com/watch?v=C0mxheI0VmE"},
   c023: {
     title: 'Широкая резекция светлоклеточной саркомы сухожилия надколенника',
     note: 'AAOS Orthopaedic Video Theater · клинический пример резекции с реконструкцией. Показан конкретный гистотип и анатомическая локализация. Доступ может требовать авторизации.',
@@ -3674,9 +3699,9 @@ const SURGICAL_VIDEO_SUPPLEMENTS = {
     url: "https://www.sages.org/video/v276-laparoscopic-gastric-wedge-resection-for-a-massive-gist/",
   },
   c033: {
-    title: "Лапароскопическая энуклеация нейроэндокринной опухоли поджелудочной железы",
-    note: "SAGES Video Library · энуклеация в отдельной клинической ситуации.",
-    url: "https://www.sages.org/video/laparoscopic-enucleation-of-a-pancreatic-neuroendocrine-tumor/",
+    title: 'Роботическая энуклеация инсулином головки поджелудочной железы',
+    note: 'Annals of Surgical Oncology · операционное видео у клинической публикации. Решение зависит от отношения опухоли к главному протоку и онкологического риска.',
+    url: 'https://pubmed.ncbi.nlm.nih.gov/38017126/',
   },
   c034: {
     title: "Роботическая брюшно-промежностная экстирпация",
@@ -3843,11 +3868,28 @@ for (const [id, pathway, pathology, reviewDate] of SURGICAL_CARD_NOTES) {
   const card = DATA.find(item => item.id === id);
   if (!card) continue;
   SURGICAL_ALGORITHMS.push({
-    id, title: card.title, cards: [id], keywords: [card.group, ...card.icd10].join(' '),
+    id, title: card.title, cards: [id], keywords: [card.group, card.id, CARD_SEARCH_ALIASES[card.id], ...card.icd10].join(' '),
     pathway, pathology, reviewDate, situations: supplementalSurgerySituations(card), sources: supplementalSurgerySources(card),
     video: SURGICAL_VIDEO_SUPPLEMENTS[id],
   });
 }
+
+const videosRequiringSignIn = new Set([
+  "https://www.youtube.com/watch?v=Mq8c55Xum8k",
+  "https://www.youtube.com/watch?v=-UgvcRIuXmk",
+  "https://www.youtube.com/watch?v=8CYBoqGm5z4",
+  "https://www.youtube.com/watch?v=M4UDc2jUYmE",
+  "https://www.youtube.com/watch?v=NsXqkJOKnpQ",
+  "https://www.youtube.com/watch?v=SYVRGXWcB7A",
+  "https://www.youtube.com/watch?v=ZHQ96SCR1fw",
+  "https://www.youtube.com/watch?v=cSN-rSLgbps",
+  "https://www.youtube.com/watch?v=fFL4k8kCAf8",
+  "https://www.youtube.com/watch?v=gdg7EhsKki8",
+  "https://www.youtube.com/watch?v=rm6bSkNR9Gw",
+  "https://www.youtube.com/watch?v=toDWThY48Z0",
+  "https://www.youtube.com/watch?v=xDCB7v9xC9Q",
+  "https://www.youtube.com/watch?v=yQXH2oxADS0"
+]);
 
 function surgeryPage() {
   const algorithm = SURGICAL_ALGORITHMS.find(item => item.id === state.surgerySection);
@@ -3871,7 +3913,7 @@ function surgeryPage() {
         ${algorithm.video ? `<h2>Операционное видео</h2>
           <p>${treatmentSource(algorithm.video.url, algorithm.video.title + ' ↗')}</p>
           <p>${esc(algorithm.video.note)}</p>
-          <p class="fine">Операционные кадры. Доступ к полной записи зависит от условий площадки.</p>` : '<p class="fine">Операционное видео: подходящая запись пока не подтверждена.</p>'}
+          <p class="fine">${videosRequiringSignIn.has(algorithm.video.url) ? 'YouTube запрашивал вход для подтверждения возраста при проверке.' : 'Длительность и доступность записи зависят от условий площадки.'}</p>` : '<p class="fine">Операционное видео: подходящая запись пока не подтверждена.</p>'}
         ${algorithm.openVideos?.length ? `<h2>Полные записи без подписки</h2>
           ${algorithm.openVideos.map(video => `<p>${treatmentSource(video.url, video.title + ' ↗')}</p>
             <p>${esc(video.note)}</p>`).join('')}` : ''}
