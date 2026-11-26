@@ -248,6 +248,33 @@ async function main() {
     await page.locator('#r2iss-ldh').selectOption('1');
     assert.match(await page.locator('#r2iss-result').innerText(), /ISS III · R2-ISS IV · 3/);
 
+    await page.goto(home + '#scales');
+    await page.getByRole('link', {name:'Инструментальная диагностика · RADS'}).click();
+    await page.locator('#scales-rads:focus').waitFor();
+    assert.equal(await page.locator('#imaging-rads-results article').count(), 8);
+    await page.getByRole('searchbox', {name:'Поиск системы RADS'}).fill('щитовидная');
+    assert.equal(await page.locator('#imaging-rads-results article').count(), 1);
+    assert.match(await page.locator('#imaging-rads-results').innerText(), /TI-RADS/);
+    await page.getByRole('searchbox', {name:'Поиск системы RADS'}).fill('нет такой системы');
+    assert.match(await page.locator('#imaging-rads-results').innerText(), /Система не найдена/);
+
+    for (const [cardId, system] of [
+      ['c004','bi-rads'], ['c020','ti-rads'], ['c013','pi-rads'], ['c009','li-rads'],
+      ['c001','lung-rads'], ['c016','o-rads'], ['c012','vi-rads'], ['c048','ni-rads'],
+    ]) {
+      await page.goto(home + '#card/' + cardId);
+      await page.locator('#app a[href="#scales/' + system + '"]').click();
+      const systemPanel = page.locator('#scales-' + system);
+      await page.locator('#scales-' + system + ':focus').waitFor();
+      assert.ok(await systemPanel.locator('p a[href^="https://"]').count());
+      await systemPanel.locator('details summary').first().click();
+      assert.equal(await systemPanel.locator('details[open]').count(), 1);
+    }
+    await page.goto(home + '#home');
+    await page.getByRole('textbox', {name:'Поиск по справочнику'}).fill('тирэдс');
+    await page.locator('#quickSearch a[href="#scales/ti-rads"]').click();
+    await page.locator('#scales-ti-rads:focus').waitFor();
+
     await page.goto(home + '#card/c038');
     await page.locator('[data-stage=III]').click();
     assert.match(await page.locator('.treatment-content:visible').innerText(), /Индукционная ХТ/);
