@@ -99,6 +99,10 @@ const SEARCH_TOOLS = [
   ['Khorana', '#scales/khorana', 'Хорана риск ВТЭО тромбоз'],
   ['Child–Pugh', '#scales/child-pugh', 'Чайлд Пью печень цирроз'],
   ['IMDC', '#scales/imdc', 'метастатический рак почки'],
+  ['Кумулятивная доза антрациклинов', '#calculators/anthracyclines', 'антрациклины кардиотоксичность эквивалент доксорубицина эпирубицин даунорубицин идарубицин митоксантрон'],
+  ['MASCC', '#scales/mascc', 'МАССЦ фебрильная нейтропения осложнения лихорадка риск'],
+  ['CISNE', '#scales/cisne', 'фебрильная нейтропения стабильная солидная опухоль лихорадка риск'],
+  ['R2-ISS', '#scales/r2iss', 'множественная миелома прогноз цитогенетика ISS FISH'],
   ['ALBI', '#calculators/albi', 'альбумин билирубин функция печени гепатоцеллюлярный рак ГЦР'],
   ['Deauville / Lugano', '#scales/deauville', 'Довиль Довилль Лугано ПЭТ ПЭТ/КТ лимфома метаболический ответ'],
   ['CTCAE v6.0', '#scales/ctcae', 'критерии степени нежелательных явлений токсичность нейтропения тромбоцитопения диарея мукозит нейропатия пневмонит'],
@@ -298,7 +302,7 @@ function cardTakeaway(card, stage) {
   return text ? `<p class="fine"><b>Кратко для запоминания.</b> ${esc(text)}</p>` : '';
 }
 
-function card(){const c=DATA.find(x=>x.id===state.card);if(!c)return shell('Карточка не найдена','<p>Выберите нозологию в каталоге.</p>','catalog');const f=favs().includes(c.id);return shell(esc(c.title),`<div class="eyebrow">Карточка №${String(c.number).padStart(3,'0')} · ${esc(c.group)}</div><div class="actions">${btn(f?'★ В избранном':'☆ В избранное',`toggleFav('${c.id}')`)}${btn('Сохранить PDF','window.print()','secondary')}${stagingCardLink(c.id)}${c.id === 'c009' ? '<a class="btn secondary" href="#calculators/albi">Рассчитать ALBI</a>' : ''}${['c026','c027','c028','c056','c081'].includes(c.id) ? '<a class="btn secondary" href="#scales/deauville">Deauville / Lugano</a>' : ''}</div><div class="panel"><h2>1. Гистотип и локализация</h2><p><b>МКБ‑10:</b> ${esc((c.icd10 ?? []).join(', '))}</p>${c.icd10Note ? `<p class="fine">${esc(c.icd10Note)}</p>` : ''}<p><b>Происхождение:</b> ${esc(c.origin)}</p><p><b>Локализация:</b> ${esc(c.location)}</p></div><div class="panel"><h2 id="molecular" tabindex="-1">2. Молекулярные паттерны</h2><p>${esc(c.molecular).split('; ').join(' · ')}</p></div><div class="panel"><h2>3. Диагностика</h2><p>${esc(c.diagnostics)}</p></div><div class="panel"><h2>4. Онкомаркеры${c.markers.includes('продукция:')? ' и гормональная продукция':''}</h2><p>${esc(c.markers)}</p></div>${c.id === 'c038' ? `<div class="panel"><h2>Стадирование · AJCC 9</h2><p>Версия 9 действует с 1 января 2025 года. При использовании AJCC 8 указывайте версию рядом со стадией. IVA по AJCC 8 означала T4 или N3 при M0. В AJCC 9 при M0 эти категории входят в стадию III, а IVA и IVB относятся только к M1.</p><p>${treatmentSource('https://www.cancer.org/cancer/types/nasopharyngeal-cancer/detection-diagnosis-staging/staging.html', 'Группы стадий AJCC 9 · ACS')} · ${treatmentSource('https://www.facs.org/quality-programs/cancer-programs/education/ajcc-protocol-webinar-on-version-9-staging-system-for-nasopharynx-cancer/', 'Версия и дата вступления в силу · ACS/AJCC')}</p></div>` : ''}${c.id === 'c005' ? `<p class="fine"><a href="#card/c044">Отдельная карточка аденокарциномы прямой кишки</a></p>` : ''}${renderStagingOverview(c.stageOverview)}${NON_TNM_CARD_INFO[c.id] ? renderNonTnmTreatment(c) : `<div class="panel"><h2>5. ${esc(c.treatmentHeading ?? 'Лечение по стадиям')}${stagingData.other[c.id] === 'Lugano' ? ' · Lugano' : c.id === 'c041' ? ' · FIGO' : ''}</h2><div class="tabs">${(CARD_STAGES[c.id] ?? STAGES).map(s=>`<button class="tab ${state.stage===s?'selected':''}" data-stage="${s}" aria-pressed="${state.stage===s}" onclick="setStage('${s}')">${s}</button>`).join('')}</div>${c.stageTreatmentNote ? `<p class="fine">${esc(c.stageTreatmentNote)}</p>` : ''}
+function card(){const c=DATA.find(x=>x.id===state.card);if(!c)return shell('Карточка не найдена','<p>Выберите нозологию в каталоге.</p>','catalog');const f=favs().includes(c.id);return shell(esc(c.title),`<div class="eyebrow">Карточка №${String(c.number).padStart(3,'0')} · ${esc(c.group)}</div><div class="actions">${btn(f?'★ В избранном':'☆ В избранное',`toggleFav('${c.id}')`)}${btn('Сохранить PDF','window.print()','secondary')}${stagingCardLink(c.id)}${c.id === 'c029' ? '<a class="btn secondary" href="#scales/r2iss">Рассчитать R2-ISS</a>' : ''}${c.id === 'c009' ? '<a class="btn secondary" href="#calculators/albi">Рассчитать ALBI</a>' : ''}${['c026','c027','c028','c056','c081'].includes(c.id) ? '<a class="btn secondary" href="#scales/deauville">Deauville / Lugano</a>' : ''}</div><div class="panel"><h2>1. Гистотип и локализация</h2><p><b>МКБ‑10:</b> ${esc((c.icd10 ?? []).join(', '))}</p>${c.icd10Note ? `<p class="fine">${esc(c.icd10Note)}</p>` : ''}<p><b>Происхождение:</b> ${esc(c.origin)}</p><p><b>Локализация:</b> ${esc(c.location)}</p></div><div class="panel"><h2 id="molecular" tabindex="-1">2. Молекулярные паттерны</h2><p>${esc(c.molecular).split('; ').join(' · ')}</p></div><div class="panel"><h2>3. Диагностика</h2><p>${esc(c.diagnostics)}</p></div><div class="panel"><h2>4. Онкомаркеры${c.markers.includes('продукция:')? ' и гормональная продукция':''}</h2><p>${esc(c.markers)}</p></div>${c.id === 'c038' ? `<div class="panel"><h2>Стадирование · AJCC 9</h2><p>Версия 9 действует с 1 января 2025 года. При использовании AJCC 8 указывайте версию рядом со стадией. IVA по AJCC 8 означала T4 или N3 при M0. В AJCC 9 при M0 эти категории входят в стадию III, а IVA и IVB относятся только к M1.</p><p>${treatmentSource('https://www.cancer.org/cancer/types/nasopharyngeal-cancer/detection-diagnosis-staging/staging.html', 'Группы стадий AJCC 9 · ACS')} · ${treatmentSource('https://www.facs.org/quality-programs/cancer-programs/education/ajcc-protocol-webinar-on-version-9-staging-system-for-nasopharynx-cancer/', 'Версия и дата вступления в силу · ACS/AJCC')}</p></div>` : ''}${c.id === 'c005' ? `<p class="fine"><a href="#card/c044">Отдельная карточка аденокарциномы прямой кишки</a></p>` : ''}${renderStagingOverview(c.stageOverview)}${NON_TNM_CARD_INFO[c.id] ? renderNonTnmTreatment(c) : `<div class="panel"><h2>5. ${esc(c.treatmentHeading ?? 'Лечение по стадиям')}${stagingData.other[c.id] === 'Lugano' ? ' · Lugano' : c.id === 'c041' ? ' · FIGO' : ''}</h2><div class="tabs">${(CARD_STAGES[c.id] ?? STAGES).map(s=>`<button class="tab ${state.stage===s?'selected':''}" data-stage="${s}" aria-pressed="${state.stage===s}" onclick="setStage('${s}')">${s}</button>`).join('')}</div>${c.stageTreatmentNote ? `<p class="fine">${esc(c.stageTreatmentNote)}</p>` : ''}
 ${stagingData.other[c.id] === 'Lugano' ? `<p class="fine">Распространённость определяют по Lugano. При выборе терапии дополнительно учитывают гистотип, объём поражения и факторы риска. ${treatmentSource('https://www.ncbi.nlm.nih.gov/books/NBK66038/table/CDR0000062675__176/', 'Критерии Lugano')}</p>` : ''}<p id="stageContent" aria-live="polite"><b>${state.stage}:</b> ${esc(c[state.stage])}</p>${renderStageSituations(c.stageSituations?.[state.stage])}${cardTakeaway(c, state.stage)}${stageExtras(c)}<p class="fine">${c.treatmentHeading ? 'Категории лечения приведены укрупнённо.' : 'Стадии приведены укрупнённо.'} Реальная тактика определяется гистотипом, подстадией, биомаркерами, резектабельностью, функциональным статусом и линией терапии.</p></div>`}<div class="notice"><b>Статус:</b> редакционный черновик. Независимая медицинская проверка не проведена.</div>${c.references?.length ? `<div class="sources">Источники по нозологии: ${c.references.map(([label, url]) => treatmentSource(url, label)).join(' · ')}</div>` : ''}<div class="sources">Источники для проверки: ${sources.map(([n,u])=>`<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join(' · ')}</div>`,'catalog')}
 
 // Редакционные примеры режимов. Не использовать как индивидуальные назначения.
@@ -2114,6 +2118,7 @@ function therapyComplicationsPage() {
       <div class="marker-detail">
         <p><b>Когда заподозрить.</b> ${esc(topic.signs)}</p>
         <div class="notice"><b>Срочность.</b> ${esc(topic.urgent)}</div>
+        ${topic.id === 'febrile-neutropenia' ? `<p><a href="#scales/mascc">MASCC</a> · <a href="#scales/cisne">CISNE</a></p>` : ''}
         <h3>Первые действия</h3>
         <ol>${topic.steps.map(step => `<li>${esc(step)}</li>`).join('')}</ol>
         <p class="fine">${topic.sources.map(([label, url]) => treatmentSource(url, label)).join(' · ')}</p>
@@ -3239,7 +3244,8 @@ ${calcBox('Абсолютное число нейтрофилов','anc',[['wbc'
 ${calcBox('Скорректированный кальций','ca',[['cat','Общий кальций, ммоль/л','2.1'],['alb','Альбумин, г/л','32']],'Ca скорр. = Ca + 0,02 × (40 − альбумин). При тяжёлых состояниях предпочтителен ионизированный кальций.')}
 ${calcBox('QTc по Fridericia','qtc',[['qt','QT, мс','380'],['rr','RR, мс','850']],'QTcF = QT / ∛(RR в секундах). Оценивать с ЭКГ и клиническим контекстом.')}
 ${calcBox('RECIST 1.1 — ориентир','recist',[['base','Сумма таргетных очагов исходно, мм','100'],['nadir','Минимальная сумма за наблюдение, мм','100'],['current','Текущая сумма, мм','65']],'PR: снижение ≥30% от исходной; PD: рост ≥20% от надира и ≥5 мм абсолютного прироста. Новые очаги и нетаргетные изменения оцениваются отдельно.',[['newlesion','Новые очаги','Нет','Есть']])}
-</div>`)}
+</div>
+${anthracyclinePanel()}`)}
 function calcBox(title,id,fields,note,selects=[],source){return `<div class="panel" id="calculators-${id}" tabindex="-1"><h2>${title}</h2>${fields.map(([k,label,ph])=>`<label class="field">${label}<input type="number" step="any" data-calc="${id}" id="${id}_${k}" placeholder="${ph}" oninput="calculate('${id}')"></label>`).join('')}${selects.map(([k,label,...opts])=>`<label class="field">${label}<select id="${id}_${k}" onchange="calculate('${id}')">${opts.map((v,i)=>`<option value="${i}">${v}</option>`).join('')}</select></label>`).join('')}<div class="result" id="res_${id}" role="status">Введите значения</div><p class="fine">${note}</p>${source ? `<p class="fine">${treatmentSource(source[1], source[0])}</p>` : ''}</div>`}
 function calculate(id){const v=k=>{let s=$(`#${id}_${k}`)?.value;return s===''||s==null?NaN:Number(s)};const valid=(...a)=>a.every(x=>Number.isFinite(x)&&x>=0);let out='Проверьте введённые значения';const f=(x,d=2)=>x.toLocaleString('ru-RU',{maximumFractionDigits:d,minimumFractionDigits:d});if (id === 'albi') {
   const bilirubin = v('bilirubin');
@@ -3367,6 +3373,181 @@ function filterCtcae(query) {
   $('#ctcae-results').innerHTML = ctcaeRows(query);
 }
 
+const ANTHRACYCLINE_EQUIVALENTS = [
+  ['doxorubicin', 'Доксорубицин (обычная форма)', 1],
+  ['epirubicin', 'Эпирубицин', 0.8],
+  ['daunorubicin', 'Даунорубицин', 0.6],
+  ['mitoxantrone', 'Митоксантрон', 10.5],
+  ['idarubicin', 'Идарубицин', 5],
+];
+
+const FEBRILE_NEUTROPENIA_GUIDELINE = 'https://www.idsociety.org/practice-guideline/fever-and-neutropenia-in-adults-with-cancer/';
+
+function scoreField(id, label, options, callback) {
+  return `<label class="field">${esc(label)}<select id="${id}" onchange="${callback}()">
+    <option value="">Не указано</option>
+    ${options.map(([value, text]) => `<option value="${esc(value)}">${esc(text)}</option>`).join('')}
+    </select></label>`;
+}
+
+function scoreBinaryFields(prefix, factors, callback) {
+  return factors.map(([id, label, weight]) => scoreField(
+    prefix + '-' + id, label, [[0, 'Нет'], [weight, 'Да · +' + weight.toLocaleString('ru-RU')]], callback
+  )).join('');
+}
+
+function scoreNumber(id, label, callback) {
+  return `<label class="field">${esc(label)}<input id="${id}" type="number" min="0" step="any" oninput="${callback}()"></label>`;
+}
+
+function readScoreNumber(id) {
+  const input = $('#' + id);
+  if (input.validity.badInput) return NaN;
+  return input.value === '' ? null : Number(input.value);
+}
+
+function anthracyclinePanel() {
+  return `<section class="panel" id="calculators-anthracyclines" tabindex="-1">
+    <h2>Кумулятивная доза антрациклинов</h2>
+    <p>Введите фактически полученную суммарную дозу каждого препарата за все курсы в мг/м². Оставляйте поле пустым только для препарата, который не вводился. Если прежняя доза неизвестна, сначала уточните её по выпискам.</p>
+    ${ANTHRACYCLINE_EQUIVALENTS.map(([id, label, factor]) => scoreNumber('anth-' + id, label + ', мг/м² · ×' + factor.toLocaleString('ru-RU'), 'updateAnthracyclines')).join('')}
+    <div class="result" id="anth-result" role="status">Введите известные суммарные дозы.</div>
+    <p class="fine">Эквивалент по таблице 5 ESC 2022 относится к оценке кардиотоксичности. Коэффициенты преимущественно получены по данным переживших онкологическое заболевание в детстве. Для идарубицина коэффициент оценён по противоопухолевой активности. Для липосомальных форм калькулятор не выполняет пересчёт. Результат используют вместе с остальными факторами сердечно-сосудистого риска.</p>
+    <p class="fine">${treatmentSource('https://academic.oup.com/eurheartj/article/43/41/4229/6673995', 'ESC 2022 · кардиоонкология, таблица 5')}</p>
+  </section>`;
+}
+
+function updateAnthracyclines() {
+  const doses = ANTHRACYCLINE_EQUIVALENTS.map(([id]) => readScoreNumber('anth-' + id));
+  let result = 'Введите известные суммарные дозы.';
+  if (doses.some(value => value !== null)) {
+    const total = ANTHRACYCLINE_EQUIVALENTS.reduce((sum, [, , factor], i) => sum + (doses[i] ?? 0) * factor, 0);
+    result = doses.some(value => value !== null && (!Number.isFinite(value) || value < 0)) || !Number.isFinite(total)
+      ? 'Проверьте введённые дозы.'
+      : total.toLocaleString('ru-RU', {maximumFractionDigits:2}) + ' мг/м² в эквиваленте доксорубицина.';
+  }
+  $('#anth-result').textContent = result;
+}
+
+const MASCC_FACTORS = [
+  ['bp', 'Нет гипотензии, систолическое АД >90 мм рт. ст.', 5],
+  ['copd', 'ХОБЛ отсутствует', 4],
+  ['tumor', 'Солидная опухоль или гемобластоз без предшествующей грибковой инфекции', 4],
+  ['dehydration', 'Нет дегидратации, требующей парентерального введения жидкости', 3],
+  ['outpatient', 'Начало лихорадки вне стационара', 3],
+  ['age', 'Возраст <60 лет', 2],
+];
+
+const CISNE_FACTORS = [
+  ['ecog', 'ECOG ≥2', 2],
+  ['copd', 'Хроническая обструктивная болезнь лёгких', 1],
+  ['cardiac', 'Хроническое сердечно-сосудистое заболевание', 1],
+  ['mucositis', 'Мукозит степени ≥2', 1],
+  ['monocytes', 'Абсолютное число моноцитов <0,2 × 10⁹/л', 1],
+  ['glucose', 'Стрессовая гипергликемия', 2],
+];
+
+function febrileNeutropeniaPanels() {
+  return `<section class="panel" id="scales-mascc" tabindex="-1">
+    <h2>MASCC · риск осложнений при фебрильной нейтропении</h2>
+    <p class="notice">Фебрильная нейтропения требует срочной очной оценки. При клинической нестабильности ведение определяют по неотложному протоколу. Подсчёт баллов не должен задерживать начало эмпирической антибактериальной терапии.</p>
+    ${scoreField('mascc-burden', 'Выраженность симптомов', [[5, 'Нет или лёгкие · +5'], [3, 'Умеренные · +3'], [0, 'Тяжёлые · 0']], 'updateMascc')}
+    ${scoreBinaryFields('mascc', MASCC_FACTORS, 'updateMascc')}
+    <div class="result" id="mascc-result" role="status">Ответьте на все вопросы.</div>
+    <p class="fine">Порог исходной модели — 21 из 26. Даже при ≥21 балле амбулаторное ведение требует отдельной оценки инфекционного очага, длительности нейтропении, коморбидности и возможности срочного повторного обращения.</p>
+    <p class="fine">${treatmentSource('https://pubmed.ncbi.nlm.nih.gov/10944139/', 'Klastersky и соавт. · MASCC')} · ${treatmentSource(FEBRILE_NEUTROPENIA_GUIDELINE, 'ASCO/IDSA · фебрильная нейтропения')}</p>
+  </section>
+  <section class="panel" id="scales-cisne" tabindex="-1">
+    <h2>CISNE · клинически стабильная фебрильная нейтропения</h2>
+    <p>Для взрослых с солидной опухолью и фебрильной нейтропенией после химиотерапии низкой или умеренной интенсивности. Применять после очной оценки стабильности и исключения тяжёлой инфекции или острой органной дисфункции.</p>
+    ${scoreField('cisne-eligible', 'Все перечисленные условия применимости выполнены?', [['yes', 'Да'], ['no', 'Нет или клиническая стабильность не подтверждена']], 'updateCisne')}
+    <fieldset class="score-fields" id="cisne-factors" hidden>
+      <legend>Факторы риска</legend>
+      ${scoreBinaryFields('cisne', CISNE_FACTORS, 'updateCisne')}
+    </fieldset>
+    <div class="result" id="cisne-result" role="status">Подтвердите применимость шкалы.</div>
+    <p class="fine">Группы CISNE: 0 — низкая, 1–2 — промежуточная, ≥3 — высокая. Результат дополняет клиническую оценку маршрутизации.</p>
+    <p class="fine">${treatmentSource('https://pubmed.ncbi.nlm.nih.gov/25559804/', 'Carmona-Bayonas и соавт. · CISNE')} · <a href="#regimens/complications/febrile-neutropenia">Фебрильная нейтропения · первые действия</a></p>
+  </section>`;
+}
+
+function selectedScores(prefix, factors) {
+  return factors.map(([id]) => $('#' + prefix + '-' + id).value);
+}
+
+function sumScores(values) {
+  return values.reduce((sum, value) => sum + Number(value), 0);
+}
+
+function updateMascc() {
+  const values = [$('#mascc-burden').value, ...selectedScores('mascc', MASCC_FACTORS)];
+  if (values.includes('')) {
+    $('#mascc-result').textContent = 'Недостаточно данных. Ответьте на все вопросы.';
+    return;
+  }
+  const score = sumScores(values);
+  $('#mascc-result').textContent = score + ' из 26 · ' + (score >= 21 ? 'низкий риск по MASCC' : 'высокий риск по MASCC');
+}
+
+function updateCisne() {
+  const eligible = $('#cisne-eligible').value;
+  $('#cisne-factors').hidden = eligible !== 'yes';
+  if (eligible !== 'yes') {
+    $('#cisne-result').textContent = eligible === 'no'
+      ? 'CISNE неприменима. Маршрутизация по клинической оценке и неотложному протоколу.'
+      : 'Подтвердите применимость шкалы.';
+    return;
+  }
+  const values = selectedScores('cisne', CISNE_FACTORS);
+  if (values.includes('')) {
+    $('#cisne-result').textContent = 'Недостаточно данных. Ответьте на все вопросы.';
+    return;
+  }
+  const score = sumScores(values);
+  const risk = score === 0 ? 'низкий' : score <= 2 ? 'промежуточный' : 'высокий';
+  $('#cisne-result').textContent = score + ' из 8 · ' + risk + ' риск осложнений по CISNE';
+}
+
+const R2ISS_FACTORS = [
+  ['ldh', 'ЛДГ выше верхней границы нормы лаборатории', 1],
+  ['del17p', 'del(17p) по FISH', 1],
+  ['t414', 't(4;14) по FISH', 1],
+  ['1q', 'Увеличение числа копий 1q по FISH (gain или амплификация)', 0.5],
+];
+
+function r2issPanel() {
+  return `<section class="panel" id="scales-r2iss" tabindex="-1">
+    <h2>R2-ISS · множественная миелома</h2>
+    <p>Прогностическая группа при впервые диагностированной множественной миеломе. Используйте исходные показатели до начала терапии. Невыполненное исследование оставьте в состоянии «Не указано».</p>
+    ${scoreNumber('r2iss-beta', 'β₂-микроглобулин, мг/л', 'updateR2iss')}
+    ${scoreNumber('r2iss-albumin', 'Альбумин, г/л (нужен для определения ISS при β₂-микроглобулине <3,5 мг/л)', 'updateR2iss')}
+    ${scoreBinaryFields('r2iss', R2ISS_FACTORS, 'updateR2iss')}
+    <div class="result" id="r2iss-result" role="status">Введите исходные показатели и результаты исследований.</div>
+    <p class="fine">ISS I: β₂-микроглобулин <3,5 мг/л при альбумине ≥35 г/л. ISS III: β₂-микроглобулин ≥5,5 мг/л. Остальные случаи — ISS II. В R2-ISS за ISS I, II и III начисляется 0, 1 и 1,5 балла соответственно.</p>
+    <p class="fine">${treatmentSource('https://pubmed.ncbi.nlm.nih.gov/35605179/', 'D’Agostino и соавт. · R2-ISS')} · ${treatmentSource('https://pubmed.ncbi.nlm.nih.gov/15809451/', 'Greipp и соавт. · исходная ISS')} · <a href="#card/c029">Карточка миеломы</a></p>
+  </section>`;
+}
+
+function updateR2iss() {
+  const beta = readScoreNumber('r2iss-beta');
+  const albumin = readScoreNumber('r2iss-albumin');
+  const values = selectedScores('r2iss', R2ISS_FACTORS);
+  const result = $('#r2iss-result');
+  if ([beta, albumin].some(value => value !== null && (!Number.isFinite(value) || value <= 0))) {
+    result.textContent = 'Проверьте значения β₂-микроглобулина и альбумина.';
+    return;
+  }
+  if (beta === null || (beta < 3.5 && albumin === null) || values.includes('')) {
+    result.textContent = 'Недостаточно данных для расчёта R2-ISS.';
+    return;
+  }
+  const iss = beta >= 5.5 ? 'III' : beta < 3.5 && albumin >= 35 ? 'I' : 'II';
+  const score = {I:0, II:1, III:1.5}[iss] + sumScores(values);
+  const [group, risk] = score === 0 ? ['I', 'низкий'] : score <= 1 ? ['II', 'низкий промежуточный']
+    : score <= 2.5 ? ['III', 'высокий промежуточный'] : ['IV', 'высокий'];
+  result.textContent = 'ISS ' + iss + ' · R2-ISS ' + group + ' · ' + score.toLocaleString('ru-RU') + ' балла · ' + risk + ' риск.';
+}
+
 function scales(){return shell('Клинические шкалы',`<div class="panel" id="scales-ecog" tabindex="-1"><h2>ECOG Performance Status</h2>${['0 — Полностью активен','1 — Ограничена тяжёлая активность; лёгкая работа сохранена','2 — Самообслуживание сохранено, не способен работать; активен >50% дня','3 — Ограниченное самообслуживание; в постели/кресле >50% дня','4 — Полностью обездвижен, самообслуживание невозможно','5 — Смерть'].map(s=>`<p class="scale-row">${s}</p>`).join('')}</div>
 <div class="panel" id="scales-kps" tabindex="-1"><h2>Karnofsky (KPS)</h2><p>100 — без жалоб; 90 — обычная активность, минимальные симптомы; 80 — обычная активность с усилием; 70 — обслуживает себя, не способен к обычной работе; 60 — нужна периодическая помощь; 50 — значительная помощь; 40 — инвалидизирован; 30 — госпитализация показана; 20 — тяжёлое состояние; 10 — терминальное состояние; 0 — смерть.</p></div>
 <div class="panel" id="scales-khorana" tabindex="-1"><h2>Khorana — риск ВТЭО при ХТ</h2><label class="field">Локализация<select id="kh_site" onchange="khorana()"><option value="0">Другие</option><option value="1">Лёгкое, лимфома, гинекологическая, мочевой пузырь, яичко</option><option value="2">Желудок или поджелудочная железа</option></select></label>${[['kh_pl','Тромбоциты ≥350 ×10⁹/л'],['kh_hb','Hb <100 г/л или ЭПО'],['kh_wbc','Лейкоциты >11 ×10⁹/л'],['kh_bmi','ИМТ ≥35 кг/м²']].map(([id,label])=>`<label class="check"><input id="${id}" type="checkbox" onchange="khorana()"> ${label}</label>`).join('')}<div class="result" id="kh_result">0 баллов — низкий риск</div><p class="fine">Шкала не заменяет оценку риска кровотечения и показаний к тромбопрофилактике.</p></div>
@@ -3374,7 +3555,9 @@ function scales(){return shell('Клинические шкалы',`<div class="
 <div class="panel" id="scales-imdc" tabindex="-1"><h2>IMDC — метастатический рак почки</h2>${[['im_time','Время от диагноза до системной терапии <1 года'],['im_kps','Karnofsky <80%'],['im_hb','Hb ниже нижней границы нормы'],['im_ca','Скорректированный Ca выше верхней границы нормы'],['im_neu','Нейтрофилы выше верхней границы нормы'],['im_pl','Тромбоциты выше верхней границы нормы']].map(([id,label])=>`<label class="check"><input id="${id}" type="checkbox" onchange="imdc()"> ${label}</label>`).join('')}<div class="result" id="im_result">0 факторов — благоприятный риск</div></div>
 ${deauvillePanel()}
 ${ctcaePanel()}
-<div class="panel" id="scales-other" tabindex="-1"><h2>Другие шкалы</h2><p><b>MASCC:</b> требует полного набора клинических признаков и валидации; автоматический подсчёт пока не активирован. <b>R-ISS:</b> необходимы β2-микроглобулин, альбумин, ЛДГ и FISH; применяйте оригинальные критерии.</p></div>`)}
+${febrileNeutropeniaPanels()}
+${r2issPanel()}
+<div class="panel" id="scales-other" tabindex="-1"><h2>Другие шкалы</h2><p><b>R-ISS:</b> необходимы β2-микроглобулин, альбумин, ЛДГ и FISH; применяйте оригинальные критерии.</p></div>`)}
 function khorana(){let n=Number($('#kh_site').value)+['kh_pl','kh_hb','kh_wbc','kh_bmi'].filter(x=>$('#'+x).checked).length;$('#kh_result').textContent=n+' балл(ов) — '+(n===0?'низкий':n<=2?'промежуточный':'высокий')+' риск (исходная классификация)'}
 function child(){let n=['cp_bili','cp_alb','cp_inr','cp_asc','cp_enc'].reduce((a,x)=>a+Number($('#'+x).value),0);$('#cp_result').textContent=n+' баллов — Child–Pugh '+(n<=6?'A':n<=9?'B':'C')}
 function imdc(){let n=['im_time','im_kps','im_hb','im_ca','im_neu','im_pl'].filter(x=>$('#'+x).checked).length;$('#im_result').textContent=n+' факторов — '+(n===0?'благоприятный':n<=2?'промежуточный':'неблагоприятный')+' риск'}
@@ -4303,5 +4486,5 @@ function surgeryPage() {
 }
 
 function render(){const pages={home,catalog,card,tnm:tnmPage,calculators:calcPage,scales,markers,regimens:regimenIndexPage,surgery:surgeryPage,sources:sourcesPage,favorites,about,admin};$('#app').innerHTML=(pages[state.page]||home)();allNodes('[data-nav]').forEach(x=>x.classList.toggle('active',x.dataset.nav===state.page));if(state.page==='catalog')listCards();if(state.page==='regimens' && state.regimenSection!=='complications')filterRegimenIndex()}
-window.view=view;window.toggleFav=toggleFav;window.setStage=setStage;window.searchHome=searchHome;window.filterRegimenIndex=filterRegimenIndex;window.listCards=listCards;window.filterStaging=filterStaging;window.calculate=calculate;window.updateDeauville=updateDeauville;window.filterCtcae=filterCtcae;window.khorana=khorana;window.child=child;window.imdc=imdc;window.filterMarkers=filterMarkers;
+window.view=view;window.toggleFav=toggleFav;window.setStage=setStage;window.searchHome=searchHome;window.filterRegimenIndex=filterRegimenIndex;window.listCards=listCards;window.filterStaging=filterStaging;window.calculate=calculate;window.updateDeauville=updateDeauville;window.updateAnthracyclines=updateAnthracyclines;window.updateMascc=updateMascc;window.updateCisne=updateCisne;window.updateR2iss=updateR2iss;window.filterCtcae=filterCtcae;window.khorana=khorana;window.child=child;window.imdc=imdc;window.filterMarkers=filterMarkers;
 start();

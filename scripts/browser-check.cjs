@@ -188,6 +188,66 @@ async function main() {
     await page.locator('#ctcae-query').fill('нет такого события');
     assert.match(await page.locator('#ctcae-results').innerText(), /Событие не найдено/);
 
+    for (const [query, href] of [
+      ['антрациклины', '#calculators/anthracyclines'], ['MASCC', '#scales/mascc'],
+      ['CISNE', '#scales/cisne'], ['R2-ISS', '#scales/r2iss'],
+    ]) {
+      await page.goto(home + '#home');
+      await page.getByRole('textbox', {name:'Поиск по справочнику'}).fill(query);
+      await page.locator('#quickSearch a[href="' + href + '"]').click();
+      await page.locator(':focus').filter({has:page.getByRole('heading', {level:2})}).waitFor();
+    }
+    await page.goto(home + '#calculators/anthracyclines');
+    await page.locator('#anth-doxorubicin').fill('50');
+    await page.locator('#anth-epirubicin').fill('125');
+    await page.locator('#anth-mitoxantrone').fill('10');
+    assert.match(await page.locator('#anth-result').innerText(), /^255 мг/);
+    await page.locator('#anth-idarubicin').fill('-1');
+    assert.match(await page.locator('#anth-result').innerText(), /Проверьте/);
+
+    await page.goto(home + '#regimens/complications/febrile-neutropenia');
+    await page.getByRole('link', {name:'MASCC', exact:true}).click();
+    await page.locator('#mascc-burden').selectOption('5');
+    assert.match(await page.locator('#mascc-result').innerText(), /Недостаточно данных/);
+    for (const [field, value] of [['bp','5'], ['copd','4'], ['tumor','4'], ['dehydration','3'], ['outpatient','3'], ['age','2']]) {
+      await page.locator('#mascc-' + field).selectOption(value);
+    }
+    assert.match(await page.locator('#mascc-result').innerText(), /26 из 26.*низкий/);
+    await page.locator('#mascc-bp').selectOption('0');
+    assert.match(await page.locator('#mascc-result').innerText(), /21 из 26.*низкий/);
+    await page.locator('#mascc-age').selectOption('0');
+    assert.match(await page.locator('#mascc-result').innerText(), /19 из 26.*высокий/);
+
+    await page.goto(home + '#scales/cisne');
+    await page.locator('#cisne-eligible').selectOption('no');
+    assert.ok(await page.locator('#cisne-factors').isHidden());
+    assert.match(await page.locator('#cisne-result').innerText(), /неприменима/);
+    await page.locator('#cisne-eligible').selectOption('yes');
+    for (const field of ['ecog','copd','cardiac','mucositis','monocytes','glucose']) {
+      await page.locator('#cisne-' + field).selectOption('0');
+    }
+    assert.match(await page.locator('#cisne-result').innerText(), /0 из 8.*низкий/);
+    await page.locator('#cisne-ecog').selectOption('2');
+    assert.match(await page.locator('#cisne-result').innerText(), /2 из 8.*промежуточный/);
+    await page.locator('#cisne-copd').selectOption('1');
+    assert.match(await page.locator('#cisne-result').innerText(), /3 из 8.*высокий/);
+
+    await page.goto(home + '#card/c029');
+    await page.getByRole('link', {name:'Рассчитать R2-ISS'}).click();
+    await page.locator('#r2iss-beta').fill('3');
+    await page.locator('#r2iss-albumin').fill('35');
+    for (const field of ['ldh','del17p','t414']) await page.locator('#r2iss-' + field).selectOption('0');
+    assert.match(await page.locator('#r2iss-result').innerText(), /Недостаточно данных/);
+    await page.locator('#r2iss-1q').selectOption('0');
+    assert.match(await page.locator('#r2iss-result').innerText(), /ISS I · R2-ISS I · 0/);
+    await page.locator('#r2iss-beta').fill('3.5');
+    assert.match(await page.locator('#r2iss-result').innerText(), /ISS II · R2-ISS II · 1/);
+    await page.locator('#r2iss-beta').fill('5.5');
+    assert.match(await page.locator('#r2iss-result').innerText(), /ISS III · R2-ISS III · 1,5/);
+    await page.locator('#r2iss-1q').selectOption('0.5');
+    await page.locator('#r2iss-ldh').selectOption('1');
+    assert.match(await page.locator('#r2iss-result').innerText(), /ISS III · R2-ISS IV · 3/);
+
     await page.goto(home + '#card/c038');
     await page.locator('[data-stage=III]').click();
     assert.match(await page.locator('.treatment-content:visible').innerText(), /Индукционная ХТ/);
