@@ -275,6 +275,33 @@ async function main() {
     await page.locator('#quickSearch a[href="#scales/ti-rads"]').click();
     await page.locator('#scales-ti-rads:focus').waitFor();
 
+    for (const [query, href] of [
+      ['бирэдс', '#scales/bi-rads'], ['TI‑RADS', '#scales/ti-rads'],
+      ['пирэдс', '#scales/pi-rads'], ['лирэдс', '#scales/li-rads'],
+      ['lungrads', '#scales/lung-rads'], ['орэдс', '#scales/o-rads'],
+      ['вирэдс', '#scales/vi-rads'], ['нирэдс', '#scales/ni-rads'],
+      ['альби', '#calculators/albi'], ['r2iss', '#scales/r2iss'],
+      ['сисне', '#scales/cisne'], ['масск', '#scales/mascc'],
+      ['MALT Lugano', '#card/c082/staging'], ['c081 Lugano', '#card/c081/staging'],
+    ]) {
+      await page.goto(home + '#home');
+      await page.getByRole('textbox', {name:'Поиск по справочнику'}).fill(query);
+      await page.locator('#quickSearch a[href="' + href + '"]').first().waitFor({state:'attached'});
+    }
+    await page.goto(home + '#home');
+    await page.getByRole('textbox', {name:'Поиск по справочнику'}).fill('CTCAE v6.0 пневмонит');
+    await page.locator('#quickSearch a[href="#scales/ctcae-pneumonitis"]').click();
+    await page.locator('#scales-ctcae-pneumonitis[open]:focus').waitFor();
+    assert.match(await page.locator('#scales-ctcae-pneumonitis').innerText(), /показан кислород/);
+    await page.locator('#ctcae-query').fill('CTCAE v6.0 диарея');
+    assert.equal(await page.locator('#ctcae-results details[open]').count(), 1);
+
+    await page.goto(home + '#home');
+    await page.getByRole('textbox', {name:'Поиск по справочнику'}).fill('тебентафусп');
+    await page.locator('#quickSearch a[href^="#card/c077/IV/"]').first().click();
+    await page.locator('.treatment-regimen:focus').waitFor();
+    assert.match(await page.locator('.treatment-regimen:focus').innerText(), /Тебентафусп/);
+
     await page.goto(home + '#card/c038');
     await page.locator('[data-stage=III]').click();
     assert.match(await page.locator('.treatment-content:visible').innerText(), /Индукционная ХТ/);

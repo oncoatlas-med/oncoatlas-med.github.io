@@ -6520,6 +6520,7 @@ function start() {
   render();
   const detail = target ? $(target) : null;
   if (detail) {
+    if (detail.matches('details')) detail.open = true;
     detail.focus({preventScroll: true});
     detail.scrollIntoView({block: 'start'});
   } else window.scrollTo(0, 0);
@@ -6566,7 +6567,7 @@ const SEARCH_LIBRARY = [
 const IMAGING_RADS = [
   {
     id: 'bi-rads', title: 'BI-RADS', organ: 'Молочная железа', version: 'ACR BI-RADS v2025',
-    aliases: 'birads birad бирадс би радс mammography РМЖ маммография УЗИ МРТ CEM',
+    aliases: 'birads birad бирадс бирэдс би радс би рад молочной железы mammography РМЖ маммография УЗИ МРТ CEM',
     cards: ['c004'],
     use: 'Стандартизированная оценка исследования молочной железы. Категория относится к результату визуализации. Тактику определяют с учётом клиники и согласованности визуализации с морфологией.',
     groups: [
@@ -6589,7 +6590,7 @@ const IMAGING_RADS = [
   },
   {
     id: 'ti-rads', title: 'TI-RADS', organ: 'Щитовидная железа', version: 'ACR TI-RADS',
-    aliases: 'тирэдс тирадс тир адс tirads узел щитовидной железы УЗИ ТАБ',
+    aliases: 'тирэдс тирадс ти радс tirads узел щитовидной железы УЗИ ТАБ',
     cards: ['c020', 'c021'],
     use: 'Балльная система для УЗИ узлов щитовидной железы до морфологической верификации. Пороги ниже относятся к ACR TI-RADS. Подозрительные шейные лимфоузлы оценивают отдельно.',
     groups: [
@@ -6611,7 +6612,7 @@ const IMAGING_RADS = [
   },
   {
     id: 'pi-rads', title: 'PI-RADS', organ: 'Предстательная железа', version: 'PI-RADS v2.1',
-    aliases: 'пирадс пи радс pirads простата МРТ PSA ПСА',
+    aliases: 'пирадс пирэдс пи радс pirads предстательной железы простата МРТ PSA ПСА',
     cards: ['c013'],
     use: 'Оценка вероятности клинически значимого рака простаты на МРТ. Решение о биопсии дополнительно учитывает плотность ПСА, семейный анамнез, предшествующие биопсии и клинический риск.',
     groups: [
@@ -6629,7 +6630,7 @@ const IMAGING_RADS = [
   },
   {
     id: 'li-rads', title: 'LI-RADS', organ: 'Печень', version: 'ACR · отдельные редакции по задачам',
-    aliases: 'лирадс ли радс lirads печень ГЦР цирроз гепатоцеллюлярная КТ МРТ CEUS',
+    aliases: 'лирадс лирэдс ли радс lirads печень ГЦР цирроз гепатоцеллюлярная КТ МРТ CEUS',
     cards: ['c009'],
     use: 'Для определённых групп пациентов с высоким риском ГЦР. Перед присвоением категории проверьте критерии применимости выбранной ветки, в частности вид фонового заболевания и задачу исследования.',
     groups: [
@@ -6656,7 +6657,7 @@ const IMAGING_RADS = [
   },
   {
     id: 'lung-rads', title: 'Lung-RADS', organ: 'Лёгкие', version: 'ACR Lung-RADS v2022',
-    aliases: 'ланградс lungrads lung rads ндкт низкодозная кт скрининг рак легкого легочный узел',
+    aliases: 'ланградс ланг радс lungrads lung rads ндкт низкодозная кт скрининг рак легкого легочный узел',
     cards: ['c001', 'c002', 'c003', 'c083'],
     cardNote: 'Применяется к НДКТ в рамках скрининга.',
     use: 'Категоризация находок на низкодозной КТ в программе скрининга. Для случайно выявленных узлов вне скрининга применяются другие рекомендации. Пороги ниже приведены для солидного узла на первом скрининге и не охватывают новые, растущие, субсолидные или эндобронхиальные узлы.',
@@ -6671,7 +6672,7 @@ const IMAGING_RADS = [
   },
   {
     id: 'o-rads', title: 'O-RADS', organ: 'Яичники и придатки', version: 'УЗИ v2022 и отдельная шкала МРТ ACR',
-    aliases: 'орадс о радс orads яичники придатки УЗИ МРТ IOTA',
+    aliases: 'орадс орэдс о радс orads яичники придатки УЗИ МРТ IOTA',
     cards: ['c016', 'c042', 'c043'],
     use: 'Оценка риска злокачественности при образованиях яичников и придатков. УЗИ — первичная оценка. МРТ используют для уточнения по показаниям. При острой симптоматике или высоком наследственном риске маршрутизацию определяют отдельно.',
     groups: [
@@ -6691,7 +6692,7 @@ const IMAGING_RADS = [
   },
   {
     id: 'vi-rads', title: 'VI-RADS', organ: 'Мочевой пузырь', version: 'Стандарт VI-RADS · мпМРТ',
-    aliases: 'вирадс ви радс virads мочевой пузырь мышечная инвазия детрузор',
+    aliases: 'вирадс вирэдс ви радс virads мочевой пузырь мочевого пузыря мышечная инвазия детрузор',
     cards: ['c012'],
     use: 'Оценка вероятности инвазии мышечного слоя при опухоли мочевого пузыря. При использовании МРТ для местного стадирования исследование предпочтительно проводить до ТУР. Окончательная стадия учитывает материал ТУР и морфологическую оценку мышечного слоя.',
     groups: [['Критерии и интерпретация', [
@@ -6704,7 +6705,7 @@ const IMAGING_RADS = [
   },
   {
     id: 'ni-rads', title: 'NI-RADS', organ: 'Голова и шея', version: 'ACR · КТ/ПЭТ-КТ и отдельный протокол МРТ v2025',
-    aliases: 'нирадс ни радс nirads рецидив после лечения голова шея ПЭТ МРТ',
+    aliases: 'нирадс нирэдс ни радс nirads рецидив после лечения голова шея ПЭТ МРТ',
     cards: ['c019', 'c038', 'c047', 'c048', 'c049', 'c052', 'c073'],
     cardNote: 'Для наблюдения после лечения.',
     use: 'Оценка подозрения на остаточную или рецидивную опухоль после лечения рака головы и шеи. Первичную зону и шейные узлы оценивают раздельно. Используйте таблицу для выбранного метода.',
@@ -6771,10 +6772,10 @@ const SEARCH_TOOLS = [
   ['Child–Pugh', '#scales/child-pugh', 'Чайлд Пью печень цирроз'],
   ['IMDC', '#scales/imdc', 'метастатический рак почки'],
   ['Кумулятивная доза антрациклинов', '#calculators/anthracyclines', 'антрациклины кардиотоксичность эквивалент доксорубицина эпирубицин даунорубицин идарубицин митоксантрон'],
-  ['MASCC', '#scales/mascc', 'МАССЦ фебрильная нейтропения осложнения лихорадка риск'],
-  ['CISNE', '#scales/cisne', 'фебрильная нейтропения стабильная солидная опухоль лихорадка риск'],
-  ['R2-ISS', '#scales/r2iss', 'множественная миелома прогноз цитогенетика ISS FISH'],
-  ['ALBI', '#calculators/albi', 'альбумин билирубин функция печени гепатоцеллюлярный рак ГЦР'],
+  ['MASCC', '#scales/mascc', 'МАСК МАССК МАССЦ фебрильная нейтропения осложнения лихорадка риск'],
+  ['CISNE', '#scales/cisne', 'сисне цисне фебрильная нейтропения стабильная солидная опухоль лихорадка риск'],
+  ['R2-ISS', '#scales/r2iss', 'r2iss р2исс р2 исс множественная миелома прогноз цитогенетика ISS FISH'],
+  ['ALBI', '#calculators/albi', 'альби алби альбумин билирубин функция печени гепатоцеллюлярный рак ГЦР'],
   ['Deauville / Lugano', '#scales/deauville', 'Довиль Довилль Лугано ПЭТ ПЭТ/КТ лимфома метаболический ответ'],
   ['CTCAE v6.0', '#scales/ctcae', 'критерии степени нежелательных явлений токсичность нейтропения тромбоцитопения диарея мукозит нейропатия пневмонит'],
 ];
@@ -6829,13 +6830,15 @@ function globalSearch(query) {
       .map(topic => [topic.title, '#regimens/complications/' + topic.id, 'Признаки · срочность · первые действия'])],
     ['Калькуляторы и шкалы', SEARCH_TOOLS.filter(([title, , keywords]) => matches(title + ' ' + keywords))
       .map(([title, href]) => [title, href, href.startsWith('#scales') ? 'Клиническая шкала' : 'Калькулятор'])],
+    ['Степени токсичности · CTCAE', ctcaeMatches(query, false)
+      .map(([id, title]) => [title, '#scales/ctcae-' + id, 'CTCAE v6.0'])],
     ['Источники', SOURCE_SECTIONS.flatMap(([group, sources]) => sources.filter(([name, description]) =>
       matches([group, name, description].join(' '))).map(([name, , url]) => [name, url, group]))],
     ['Другие системы стадирования', DATA.filter(card => stagingData.other[card.id] &&
-      matches([card.title, CARD_SEARCH_ALIASES[card.id], stagingData.other[card.id]].join(' ')))
-      .map(card => [card.title, '#card/' + card.id, stagingData.other[card.id]])],
+      matches([card.title, card.id, CARD_SEARCH_ALIASES[card.id], stagingData.other[card.id], card.stageOverview?.title].join(' ')))
+      .map(card => [card.title, '#card/' + card.id + (card.stageOverview ? '/staging' : ''), stagingData.other[card.id]])],
     ['Стадирование', stagingData.entries.filter(entry => DATA.some(card => entry.cards.includes(card.id) &&
-      matches([card.title, CARD_SEARCH_ALIASES[card.id], ...card.icd10, entry.title, entry.edition].join(' '))))
+      matches([card.title, card.id, CARD_SEARCH_ALIASES[card.id], ...card.icd10, entry.title, entry.edition].join(' '))))
       .map(entry => [entry.title, '#tnm/' + entry.id, entry.edition])],
     ['Схемы лечения', REGIMEN_INDEX
       .flatMap(row => row.contexts.filter(context => matches([row.searchText, CARD_SEARCH_ALIASES[row.card.id], context.label, ...row.lines, ...row.purposes].join(' ')))
@@ -9982,37 +9985,37 @@ function updateDeauville() {
 }
 
 const CTCAE_EVENTS = [
-  ['Снижение числа нейтрофилов', 'Neutrophil count decreased', 'нейтропения АЧН ANC', [
+  ['neutrophils', 'Снижение числа нейтрофилов', 'Neutrophil count decreased', 'нейтропения АЧН ANC', [
     'АЧН от 1,0 до <1,5 × 10⁹/л.', 'АЧН от 0,5 до <1,0 × 10⁹/л.',
     'АЧН от 0,1 до <0,5 × 10⁹/л.', 'АЧН <0,1 × 10⁹/л.', null,
   ]],
-  ['Фебрильная нейтропения', 'Febrile neutropenia', 'лихорадка температура инфекция ANC', [
+  ['febrile-neutropenia', 'Фебрильная нейтропения', 'Febrile neutropenia', 'лихорадка температура инфекция ANC', [
     null, null, 'АЧН <1,0 × 10⁹/л и температура >38,3 °C однократно либо ≥38 °C в течение более часа.',
     'Угроза жизни с необходимостью срочного вмешательства.', 'Смерть, связанная с событием.',
   ]],
-  ['Тромбоцитопения', 'Thrombocytopenia', 'тромбоциты platelet', [
+  ['thrombocytopenia', 'Тромбоцитопения', 'Thrombocytopenia', 'тромбоциты platelet', [
     'Тромбоциты от 75 × 10⁹/л до нижней границы нормы (не включая её).',
     'Тромбоциты от 50 до <75 × 10⁹/л.',
     'Тромбоциты от 10 до <50 × 10⁹/л либо показана трансфузия.',
     'Тромбоциты <10 × 10⁹/л либо угроза жизни с необходимостью срочного вмешательства.', 'Смерть, связанная с событием.',
   ]],
-  ['Диарея', 'Diarrhea', 'жидкий стул стома', [
+  ['diarrhea', 'Диарея', 'Diarrhea', 'жидкий стул стома', [
     'Изменение консистенции или частоты стула.',
     'Прирост 4–6 дефекаций в сутки; умеренное увеличение отделяемого по стоме относительно исходного; ограничение инструментальных повседневных действий.',
     'Прирост ≥7 дефекаций в сутки; показана госпитализация; выраженное увеличение отделяемого по стоме; требуется внутривенное вмешательство либо ограничено самообслуживание.',
     'Угроза жизни с необходимостью срочного вмешательства.', 'Смерть, связанная с событием.',
   ]],
-  ['Мукозит полости рта', 'Mucositis oral', 'стоматит язвы слизистой', [
+  ['oral-mucositis', 'Мукозит полости рта', 'Mucositis oral', 'стоматит язвы слизистой', [
     'Симптомов нет или они лёгкие; вмешательство не показано.',
     'Умеренная боль или язва без нарушения приёма пищи; требуется изменить рацион.',
     'Сильная боль мешает приёму пищи.',
     'Угроза жизни с необходимостью срочного вмешательства.', 'Смерть, связанная с событием.',
   ]],
-  ['Периферическая сенсорная нейропатия', 'Peripheral sensory neuropathy', 'полинейропатия парестезии онемение', [
+  ['neuropathy', 'Периферическая сенсорная нейропатия', 'Peripheral sensory neuropathy', 'полинейропатия парестезии онемение', [
     'Лёгкие симптомы.', 'Умеренные симптомы, ограничивающие инструментальные повседневные действия.',
     'Тяжёлые симптомы, ограничивающие самообслуживание.', 'Угроза жизни с необходимостью срочного вмешательства.', null,
   ]],
-  ['Пневмонит', 'Pneumonitis', 'поражение легких кашель одышка иммунотерапия', [
+  ['pneumonitis', 'Пневмонит', 'Pneumonitis', 'поражение легких кашель одышка иммунотерапия', [
     'Симптомов нет; изменения выявлены клинически или при обследовании, вмешательство не показано.',
     'Есть симптомы; показано медикаментозное вмешательство, ограничены инструментальные повседневные действия.',
     'Тяжёлые симптомы; показан кислород, ограничено самообслуживание.',
@@ -10020,10 +10023,18 @@ const CTCAE_EVENTS = [
   ]],
 ];
 
+function ctcaeMatches(query, includeAll) {
+  const terms = normalizeSearch(query).replace(/\bctcae(?: v?6(?: 0)?)?\b/g, '').split(' ').filter(Boolean);
+  if (!terms.length) return includeAll ? CTCAE_EVENTS : [];
+  return CTCAE_EVENTS.filter(([, title, en, aliases]) => {
+    const haystack = normalizeSearch([title, en, aliases].join(' '));
+    return terms.every(term => haystack.includes(term));
+  });
+}
+
 function ctcaeRows(query = '') {
-  const terms = normalizeSearch(query).split(' ').filter(Boolean);
-  const events = CTCAE_EVENTS.filter(event => terms.every(term => normalizeSearch(event.slice(0, 3).join(' ')).includes(term)));
-  return events.map(([title, en, , grades]) => `<details class="marker-entry"${events.length === 1 ? ' open' : ''}>
+  const events = ctcaeMatches(query, true);
+  return events.map(([id, title, en, , grades]) => `<details class="marker-entry" id="scales-ctcae-${id}" tabindex="-1"${events.length === 1 ? ' open' : ''}>
     <summary>${esc(title)}</summary><div class="marker-detail"><p class="muted">${esc(en)}</p>
     ${grades.map((grade, i) => `<p><b>Степень ${i + 1}.</b> ${esc(grade ?? 'Не предусмотрена для этого события.')}</p>`).join('')}
     </div></details>`).join('') || '<p class="muted">Событие не найдено в этой подборке.</p>';
