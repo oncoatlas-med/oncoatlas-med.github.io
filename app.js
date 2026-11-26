@@ -32,6 +32,7 @@ function start() {
   if (['calculators', 'scales'].includes(state.page) && /^[a-z0-9-]+$/.test(id ?? '')) target = '#' + state.page + '-' + id;
   if (state.page === 'card' && DATA.some(card => card.id === id)) {
     if (section === 'molecular') target = '#molecular';
+    else if (section === 'staging') target = '#card-staging';
     else if ((CARD_STAGES[id] ?? STAGES).includes(section)) {
       state.stage = section;
       state.treatmentTab = key === 'surgery' ? 'surgery' : 'drugs';
@@ -268,6 +269,18 @@ const CONTEXTUAL_SURGERY = {
   c056: 'Удаление поражённого узла может быть необходимо для диагностики. Роль локальной терапии при ограниченной болезни обсуждают на консилиуме.',
 };
 
+function renderStagingOverview(overview) {
+  if (!overview) return '';
+  return `<section class="panel" id="card-staging" tabindex="-1"><h2>${esc(overview.title)}</h2>
+    ${overview.items.map(([label, detail]) => `<p><b>${esc(label)}.</b> ${esc(detail)}</p>`).join('')}
+    <p class="fine">${treatmentSource(overview.source[1], overview.source[0])}</p></section>`;
+}
+
+function renderStageSituations(situations) {
+  return (situations ?? []).map(([label, detail]) =>
+    `<p class="notice"><b>${esc(label)}.</b> ${esc(detail)}</p>`).join('');
+}
+
 function renderNonTnmTreatment(c) {
   const info = NON_TNM_CARD_INFO[c.id];
   const reference = treatmentSource(info.url, 'Источник по классификации и тактике');
@@ -283,8 +296,8 @@ function cardTakeaway(card, stage) {
   return text ? `<p class="fine"><b>Кратко для запоминания.</b> ${esc(text)}</p>` : '';
 }
 
-function card(){const c=DATA.find(x=>x.id===state.card);if(!c)return shell('Карточка не найдена','<p>Выберите нозологию в каталоге.</p>','catalog');const f=favs().includes(c.id);return shell(esc(c.title),`<div class="eyebrow">Карточка №${String(c.number).padStart(3,'0')} · ${esc(c.group)}</div><div class="actions">${btn(f?'★ В избранном':'☆ В избранное',`toggleFav('${c.id}')`)}${btn('Сохранить PDF','window.print()','secondary')}${stagingCardLink(c.id)}</div><div class="panel"><h2>1. Гистотип и локализация</h2><p><b>МКБ‑10:</b> ${esc((c.icd10 ?? []).join(', '))}</p>${c.icd10Note ? `<p class="fine">${esc(c.icd10Note)}</p>` : ''}<p><b>Происхождение:</b> ${esc(c.origin)}</p><p><b>Локализация:</b> ${esc(c.location)}</p></div><div class="panel"><h2 id="molecular" tabindex="-1">2. Молекулярные паттерны</h2><p>${esc(c.molecular).split('; ').join(' · ')}</p></div><div class="panel"><h2>3. Диагностика</h2><p>${esc(c.diagnostics)}</p></div><div class="panel"><h2>4. Онкомаркеры${c.markers.includes('продукция:')? ' и гормональная продукция':''}</h2><p>${esc(c.markers)}</p></div>${c.id === 'c038' ? `<div class="panel"><h2>Стадирование · AJCC 9</h2><p>Версия 9 действует с 1 января 2025 года. При использовании AJCC 8 указывайте версию рядом со стадией. IVA по AJCC 8 означала T4 или N3 при M0. В AJCC 9 при M0 эти категории входят в стадию III, а IVA и IVB относятся только к M1.</p><p>${treatmentSource('https://www.cancer.org/cancer/types/nasopharyngeal-cancer/detection-diagnosis-staging/staging.html', 'Группы стадий AJCC 9 · ACS')} · ${treatmentSource('https://www.facs.org/quality-programs/cancer-programs/education/ajcc-protocol-webinar-on-version-9-staging-system-for-nasopharynx-cancer/', 'Версия и дата вступления в силу · ACS/AJCC')}</p></div>` : ''}${c.id === 'c005' ? `<p class="fine"><a href="#card/c044">Отдельная карточка аденокарциномы прямой кишки</a></p>` : ''}${NON_TNM_CARD_INFO[c.id] ? renderNonTnmTreatment(c) : `<div class="panel"><h2>5. ${esc(c.treatmentHeading ?? 'Лечение по стадиям')}${stagingData.other[c.id] === 'Lugano' ? ' · Lugano' : c.id === 'c041' ? ' · FIGO' : ''}</h2><div class="tabs">${(CARD_STAGES[c.id] ?? STAGES).map(s=>`<button class="tab ${state.stage===s?'selected':''}" data-stage="${s}" aria-pressed="${state.stage===s}" onclick="setStage('${s}')">${s}</button>`).join('')}</div>${c.stageTreatmentNote ? `<p class="fine">${esc(c.stageTreatmentNote)}</p>` : ''}
-${stagingData.other[c.id] === 'Lugano' ? `<p class="fine">Распространённость определяют по Lugano. При выборе терапии дополнительно учитывают гистотип, объём поражения и факторы риска. ${treatmentSource('https://www.ncbi.nlm.nih.gov/books/NBK66038/table/CDR0000062675__176/', 'Критерии Lugano')}</p>` : ''}<p id="stageContent" aria-live="polite"><b>${state.stage}:</b> ${esc(c[state.stage])}</p>${cardTakeaway(c, state.stage)}${stageExtras(c)}<p class="fine">${c.treatmentHeading ? 'Категории лечения приведены укрупнённо.' : 'Стадии приведены укрупнённо.'} Реальная тактика определяется гистотипом, подстадией, биомаркерами, резектабельностью, функциональным статусом и линией терапии.</p></div>`}<div class="notice"><b>Статус:</b> редакционный черновик. Независимая медицинская проверка не проведена.</div>${c.references?.length ? `<div class="sources">Источники по нозологии: ${c.references.map(([label, url]) => treatmentSource(url, label)).join(' · ')}</div>` : ''}<div class="sources">Источники для проверки: ${sources.map(([n,u])=>`<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join(' · ')}</div>`,'catalog')}
+function card(){const c=DATA.find(x=>x.id===state.card);if(!c)return shell('Карточка не найдена','<p>Выберите нозологию в каталоге.</p>','catalog');const f=favs().includes(c.id);return shell(esc(c.title),`<div class="eyebrow">Карточка №${String(c.number).padStart(3,'0')} · ${esc(c.group)}</div><div class="actions">${btn(f?'★ В избранном':'☆ В избранное',`toggleFav('${c.id}')`)}${btn('Сохранить PDF','window.print()','secondary')}${stagingCardLink(c.id)}</div><div class="panel"><h2>1. Гистотип и локализация</h2><p><b>МКБ‑10:</b> ${esc((c.icd10 ?? []).join(', '))}</p>${c.icd10Note ? `<p class="fine">${esc(c.icd10Note)}</p>` : ''}<p><b>Происхождение:</b> ${esc(c.origin)}</p><p><b>Локализация:</b> ${esc(c.location)}</p></div><div class="panel"><h2 id="molecular" tabindex="-1">2. Молекулярные паттерны</h2><p>${esc(c.molecular).split('; ').join(' · ')}</p></div><div class="panel"><h2>3. Диагностика</h2><p>${esc(c.diagnostics)}</p></div><div class="panel"><h2>4. Онкомаркеры${c.markers.includes('продукция:')? ' и гормональная продукция':''}</h2><p>${esc(c.markers)}</p></div>${c.id === 'c038' ? `<div class="panel"><h2>Стадирование · AJCC 9</h2><p>Версия 9 действует с 1 января 2025 года. При использовании AJCC 8 указывайте версию рядом со стадией. IVA по AJCC 8 означала T4 или N3 при M0. В AJCC 9 при M0 эти категории входят в стадию III, а IVA и IVB относятся только к M1.</p><p>${treatmentSource('https://www.cancer.org/cancer/types/nasopharyngeal-cancer/detection-diagnosis-staging/staging.html', 'Группы стадий AJCC 9 · ACS')} · ${treatmentSource('https://www.facs.org/quality-programs/cancer-programs/education/ajcc-protocol-webinar-on-version-9-staging-system-for-nasopharynx-cancer/', 'Версия и дата вступления в силу · ACS/AJCC')}</p></div>` : ''}${c.id === 'c005' ? `<p class="fine"><a href="#card/c044">Отдельная карточка аденокарциномы прямой кишки</a></p>` : ''}${renderStagingOverview(c.stageOverview)}${NON_TNM_CARD_INFO[c.id] ? renderNonTnmTreatment(c) : `<div class="panel"><h2>5. ${esc(c.treatmentHeading ?? 'Лечение по стадиям')}${stagingData.other[c.id] === 'Lugano' ? ' · Lugano' : c.id === 'c041' ? ' · FIGO' : ''}</h2><div class="tabs">${(CARD_STAGES[c.id] ?? STAGES).map(s=>`<button class="tab ${state.stage===s?'selected':''}" data-stage="${s}" aria-pressed="${state.stage===s}" onclick="setStage('${s}')">${s}</button>`).join('')}</div>${c.stageTreatmentNote ? `<p class="fine">${esc(c.stageTreatmentNote)}</p>` : ''}
+${stagingData.other[c.id] === 'Lugano' ? `<p class="fine">Распространённость определяют по Lugano. При выборе терапии дополнительно учитывают гистотип, объём поражения и факторы риска. ${treatmentSource('https://www.ncbi.nlm.nih.gov/books/NBK66038/table/CDR0000062675__176/', 'Критерии Lugano')}</p>` : ''}<p id="stageContent" aria-live="polite"><b>${state.stage}:</b> ${esc(c[state.stage])}</p>${renderStageSituations(c.stageSituations?.[state.stage])}${cardTakeaway(c, state.stage)}${stageExtras(c)}<p class="fine">${c.treatmentHeading ? 'Категории лечения приведены укрупнённо.' : 'Стадии приведены укрупнённо.'} Реальная тактика определяется гистотипом, подстадией, биомаркерами, резектабельностью, функциональным статусом и линией терапии.</p></div>`}<div class="notice"><b>Статус:</b> редакционный черновик. Независимая медицинская проверка не проведена.</div>${c.references?.length ? `<div class="sources">Источники по нозологии: ${c.references.map(([label, url]) => treatmentSource(url, label)).join(' · ')}</div>` : ''}<div class="sources">Источники для проверки: ${sources.map(([n,u])=>`<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join(' · ')}</div>`,'catalog')}
 
 // Редакционные примеры режимов. Не использовать как индивидуальные назначения.
 const STAGES = ['I', 'II', 'III', 'IV'];
@@ -3143,8 +3156,9 @@ const stagingNames = new Map(stagingCards.map(card => [card.id, normalizeSearch(
 
 function stagingCardLink(id) {
   const entries = stagingByCard.get(id);
-  if (!entries?.length) return '';
-  return `<a class="btn secondary" href="#tnm/${esc(entries.length === 1 ? entries[0].id : id)}">Открыть стадирование</a>`;
+  if (entries?.length) return `<a class="btn secondary" href="#tnm/${esc(entries.length === 1 ? entries[0].id : id)}">Открыть стадирование</a>`;
+  const card = DATA.find(item => item.id === id);
+  return card?.stageOverview ? `<a class="btn secondary" href="#card/${esc(id)}/staging">Открыть стадирование</a>` : '';
 }
 
 function stagingResults(query = '', group = 'Все') {
@@ -3180,9 +3194,10 @@ function tnmPage() {
   const back = '<a class="back staging-back" href="#tnm">← Справочник стадирования</a>';
   if (entry) {
     const blocks = [['Группы стадий', entry.groups], ['T · Первичная опухоль', entry.t],
-      ['N · Регионарные лимфоузлы', entry.n], ['M · Отдалённые метастазы', entry.m]];
+      ['N · Регионарные лимфоузлы', entry.n], ['M · Отдалённые метастазы', entry.m], ...(entry.details ?? [])];
     return `${back}<h1>${esc(entry.title)}</h1>
       <p class="muted">${esc(entry.edition)}</p>
+      ${entry.scope ? `<p>${esc(entry.scope)}</p>` : ''}
       ${entry.verification ? `<p class="fine"><b>Редакционная сверка ${esc(entry.verification.date.split('-').reverse().join('.'))}.</b> ${esc(entry.verification.scope)}</p>` : ''}
       <p><a href="${esc(entry.url)}" target="_blank" rel="noopener">Источник критериев и подробные определения ↗</a></p>
       ${(entry.references ?? []).map(([label, url]) => `<p><a href="${esc(url)}" target="_blank" rel="noopener">${esc(label)} ↗</a></p>`).join('')}
@@ -3205,7 +3220,7 @@ function tnmPage() {
     <div id="stagingResults">${stagingResults()}</div>
     <details class="marker-entry"><summary>Другие системы стадирования и оценки риска</summary>
       <div class="marker-detail">${DATA.filter(card => stagingData.other[card.id]).map(card =>
-        `<p><a href="#card/${esc(card.id)}">${esc(card.title)}</a> · ${esc(stagingData.other[card.id])}</p>`).join('')}</div></details>
+        `<p><a href="#card/${esc(card.id)}${card.stageOverview ? '/staging' : ''}">${esc(card.title)}</a> · ${esc(stagingData.other[card.id])}</p>`).join('')}</div></details>
     <p class="fine"><a href="https://www.facs.org/quality-programs/cancer-programs/american-joint-committee-on-cancer/version-9/" target="_blank" rel="noopener">Редакции AJCC</a> ·
     <a href="https://www.uicc.org/what-we-do/sharing-knowledge/tnm/publications-and-resources" target="_blank" rel="noopener">Редакции и исправления UICC</a></p>`);
 }

@@ -78,8 +78,15 @@ async function main() {
       }
       assert.ok(await page.locator('.sources').getByRole('link', {name:card.references[0][0]}).isVisible());
       const staging = page.getByRole('link', {name:'Открыть стадирование'});
-      assert.equal(await staging.count(), stagingLinks[card.id] ? 1 : 0, card.id);
+      assert.equal(await staging.count(), stagingLinks[card.id] || card.stageOverview ? 1 : 0, card.id);
       if (stagingLinks[card.id]) assert.equal(await staging.getAttribute('href'), '#tnm/' + stagingLinks[card.id]);
+      if (card.stageOverview) {
+        assert.equal(await staging.getAttribute('href'), '#card/' + card.id + '/staging');
+        await staging.click();
+        await page.locator('#card-staging:focus').waitFor();
+        assert.equal(await page.locator('#card-staging h2').innerText(), card.stageOverview.title);
+        assert.equal(await page.locator('#card-staging p > b').count(), card.stageOverview.items.length);
+      }
       await page.locator('[data-treatment=surgery]').click();
       const algorithm = page.getByRole('link', {name:'Подробный хирургический алгоритм'});
       assert.equal(await algorithm.count(), card.treatmentContexts ? 0 : 1, card.id);
@@ -98,6 +105,17 @@ async function main() {
         assert.equal(await page.locator('[data-treatment=surgery]').getAttribute('aria-pressed'), 'true', card.id);
       }
     }
+
+    for (const card of cards.filter(item => item.stageSituations)) {
+      for (const [stage, situations] of Object.entries(card.stageSituations)) {
+        await page.goto(home + '#card/' + card.id + '/' + stage);
+        await page.locator('[data-stage="' + stage + '"][aria-pressed=true]').waitFor();
+        for (const [label] of situations) await page.getByText(label + '.', {exact:true}).waitFor();
+      }
+    }
+    await page.goto(home + '#tnm/uveal');
+    await page.getByText('Радужка · отдельные критерии T', {exact:true}).click();
+    await page.getByText(/T1a ≤3 часовых секторов/).waitFor();
 
     await page.goto(home + '#card/c073/IV');
     await page.getByText('Паллиативные цисплатин + фторурацил при синоназальном ПКР', {exact:true}).waitFor();
