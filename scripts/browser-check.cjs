@@ -142,6 +142,52 @@ async function main() {
     await page.locator('[data-stage=IV][aria-pressed=true]').waitFor();
     assert.match(await page.locator(':focus').innerText(), /Паллиативные цисплатин/);
 
+    for (const [query, href] of [['ALBI', '#calculators/albi'], ['Довиль', '#scales/deauville'], ['CTCAE', '#scales/ctcae']]) {
+      await page.goto(home + '#home');
+      await page.getByRole('textbox', {name:'Поиск по справочнику'}).fill(query);
+      await page.locator('#quickSearch a[href="' + href + '"]').click();
+      await page.locator(':focus').filter({has:page.getByRole('heading', {level:2})}).waitFor();
+    }
+    await page.goto(home + '#card/c009');
+    await page.getByRole('link', {name:'Рассчитать ALBI'}).click();
+    await page.locator('#albi_bilirubin').fill('20');
+    await page.locator('#albi_albumin').fill('40');
+    assert.match(await page.locator('#res_albi').innerText(), /-2,541.*ALBI 2/);
+    await page.locator('#albi_albumin').fill('45');
+    assert.match(await page.locator('#res_albi').innerText(), /ALBI 1/);
+    await page.locator('#albi_albumin').fill('20');
+    assert.match(await page.locator('#res_albi').innerText(), /ALBI 3/);
+    await page.locator('#albi_bilirubin').fill('0');
+    assert.match(await page.locator('#res_albi').innerText(), /Проверьте/);
+
+    await page.goto(home + '#card/c027');
+    await page.getByRole('link', {name:'Deauville / Lugano'}).click();
+    await page.locator('#deauville-phase').selectOption('interim');
+    await page.locator('#deauville-score').selectOption('4');
+    await page.locator('#deauville-new').selectOption('no');
+    assert.match(await page.locator('#deauville-result').innerText(), /укажите динамику/);
+    await page.locator('#deauville-change').selectOption('lower');
+    assert.match(await page.locator('#deauville-result').innerText(), /в ходе лечения/);
+    await page.locator('#deauville-phase').selectOption('end');
+    assert.match(await page.locator('#deauville-result').innerText(), /остаточной метаболически активной/);
+    await page.locator('#deauville-new').selectOption('uncertain');
+    assert.match(await page.locator('#deauville-result').innerText(), /до классификации ответа/);
+    await page.locator('#deauville-score').selectOption('5');
+    await page.locator('#deauville-new').selectOption('yes');
+    assert.match(await page.locator('#deauville-result').innerText(), /Прогрессирование/);
+
+    await page.goto(home + '#regimens/complications');
+    await page.getByRole('link', {name:/Степени токсичности/}).click();
+    await page.locator('#ctcae-query').waitFor();
+    assert.equal(await page.locator('#ctcae-results details').count(), 7);
+    await page.locator('#ctcae-query').fill('пневмонит');
+    assert.equal(await page.locator('#ctcae-results details[open]').count(), 1);
+    assert.match(await page.locator('#ctcae-results').innerText(), /показан кислород/);
+    await page.locator('#ctcae-query').fill('диарея');
+    assert.match(await page.locator('#ctcae-results').innerText(), /Изменение консистенции/);
+    await page.locator('#ctcae-query').fill('нет такого события');
+    assert.match(await page.locator('#ctcae-results').innerText(), /Событие не найдено/);
+
     await page.goto(home + '#card/c038');
     await page.locator('[data-stage=III]').click();
     assert.match(await page.locator('.treatment-content:visible').innerText(), /Индукционная ХТ/);
