@@ -65,9 +65,10 @@ async function main() {
       }
     }
 
-    const newCards = cards.filter(card => card.number >= 69 && card.number <= 76);
+    const newCards = cards.filter(card => card.number >= 69 && card.number <= 84);
     const stagingLinks = {
       c071: 'lung', c072: 'adrenal', c073: 'sinonasal', c074: 'kidney', c075: 'sarcoma',
+      c077: 'uveal', c078: 'ampullary', c079: 'appendiceal', c083: 'lung', c084: 'sarcoma',
     };
     for (const card of newCards) {
       await page.goto(home + '#card/' + card.id);
@@ -89,6 +90,9 @@ async function main() {
         await algorithm.click();
         await page.getByRole('heading', {name:'Выберите клиническую ситуацию'}).waitFor();
         const returnLink = page.locator('#app .actions').getByRole('link', {name:card.title, exact:true});
+        if (card.number >= 77) {
+          assert.ok(await page.getByRole('heading', {name:'Операционное видео', exact:true}).isVisible(), card.id);
+        }
         await returnLink.click();
         await page.locator('[data-stage="' + stage + '"][aria-pressed=true]').waitFor();
         assert.equal(await page.locator('[data-treatment=surgery]').getAttribute('aria-pressed'), 'true', card.id);
